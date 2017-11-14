@@ -23,7 +23,7 @@ module.exports = class{
         
         discord.on('message', message => {
           const match = new QueueRoute([
-            new RegexRoute('^help$', [], {
+            new RegexRoute(/^help$/i, [], {
               middleware: new HelpMiddleware
             })
           ]).route(message);
