@@ -1,3 +1,7 @@
+const RegexRoute = require('../Router/RegexRoute');
+const QueueRoute = require('../Router/QueueRoute');
+const HelpMiddleware = require('../Middleware/Help/HelpMiddleware');
+
 module.exports = class{
   constructor(container){
     this.container = container;
@@ -17,10 +21,18 @@ module.exports = class{
           console.log(`Logged in as ${discord.user.tag}!`);
         });
         
-        discord.on('message', msg => {
-          if (msg.content === 'ping') {
-            msg.reply('Pong!');
+        discord.on('message', message => {
+          const match = new QueueRoute([
+            new RegexRoute('^help$', [], {
+              middleware: new HelpMiddleware
+            })
+          ]).route(message);
+
+          if(match === null){
+            return;
           }
+
+          match.middleware.process(message);
         });
         
         discord.login(config.bot.token);
