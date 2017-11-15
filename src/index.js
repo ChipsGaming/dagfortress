@@ -1,5 +1,13 @@
 const container = require('./container');
 const Game = require('./Game/Game');
 
-const game = new Game(container);
-game.run();
+
+Promise.all([
+  container.get('Config').build({}, container),
+  container.get('Discord').build({}, container)
+])
+  .then(function([config, discord]){
+    new Game(container).listen(discord);
+
+    discord.login(config.bot.token);
+  });

@@ -1,41 +1,41 @@
+const NullRoute = require('../Router/NullRoute');
 const RegexRoute = require('../Router/RegexRoute');
 const QueueRoute = require('../Router/QueueRoute');
-const HelpMiddleware = require('../Middleware/Help/HelpMiddleware');
+const HelpHandler = require('../Handler/HelpHandler');
+const PingHandler = require('../Handler/PingHandler');
 
 module.exports = class{
   constructor(container){
     this.container = container;
   }
 
-  run(){
-    if(process.argv[2] === undefined){
-      throw new Error('Config file not set. Run "nodejs src/index.js path/to/config.json"');
-    }
+  listen(discord){
+    this.discord = discord;
 
-    Promise.all([
-      this.container.get('Config').build(process.argv[2]),
-      this.container.get('Discord').build()
+    discord.on('ready', this.onReady.bind(this));
+    discord.on('message', this.onMessage.bind(this));
+  }
+
+  onReady(){
+    console.log(`logged in as ${this.discord.user.tag}!`);
+  }
+
+  onMessage(message){
+    const match = new QueueRoute([
+      new RegexRoute(/^help$/i, [], {
+        middleware: new HelpHandler
+      }),
+      new RegexRoute(/^ping$/i, [], {
+        middleware: new PingHandler
+      }),
+      new NullRoute({
+        middleware: {
+          process: function(){}
+        }
+      })
     ])
-      .then(function([config, discord]){
-        discord.on('ready', () => {
-          console.log(`Logged in as ${discord.user.tag}!`);
-        });
-        
-        discord.on('message', message => {
-          const match = new QueueRoute([
-            new RegexRoute(/^help$/i, [], {
-              middleware: new HelpMiddleware
-            })
-          ]).route(message);
-
-          if(match === null){
-            return;
-          }
-
-          match.middleware.process(message);
-        });
-        
-        discord.login(config.bot.token);
-      });
+      .route(message)
+      .middleware
+      .process(message);
   }
 };

@@ -4,6 +4,8 @@
 	"description": "Dag fortress game",
 	"main": "index.js",
 	"scripts": {
+		"migrate_up": "./node_modules/.bin/knex migrate:latest",
+		"migrate_down": "./node_modules/.bin/knex migrate:rollback",
 		"start": "nodejs src/index.js config/config.json",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
@@ -18,6 +20,9 @@
 	},
 	"homepage": "https://github.com/ChipsGaming/dagfortress#readme",
 	"dependencies": {
+		"uuid": "^3.0",
+		"sqlite3": "^3.0",
+		"knex": "^0.14.0",
 		"discord.js": "^11.0"
 	},
 	"devDependencies": {

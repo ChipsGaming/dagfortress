@@ -1,14 +1,34 @@
+/**
+ * Роутер на регулярных выражениях.
+ *
+ * @example
+ * const router = new RegexRoute(/^help (\w+)$/i, ['section'], {
+ *   handler: new HelpHandler
+ * })
+ *  .route(message);
+ *
+ * @author Artur Sh. Mamedbekov
+ */
 module.exports = class{
-  constructor(regex, names, defaults){
-    if(!(defaults instanceof Object)){
-      defaults = {};
-    }
-
+  /**
+   * @param {RegExp} regex Используемое для разбора регулярное выражение.
+   * @param {Array} names Массив имен групп регулярного выражения.
+   * @param {Object} defaults [optional] Результаты по умолчанию.
+   */
+  constructor(regex, names, defaults = {}){
     this.regex = regex;
     this.names = names;
     this.defaults = defaults;
   }
 
+  /**
+   * Роутит сообщение.
+   *
+   * @param {Discord.Message} message Разбираемое сообщение.
+   *
+   * @return {Object|null} Результат роутинга или null - если сообщения не 
+   * соответствует правилам разбора.
+   */
   route(message){
     if(!('content' in message)){
       return null;
