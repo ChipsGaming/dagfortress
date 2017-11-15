@@ -20,7 +20,7 @@ module.exports = class{
   onMessage(message){
     this.container.get('PlayerRepository').build({}, this.container)
       .then(function(playerRepository){
-        playerRepository.find('id', message.author.id)
+        playerRepository.find('discordUser', message.author.id)
           .then(function(player){
             if(player === null){
               new DefaultStateHandler(this.container)
@@ -31,6 +31,6 @@ module.exports = class{
                 .process(message);
             }
           }.bind(this));
-      });
+      }.bind(this));
   }
 };

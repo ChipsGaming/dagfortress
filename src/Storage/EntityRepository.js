@@ -81,7 +81,7 @@ module.exports = class{
     return this.database
       .select('*')
       .from(this.tableName)
-      .where('id', id)
+      .where(field, value)
       .limit(1)
       .then(function(data){
         if(data.length == 0){
