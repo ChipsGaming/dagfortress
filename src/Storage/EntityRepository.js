@@ -67,7 +67,8 @@ module.exports = class{
    */
   remove(entity){
     return this.database
-      .del()
+      .delete()
+      .from(this.tableName)
       .where('id', entity.id);
   }
 

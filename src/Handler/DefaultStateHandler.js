@@ -1,8 +1,6 @@
 const NullRoute = require('../Router/NullRoute');
 const RegexRoute = require('../Router/RegexRoute');
 const QueueRoute = require('../Router/QueueRoute');
-const HelpHandler = require('./DefaultState/HelpHandler');
-const PingHandler = require('./DefaultState/PingHandler');
 
 module.exports = class{
   constructor(container){
@@ -12,10 +10,19 @@ module.exports = class{
   process(message, next){
     const match = new QueueRoute([
       new RegexRoute(/^help$/i, [], {
-        middleware: new HelpHandler
+        middleware: new (require('./DefaultState/HelpHandler'))
       }),
       new RegexRoute(/^ping$/i, [], {
-        middleware: new PingHandler
+        middleware: new (require('./DefaultState/PingHandler'))
+      }),
+      new RegexRoute(/^список$/i, [], {
+        middleware: new (require('./DefaultState/WorldListHandler'))(this.container)
+      }),
+      new RegexRoute(/^создать (\d+)$/i, ['seed'], {
+        middleware: new (require('./DefaultState/CreateWorldHandler'))(this.container)
+      }),
+      new RegexRoute(/^войти ([a-z0-9-]+)$/i, ['id'], {
+        middleware: new (require('./DefaultState/EnterWorldHandler'))(this.container)
       }),
       new NullRoute({
         middleware: {
@@ -24,7 +31,7 @@ module.exports = class{
       })
     ])
       .route(message)
-      .middleware
-      .process(message);
+
+    match.middleware.process(message, match);
   }
 };

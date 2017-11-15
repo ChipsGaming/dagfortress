@@ -1,5 +1,6 @@
 node_modules/
 config/*
 !config/.gitkeep
+!config/config.example.json
 data/*
 !data/.gitkeep

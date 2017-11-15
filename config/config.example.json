@@ -1,0 +1,11 @@
+{
+	"bot": {
+		"token": "321123"
+	},
+	"game": {
+		"maxWorlds": 3,
+		"world": {
+			"maxPlayers": 10
+		}
+	}
+}
