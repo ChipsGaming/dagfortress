@@ -18,19 +18,19 @@ module.exports = class{
   }
 
   onMessage(message){
-    this.container.get('PlayerRepository').build({}, container)
+    this.container.get('PlayerRepository').build({}, this.container)
       .then(function(playerRepository){
         playerRepository.find('id', message.author.id)
           .then(function(player){
             if(player === null){
-              new DefaultStateHandler(container)
+              new DefaultStateHandler(this.container)
                 .process(message);
             }
             else{
-              new InWorldStateHandler(container, player)
+              new InWorldStateHandler(this.container, player)
                 .process(message);
             }
-          });
+          }.bind(this));
       });
   }
 };
