@@ -16,6 +16,9 @@ module.exports = class{
       new RegexRoute(/^ping$/i, [], {
         middleware: new (require('./InWorldState/PingHandler'))(this.player)
       }),
+      new RegexRoute(/^осмотреться$/i, [], {
+        middleware: new (require('./InWorldState/ViewLocationHandler'))(this.container, this.player)
+      }),
       new RegexRoute(/^выйти$/i, [], {
         middleware: new (require('./InWorldState/ExitWorldHandler'))(this.container, this.player)
       }),

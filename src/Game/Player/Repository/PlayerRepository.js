@@ -13,6 +13,7 @@ module.exports = class extends EntityRepository{
       id: entity.id,
       discordUser: entity.discordUser,
       world: entity.world,
+      location: entity.location,
       added: entity.added
     };
   }
@@ -20,7 +21,8 @@ module.exports = class extends EntityRepository{
   hydrate(data){
     const entity = new Entity(
       data.discordUser,
-      data.world
+      data.world,
+      data.location
     );
     entity.id = data.id;
     entity.added = new Date(data.added);

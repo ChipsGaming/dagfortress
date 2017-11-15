@@ -1,14 +1,13 @@
 
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable('player', function(t){
+  return knex.schema.createTable('location', function(t){
     t.string('id').primary();
-    t.string('discordUser').notNull();
     t.string('world').notNull();
-    t.string('location').notNull();
+    t.boolean('isStart').notNull();
     t.dateTime('added').notNull();
   });
 };
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTable('player');
+  return knex.schema.dropTable('location');
 };

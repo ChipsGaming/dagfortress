@@ -5,6 +5,7 @@ const DiscordFactory = require('./Game/Container/DiscordFactory');
 const DatabaseFactory = require('./Storage/Container/DatabaseFactory');
 const WorldRepositoryFactory = require('./Game/World/Repository/Container/WorldRepositoryFactory');
 const PlayerRepositoryFactory = require('./Game/Player/Repository/Container/PlayerRepositoryFactory');
+const LocationRepositoryFactory = require('./Game/World/Location/Repository/Container/LocationRepositoryFactory');
 
 module.exports = new Container({
   'config_path': process.argv[2]? process.argv[2] : './config/config.json',
@@ -14,5 +15,6 @@ module.exports = new Container({
 
   // Repository
   'WorldRepository': new SharingFactory(new WorldRepositoryFactory),
-  'PlayerRepository': new SharingFactory(new PlayerRepositoryFactory)
+  'PlayerRepository': new SharingFactory(new PlayerRepositoryFactory),
+  'LocationRepository': new SharingFactory(new LocationRepositoryFactory)
 });

@@ -10,9 +10,15 @@ module.exports = class{
     Promise.all([
       this.container.get('Config').build({}, this.container),
       this.container.get('WorldRepository').build({}, this.container),
+      this.container.get('LocationRepository').build({}, this.container),
       this.container.get('PlayerRepository').build({}, this.container)
     ])
-      .then(function([config, worldRepository, playerRepository]){
+      .then(function([
+        config,
+        worldRepository,
+        locationRepository,
+        playerRepository
+      ]){
         worldRepository
           .find('id', match.id)
           .then(function(world){
@@ -28,10 +34,22 @@ module.exports = class{
                   return message.reply('Лимит свободных слотов для игроков в этом мире истек');
                 }
 
-                let player = new Player(message.author.id, world.id);
+                return locationRepository.select()
+                  .where('world', world.id)
+                  .where('isStart', true)
+                  .limit(1);
+              })
+              .then(function(data){
+                if(data.lendth == 0){
+                  return message.reply('В данном мире нет стартовой локации. Вход невозможен');
+                }
+
+                const location = locationRepository.hydrate(data[0]);
+
+                const player = new Player(message.author.id, world.id, location.id);
                 playerRepository.save(player).then();
 
-                return message.reply(`Вы вошли в мир "${world.id}"`);
+                return message.reply(`Вы вошли в мир "${world.id}", локация "${location.id}"`);
               });
           });
       });

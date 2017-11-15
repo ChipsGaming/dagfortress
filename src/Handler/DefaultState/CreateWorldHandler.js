@@ -1,4 +1,5 @@
 const World = require('../../Game/World/World');
+const Location = require('../../Game/World/Location/Location');
 const Player = require('../../Game/Player/Player');
 
 module.exports = class{
@@ -10,9 +11,15 @@ module.exports = class{
     Promise.all([
       this.container.get('Config').build({}, this.container),
       this.container.get('WorldRepository').build({}, this.container),
+      this.container.get('LocationRepository').build({}, this.container),
       this.container.get('PlayerRepository').build({}, this.container)
     ])
-      .then(function([config, worldRepository, playerRepository]){
+      .then(function([
+        config,
+        worldRepository,
+        locationRepository,
+        playerRepository
+      ]){
         if(config.game.world.maxPlayers < 1){
           return message.reply('Лимит свободных слотов для игроков в этом мире истек');
         }
@@ -24,13 +31,17 @@ module.exports = class{
               return message.reply('Лимит свободных слотов для миров истек');
             }
 
-            let world = new World(parseInt(match.seed));
+            const world = new World(parseInt(match.seed));
             worldRepository.save(world).then();
 
-            let player = new Player(message.author.id, world.id);
+            const location = new Location(world.id);
+            location.isStart = true;
+            locationRepository.save(location).then();
+
+            const player = new Player(message.author.id, world.id, location.id);
             playerRepository.save(player).then();
 
-            return message.reply(`Мир успешно создан "${world.id}"`);
+            return message.reply(`Мир успешно создан "${world.id}". Вы в локации "${location.id}"`);
           });
       });
   }
