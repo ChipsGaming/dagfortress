@@ -1,5 +1,5 @@
 module.exports = class{
   process(message){
-    message.reply('This is DagFortress, dude');
+    message.reply(`Pong! ${message.author.id}`);
   }
 };
