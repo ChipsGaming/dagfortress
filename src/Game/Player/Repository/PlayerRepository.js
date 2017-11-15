@@ -11,18 +11,24 @@ module.exports = class extends EntityRepository{
 
     return {
       id: entity.id,
+      discordUser: entity.discordUser,
+      world: entity.world,
       added: entity.added
     };
   }
 
   hydrate(data){
-    const entity = new Entity(data.id);
+    const entity = new Entity(
+      data.id,
+      data.discordUser
+    );
+    entity.world = data.world;
     entity.added = new Date(data.added);
 
     return entity;
   }
 
   isNew(entity){
-    return entity.added === undefined;
+    return entity.added === null;
   }
 };

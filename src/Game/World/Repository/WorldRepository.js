@@ -25,6 +25,6 @@ module.exports = class extends EntityRepository{
   }
 
   isNew(entity){
-    return entity.added === undefined;
+    return entity.added === null;
   }
 };

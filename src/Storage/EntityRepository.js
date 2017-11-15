@@ -72,11 +72,12 @@ module.exports = class{
   }
 
   /**
-   * @param {String} id Идентификатор целевой сущности.
+   * @param {String} field Имя проверяемого поля.
+   * @param {String} value Искомое значение.
    *
    * @return {Object|null} Сущность или null - если она не найдена.
    */
-  find(id){
+  find(field, value){
     return this.database
       .select('*')
       .from(this.tableName)

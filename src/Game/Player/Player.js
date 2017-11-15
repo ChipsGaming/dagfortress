@@ -1,6 +1,8 @@
 module.exports = class{
-  constructor(id){
+  constructor(id, discordUser){
     this.id = id;
-    this.added = undefined;
+    this.discordUser = null;
+    this.world = null;
+    this.added = null;
   }
 };

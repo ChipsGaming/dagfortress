@@ -4,6 +4,6 @@ module.exports = class{
   constructor(seed){
     this.id = Uuid();
     this.seed = seed;
-    this.added = undefined;
+    this.added = null;
   }
 };

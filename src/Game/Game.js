@@ -1,8 +1,5 @@
-const NullRoute = require('../Router/NullRoute');
-const RegexRoute = require('../Router/RegexRoute');
-const QueueRoute = require('../Router/QueueRoute');
-const HelpHandler = require('../Handler/HelpHandler');
-const PingHandler = require('../Handler/PingHandler');
+const DefaultStateHandler = require('../Handler/DefaultStateHandler');
+const InWorldStateHandler = require('../Handler/InWorldStateHandler');
 
 module.exports = class{
   constructor(container){
@@ -21,21 +18,19 @@ module.exports = class{
   }
 
   onMessage(message){
-    const match = new QueueRoute([
-      new RegexRoute(/^help$/i, [], {
-        middleware: new HelpHandler
-      }),
-      new RegexRoute(/^ping$/i, [], {
-        middleware: new PingHandler
-      }),
-      new NullRoute({
-        middleware: {
-          process: function(){}
-        }
-      })
-    ])
-      .route(message)
-      .middleware
-      .process(message);
+    this.container.get('PlayerRepository').build({}, container)
+      .then(function(playerRepository){
+        playerRepository.find('id', message.author.id)
+          .then(function(player){
+            if(player === null){
+              new DefaultStateHandler(container)
+                .process(message);
+            }
+            else{
+              new InWorldStateHandler(container, player)
+                .process(message);
+            }
+          });
+      });
   }
 };
