@@ -13,7 +13,7 @@ module.exports = class{
       this.container.get('PlayerRepository').build({}, this.container)
     ])
       .then(function([config, worldRepository, playerRepository]){
-        worldRepository.select()
+        worldRepository
           .find('id', match.id)
           .then(function(world){
             if(world === null){
