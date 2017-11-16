@@ -12,12 +12,18 @@ module.exports = class extends EntityRepository{
     return {
       id: entity.id,
       seed: entity.seed,
+      name: entity.name,
+      description: entity.description,
       added: entity.added
     };
   }
 
   hydrate(data){
-    const entity = new Entity(data.seed);
+    const entity = new Entity(
+      data.seed,
+      data.name,
+      data.description
+    );
     entity.id = data.id
     entity.added = new Date(data.added);
 

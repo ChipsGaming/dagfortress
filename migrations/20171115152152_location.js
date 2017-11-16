@@ -8,6 +8,8 @@ exports.up = function(knex, Promise) {
       .references('id').inTable('world')
       .onDelete('cascade')
       .onUpdate('cascade');
+    t.string('name').notNull();
+    t.string('description').notNull();
     t.boolean('isStart').notNull();
     t.dateTime('added').notNull();
   });

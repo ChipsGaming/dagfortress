@@ -12,5 +12,9 @@ module.exports = new Container({
   'WorldRepository': new SharingFactory(new (require('./Game/World/Repository/Container/WorldRepositoryFactory'))),
   'PlayerRepository': new SharingFactory(new (require('./Game/Player/Repository/Container/PlayerRepositoryFactory'))),
   'LocationRepository': new SharingFactory(new (require('./Game/World/Location/Repository/Container/LocationRepositoryFactory'))),
-  'RoadRepository': new SharingFactory(new (require('./Game/World/Location/Repository/Container/RoadRepositoryFactory')))
+  'RoadRepository': new SharingFactory(new (require('./Game/World/Location/Repository/Container/RoadRepositoryFactory'))),
+
+  // Generator
+  'WorldGenerator': new SharingFactory(new (require('./Game/World/Generator/Container/WorldRandomGeneratorFactory'))),
+  'LocationGenerator': new SharingFactory(new (require('./Game/World/Location/Generator/Container/LocationRandomGeneratorFactory')))
 });

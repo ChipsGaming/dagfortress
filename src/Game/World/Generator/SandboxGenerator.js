@@ -13,20 +13,23 @@ module.exports = class{
    * @return {LocationList} Сгенерированные локации.
    */
   generate(){
-    const list = new LocationList(
-      new Location(this.world.id).setStart(true)
-    );
+    return this.container.get('LocationGenerator').build({}, this.container)
+      .then(function(locationGenerator){
+        const list = new LocationList(
+          locationGenerator.generate(this.world.id).setStart(true)
+        );
 
-    list
-      .createRoad(
-        list.startLocation,
-        new Location(this.world.id)
-      )
-      .createRoad(
-        list.lastLocation,
-        new Location(this.world.id)
-      );
+        list
+          .createRoad(
+            list.startLocation,
+            locationGenerator.generate(this.world.id)
+          )
+          .createRoad(
+            list.lastLocation,
+            locationGenerator.generate(this.world.id)
+          );
 
-    return list;
+        return list;
+      }.bind(this));
   }
 };

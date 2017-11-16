@@ -5,7 +5,11 @@
 	"game": {
 		"maxWorlds": 3,
 		"world": {
-			"maxPlayers": 10
+			"randomGeneratorPath": "./config/descriptions/worlds.json",
+			"maxPlayers": 10,
+			"location": {
+				"randomGeneratorPath": "./config/descriptions/locations.json"
+			}
 		}
 	}
 }
