@@ -46,7 +46,10 @@ module.exports = class{
                     break;
                   case 'object':
                     render.render(response)
-                      .then(message.reply);
+                      .then(function(template){
+                        console.log(template);
+                        message.reply(template);
+                      });
                     break;
                 }
               });
