@@ -19,7 +19,7 @@ module.exports = class{
       new RegexRoute(/^осмотреться$/i, [], {
         middleware: new (require('./InWorldState/ViewLocationHandler'))(this.container, this.player)
       }),
-      new RegexRoute(/^пойти ([a-z0-9-]+)$/i, ['id'], {
+      new RegexRoute(/^пойти ([\w\d ]+)$/i, ['id'], {
         middleware: new (require('./InWorldState/EnterLocationHandler'))(this.container, this.player)
       }),
       new RegexRoute(/^выйти$/i, [], {

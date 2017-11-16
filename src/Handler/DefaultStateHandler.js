@@ -21,7 +21,7 @@ module.exports = class{
       new RegexRoute(/^создать (\d+)$/i, ['seed'], {
         middleware: new (require('./DefaultState/CreateWorldHandler'))(this.container)
       }),
-      new RegexRoute(/^войти ([a-z0-9-]+)$/i, ['id'], {
+      new RegexRoute(/^войти ([\w\d ]+)$/i, ['name'], {
         middleware: new (require('./DefaultState/EnterWorldHandler'))(this.container)
       }),
       new NullRoute({

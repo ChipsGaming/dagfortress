@@ -26,7 +26,7 @@ module.exports = class{
           .where('location.id', '!=', this.player.location)
           .then(function(data){
             for(let location of locationRepository.hydrateAll(data)){
-              if(match.id == location.id){
+              if(match.name == location.name){
                 this.player.location = location.id;
                 playerRepository.save(this.player).then();
 

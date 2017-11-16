@@ -21,7 +21,7 @@ module.exports = class{
         playerRepository
       ]){
         return worldRepository
-          .find('id', match.id)
+          .find('name', match.name)
           .then(function(world){
             if(world === null){
               return 'Мир с заданым идентификатором не найден';
