@@ -15,7 +15,7 @@ module.exports = class{
           .build()
           .then(function(data){
             if(data.length == 0){
-              return message.reply(`Нет созданых миров`);
+              return 'Нет созданых миров';
             }
 
             return new ViewModel('default_state/world_list', {

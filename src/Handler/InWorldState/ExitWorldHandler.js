@@ -17,7 +17,7 @@ module.exports = class{
       ]){
         return playerRepository.remove(this.player)
           .then(function(count){
-            message.reply(`Выход выполнен`);
+            message.reply('Выход выполнен');
 
             return playerRepository.select()
               .build()
