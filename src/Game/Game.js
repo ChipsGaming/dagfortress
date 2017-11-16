@@ -38,18 +38,14 @@ module.exports = class{
               handler.process(message)
             ])
               .then(function([render, response]){
-                console.log(typeof response);
-                console.log(response);
                 switch(typeof response){
                   case 'string':
                     message.reply(response);
                     break;
                   case 'object':
-                    render.render(response)
-                      .then(function(template){
-                        console.log(template);
-                        message.reply(template);
-                      });
+                    render.render(response).then(
+                      message.reply.bind(message)
+                    );
                     break;
                 }
               });
