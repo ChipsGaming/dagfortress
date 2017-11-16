@@ -1,5 +1,4 @@
-const DefaultStateHandler = require('../Handler/DefaultStateHandler');
-const InWorldStateHandler = require('../Handler/InWorldStateHandler');
+const moment = require('moment');
 
 module.exports = class{
   constructor(container){
@@ -19,7 +18,7 @@ module.exports = class{
 
   onMessage(message){
     console.log(
-      `${message.author.username}[${message.createdAt}]: ` + message.content.substr(0, 10)
+      message.author.username + '[' + moment(message.createdAt).format('DD.MM.YYYY hh:mm:ss') + ']: ' + message.content.substr(0, 10)
     );
 
     this.container.get('PlayerRepository').build({}, this.container)
@@ -27,11 +26,11 @@ module.exports = class{
         playerRepository.find('discordUser', message.author.id)
           .then(function(player){
             if(player === null){
-              new DefaultStateHandler(this.container)
+              new (require('../Handler/DefaultStateHandler'))(this.container)
                 .process(message);
             }
             else{
-              new InWorldStateHandler(this.container, player)
+              new (require('../Handler/InWorldStateHandler'))(this.container, player)
                 .process(message);
             }
           }.bind(this));

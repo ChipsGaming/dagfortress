@@ -23,6 +23,7 @@
 		"uuid": "^3.0",
 		"sqlite3": "^3.0",
 		"knex": "^0.14.0",
+		"moment": "^2.0",
 		"discord.js": "^11.0"
 	},
 	"devDependencies": {
