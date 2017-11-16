@@ -1,5 +1,6 @@
 const World = require('../../Game/World/World');
 const Player = require('../../Game/Player/Player');
+const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
   constructor(container){
@@ -7,7 +8,7 @@ module.exports = class{
   }
 
   process(message, match){
-    Promise.all([
+    return Promise.all([
       this.container.get('Config').build({}, this.container),
       this.container.get('WorldRepository').build({}, this.container),
       this.container.get('LocationRepository').build({}, this.container),
@@ -19,29 +20,31 @@ module.exports = class{
         locationRepository,
         playerRepository
       ]){
-        worldRepository
+        return worldRepository
           .find('id', match.id)
           .then(function(world){
             if(world === null){
-              return message.reply('Мир с заданым идентификатором не найден');
+              return 'Мир с заданым идентификатором не найден';
             }
 
-            playerRepository.select()
+            return playerRepository.select()
+              .build()
               .where('world', world.id)
               .count('id as count')
               .then(function(data){
                 if(parseInt(data[0].count) + 1 > config.game.world.maxPlayers){
-                  return message.reply('Лимит свободных слотов для игроков в этом мире истек');
+                  return 'Лимит свободных слотов для игроков в этом мире истек';
                 }
 
                 return locationRepository.select()
+                  .build()
                   .where('world', world.id)
                   .where('isStart', true)
                   .limit(1);
               })
               .then(function(data){
                 if(data.lendth == 0){
-                  return message.reply('В данном мире нет стартовой локации. Вход невозможен');
+                  return 'В данном мире нет стартовой локации. Вход невозможен';
                 }
 
                 const location = locationRepository.hydrate(data[0]);
@@ -49,7 +52,10 @@ module.exports = class{
                 const player = new Player(message.author.id, world.id, location.id);
                 playerRepository.save(player).then();
 
-                return message.reply(`Вы вошли в мир "${world.id}", локация "${location.id}"`);
+                return new ViewModel('default_state/enter_world', {
+                  world: world,
+                  location: location
+                });
               });
           });
       });

@@ -32,6 +32,6 @@ module.exports = class{
     ])
       .route(message)
 
-    match.middleware.process(message, match);
+    return match.middleware.process(message, match);
   }
 };

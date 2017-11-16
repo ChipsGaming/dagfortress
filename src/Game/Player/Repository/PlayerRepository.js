@@ -1,4 +1,5 @@
 const EntityRepository = require('../../../Storage/EntityRepository');
+const QueryBuilder = require('./PlayerQueryBuilder');
 const Entity = require('../Player');
 
 module.exports = class extends EntityRepository{
@@ -32,5 +33,14 @@ module.exports = class extends EntityRepository{
 
   isNew(entity){
     return entity.added === null;
+  }
+
+  select(alias = 'e'){
+    return new QueryBuilder(
+      this.database
+        .select(`${this.tableName}.*`)
+        .from(this.tableName),
+      alias
+    );
   }
 };

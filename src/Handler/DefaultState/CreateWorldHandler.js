@@ -1,6 +1,7 @@
 const World = require('../../Game/World/World');
-const Location = require('../../Game/World/Location/Location');
+const SandboxGenerator = require('../../Game/World/Generator/SandboxGenerator');
 const Player = require('../../Game/Player/Player');
+const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
   constructor(container){
@@ -8,41 +9,54 @@ module.exports = class{
   }
 
   process(message, match){
-    Promise.all([
+    return Promise.all([
       this.container.get('Config').build({}, this.container),
       this.container.get('WorldRepository').build({}, this.container),
       this.container.get('LocationRepository').build({}, this.container),
+      this.container.get('RoadRepository').build({}, this.container),
       this.container.get('PlayerRepository').build({}, this.container)
     ])
       .then(function([
         config,
         worldRepository,
         locationRepository,
+        roadRepository,
         playerRepository
       ]){
         if(config.game.world.maxPlayers < 1){
-          return message.reply('Лимит свободных слотов для игроков в этом мире истек');
+          return 'Лимит свободных слотов для игроков в этом мире истек';
         }
 
-        worldRepository.select()
+        return worldRepository.select()
+          .build()
           .count('id as count')
           .then(function(data){
             if(parseInt(data[0].count) + 1 > config.game.maxWorlds){
-              return message.reply('Лимит свободных слотов для миров истек');
+              return 'Лимит свободных слотов для миров истек';
             }
 
             const world = new World(parseInt(match.seed));
             worldRepository.save(world).then();
 
-            const location = new Location(world.id);
-            location.isStart = true;
-            locationRepository.save(location).then();
+            const locationList = new SandboxGenerator(this.container, world)
+              .generate();
+            locationList
+              .locationsForEach((location) => { locationRepository.save(location).then() });
+            locationList
+              .roadsForEach((road) => { roadRepository.save(road).then() });
 
-            const player = new Player(message.author.id, world.id, location.id);
+            const player = new Player(
+              message.author.id,
+              world.id,
+              locationList.startLocation.id
+            );
             playerRepository.save(player).then();
 
-            return message.reply(`Мир успешно создан "${world.id}". Вы в локации "${location.id}"`);
-          });
-      });
+            return new ViewModel('default_state/create_world', {
+              world: world,
+              player: player
+            });
+          }.bind(this));
+      }.bind(this));
   }
 };

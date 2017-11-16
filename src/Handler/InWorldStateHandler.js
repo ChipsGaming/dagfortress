@@ -19,6 +19,9 @@ module.exports = class{
       new RegexRoute(/^осмотреться$/i, [], {
         middleware: new (require('./InWorldState/ViewLocationHandler'))(this.container, this.player)
       }),
+      new RegexRoute(/^пойти ([a-z0-9-]+)$/i, ['id'], {
+        middleware: new (require('./InWorldState/EnterLocationHandler'))(this.container, this.player)
+      }),
       new RegexRoute(/^выйти$/i, [], {
         middleware: new (require('./InWorldState/ExitWorldHandler'))(this.container, this.player)
       }),
@@ -30,6 +33,6 @@ module.exports = class{
     ])
       .route(message)
 
-    match.middleware.process(message, match);
+    return match.middleware.process(message, match);
   }
 };

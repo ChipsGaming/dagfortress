@@ -4,6 +4,6 @@ module.exports = class{
   }
 
   process(message){
-    message.reply(`Pong! Аватар "${this.player.id}"`);
+    return `Pong! Аватар "${this.player.id}"`;
   }
 };

@@ -7,4 +7,10 @@ module.exports = class{
     this.isStart = false;
     this.added = null;
   }
+
+  setStart(isStart){
+    this.isStart = isStart;
+
+    return this;
+  }
 };

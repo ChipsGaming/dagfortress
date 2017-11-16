@@ -1,10 +1,10 @@
 const EntityRepository = require('../../../../Storage/EntityRepository');
-const QueryBuilder = require('./LocationQueryBuilder');
-const Entity = require('../Location');
+const QueryBuilder = require('./RoadQueryBuilder');
+const Entity = require('../Road');
 
 module.exports = class extends EntityRepository{
   get tableName(){
-    return 'location';
+    return 'road';
   }
 
   extract(entity){
@@ -12,16 +12,15 @@ module.exports = class extends EntityRepository{
 
     return {
       id: entity.id,
-      world: entity.world,
-      isStart: entity.isStart,
+      start: entity.start,
+      end: entity.end,
       added: entity.added
     };
   }
 
   hydrate(data){
-    const entity = new Entity(data.world);
+    const entity = new Entity(data.start, data,end);
     entity.id = data.id
-    entity.isStart = data.isStart;
     entity.added = new Date(data.added);
 
     return entity;

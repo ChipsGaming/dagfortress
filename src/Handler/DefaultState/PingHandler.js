@@ -1,5 +1,5 @@
 module.exports = class{
   process(message){
-    message.reply(`Pong! ${message.author.id}`);
+    return `Pong! ${message.author.id}`;
   }
 };

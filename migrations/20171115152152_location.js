@@ -2,7 +2,12 @@
 exports.up = function(knex, Promise) {
   return knex.schema.createTable('location', function(t){
     t.string('id').primary();
-    t.string('world').notNull();
+    t.string('world')
+      .notNull()
+      .index()
+      .references('id').inTable('world')
+      .onDelete('cascade')
+      .onUpdate('cascade');
     t.boolean('isStart').notNull();
     t.dateTime('added').notNull();
   });

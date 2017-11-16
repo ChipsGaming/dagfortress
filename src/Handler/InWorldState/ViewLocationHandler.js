@@ -1,3 +1,5 @@
+const ViewModel = require('../../View/ViewModel');
+
 module.exports = class{
   constructor(container, player){
     this.container = container;
@@ -5,23 +7,34 @@ module.exports = class{
   }
 
   process(message, match){
-    Promise.all([
+    return Promise.all([
       this.container.get('Config').build({}, this.container),
       this.container.get('WorldRepository').build({}, this.container),
-      this.container.get('LocationRepository').build({}, this.container)
+      this.container.get('LocationRepository').build({}, this.container),
+      this.container.get('RoadRepository').build({}, this.container)
     ])
       .then(function([
         config,
         worldRepository,
-        locationRepository
+        locationRepository,
+        roadRepository
       ]){
         return Promise.all([
           worldRepository.find('id', this.player.world),
-          locationRepository.find('id', this.player.location)
+          locationRepository.find('id', this.player.location),
+          locationRepository.select('location')
+            .joinRoad(roadRepository, 'road')
+            .nearby(this.player.location)
+            .build()
+          .where('location.id', '!=', this.player.location)
         ])
-      }.bind(this))
-      .then(function([world, location]){
-        message.reply(`Вы стоите в локации "${location.id}" мира "${world.id}"`);
-      });
+          .then(function([world, location, nearbyLocations]){
+            return new ViewModel('in_world_state/view_location', {
+              world: world,
+              location: location,
+              nearbyLocations: nearbyLocations
+            });
+          });
+      }.bind(this));
   }
 };

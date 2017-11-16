@@ -25,14 +25,29 @@ module.exports = class{
       .then(function(playerRepository){
         playerRepository.find('discordUser', message.author.id)
           .then(function(player){
+            let handler = null;
             if(player === null){
-              new (require('../Handler/DefaultStateHandler'))(this.container)
-                .process(message);
+              handler = new (require('../Handler/DefaultStateHandler'))(this.container);
             }
             else{
-              new (require('../Handler/InWorldStateHandler'))(this.container, player)
-                .process(message);
+              handler = new (require('../Handler/InWorldStateHandler'))(this.container, player);
             }
+
+            Promise.all([
+              this.container.get('Render').build({}, this.container),
+              handler.process(message)
+            ])
+              .then(function([render, response]){
+                switch(typeof response){
+                  case 'string':
+                    message.reply(response);
+                    break;
+                  case 'object':
+                    render.render(response)
+                      .then(message.reply);
+                    break;
+                }
+              });
           }.bind(this));
       }.bind(this));
   }

@@ -1,9 +1,7 @@
+const ViewModel = require('../../View/ViewModel');
+
 module.exports = class{
   process(message, next){
-    message.reply(`
-      ping - проверка соединения
-      осмотреться - получить информацию о текущем местоположении
-      выйти - выйти из текущего мира (все достижения будут удалены)
-    `);
+    return new ViewModel('in_world_state/help');
   }
 };

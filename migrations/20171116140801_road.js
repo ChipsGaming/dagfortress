@@ -1,17 +1,14 @@
 
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable('player', function(t){
+  return knex.schema.createTable('road', function(t){
     t.string('id').primary();
-    t.string('discordUser')
-      .notNull()
-      .index();
-    t.string('world')
+    t.string('start')
       .notNull()
       .index()
-      .references('id').inTable('world')
+      .references('id').inTable('location')
       .onDelete('cascade')
       .onUpdate('cascade');
-    t.string('location')
+    t.string('end')
       .notNull()
       .index()
       .references('id').inTable('location')
@@ -22,5 +19,5 @@ exports.up = function(knex, Promise) {
 };
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTable('player');
+  return knex.schema.dropTable('road');
 };

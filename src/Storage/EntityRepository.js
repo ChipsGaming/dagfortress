@@ -1,3 +1,5 @@
+const QueryBuilder = require('./QueryBuilder');
+
 module.exports = class{
   /**
    * @param {Knex} database Подключение к базе данных.
@@ -26,6 +28,17 @@ module.exports = class{
    * @return {Object} Восстановленная из строки сущность.
    */
   hydrate(data){
+  }
+
+  /**
+   * @param {Array} rows Строки базы данных.
+   *
+   * @return {Generator} Текущая, восстановленная из строки сущность.
+   */
+  * hydrateAll(rows){
+    for(let row of rows){
+      yield this.hydrate(row);
+    }
   }
 
   /**
@@ -94,11 +107,16 @@ module.exports = class{
   }
 
   /**
-   * @return {Knex} Конструктор запросов.
+   * @param {String} alias Используемый псевдоним.
+   *
+   * @return {QueryBuilder} Конструктор запросов.
    */
-  select(){
-    return this.database
-      .select()
-      .from(this.tableName);
+  select(alias = 'e'){
+    return new QueryBuilder(
+      this.database
+        .select(`${this.tableName}.*`)
+        .from(this.tableName),
+      alias
+    );
   }
 };
