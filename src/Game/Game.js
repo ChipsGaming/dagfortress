@@ -18,7 +18,7 @@ module.exports = class{
   }
 
   onMessage(message){
-    console.log(`onMessage "${message.author.username}": ` + message.content.substart(0, 10));
+    console.log(`onMessage "${message.author.username}": ` + message.content.substr(0, 10));
 
     this.container.get('PlayerRepository').build({}, this.container)
       .then(function(playerRepository){
