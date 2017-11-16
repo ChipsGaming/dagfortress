@@ -38,6 +38,8 @@ module.exports = class{
               handler.process(message)
             ])
               .then(function([render, response]){
+                console.log(typeof response);
+                console.log(response);
                 switch(typeof response){
                   case 'string':
                     message.reply(response);
