@@ -1,15 +1,14 @@
 const fs = require('fs');
+const Util = require('util');
 
 module.exports = class{
-  build(options, container){
-    return new Promise(function(resolve, reject){
-      fs.readFile(container.get('config_path'), 'utf8', function(err, data){
-        if(err){
-          throw new Error(err);
-        }
-    
-        resolve(JSON.parse(data));
-      }.bind(this));
-    }.bind(this));
+  async build(options, container){
+    try {
+      return JSON.parse(
+        await Util.promisify(fs.readFile)(container.get('config_path'), 'utf8')
+      );
+    } catch(err) {
+      throw err;
+    }
   }
 };
