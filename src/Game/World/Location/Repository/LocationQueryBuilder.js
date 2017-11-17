@@ -6,11 +6,11 @@ module.exports = class extends QueryBuilder{
   joinRoad(roadRepository, alias = 'road'){
     this.query
       .innerJoin(
-        roadRepository.tableName,
+        roadRepository.constructor.tableName,
         function(clause){
           clause
-            .on(`${this.alias}.id`, '=', `${roadRepository.tableName}.start`)
-            .orOn(`${this.alias}.id`, '=', `${roadRepository.tableName}.end`);
+            .on(`${this.alias}.id`, '=', `${roadRepository.constructor.tableName}.start`)
+            .orOn(`${this.alias}.id`, '=', `${roadRepository.constructor.tableName}.end`);
         }.bind(this)
       );
 

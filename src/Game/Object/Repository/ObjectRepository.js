@@ -1,9 +1,9 @@
 const EntityRepository = require('../../../Storage/EntityRepository');
-const Entity = require('../World');
+const Entity = require('../Object');
 
 module.exports = class extends EntityRepository{
   static get tableName(){
-    return 'world';
+    return 'object';
   }
 
   extract(entity){
@@ -11,20 +11,20 @@ module.exports = class extends EntityRepository{
 
     return {
       id: entity.id,
-      seed: entity.seed,
       name: entity.name,
-      description: entity.description,
+      world: entity.world,
+      location: entity.location,
       added: entity.added
     };
   }
 
   hydrate(data){
-    const entity = new Entity(
-      data.seed,
-      data.name,
-      data.description
-    );
+    const entity = new Entity;
+
     entity.id = data.id
+    entity.world = data.world
+    entity.location = data.location
+    entity.name = data.name
     entity.added = new Date(data.added);
 
     return entity;

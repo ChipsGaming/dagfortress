@@ -1,11 +1,11 @@
 const Uuid = require('uuid/v4');
 
 module.exports = class{
-  constructor(discordUser, world, location){
+  constructor(world, location, name){
     this.id = Uuid();
-    this.discordUser = discordUser;
     this.world = world;
     this.location = location;
+    this.name = name;
     this.added = null;
   }
 };

@@ -10,7 +10,9 @@ module.exports = new Container({
 
   // Repository
   'WorldRepository': new SharingFactory(new (require('./Game/World/Repository/Container/WorldRepositoryFactory'))),
+  /*
   'PlayerRepository': new SharingFactory(new (require('./Game/Player/Repository/Container/PlayerRepositoryFactory'))),
+  */
   'LocationRepository': new SharingFactory(new (require('./Game/World/Location/Repository/Container/LocationRepositoryFactory'))),
   'RoadRepository': new SharingFactory(new (require('./Game/World/Location/Repository/Container/RoadRepositoryFactory'))),
 

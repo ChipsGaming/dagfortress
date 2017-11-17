@@ -2,16 +2,72 @@ const QueryBuilder = require('./QueryBuilder');
 
 module.exports = class{
   /**
+   * @return {String} Наименование таблицы в базе данных.
+   */
+  static get tableName(){
+  }
+
+  /**
+   * @param {String} field Имя проверяемого поля.
+   * @param {String} value Искомое значение.
+   *
+   * @return {Select} Выражение для поиска по заданному полю.
+   */
+  static getFindStatement(database, field, value){
+    return database
+      .select(`${this.tableName}.*`)
+      .from(this.tableName)
+      .where(`${this.tableName}.${field}`, value)
+      .limit(1);
+  }
+
+  /**
+   * @param {Object} entity Исходная сущность.
+   *
+   * @return {Select} Выражение для добавления состояния сущности.
+   */
+  static getInsertStatement(database, entity){
+    return database
+      .insert(this.extract(entity))
+      .into(this.constructor.tableName);
+  }
+
+  /**
+   * @param {Object} entity Исходная сущность.
+   *
+   * @return {Select} Выражение для обновления состояния сущности.
+   */
+  static getUpdateStatement(database, entity){
+    return database
+      .update(this.extract(entity))
+      .from(this.constructor.tableName)
+      .where('id', entity.id);
+  }
+
+  /**
+   * @param {Object} entity Исходная сущность.
+   *
+   * @return {Select} Выражение для удаления состояния сущности.
+   */
+  static getDeleteStatement(database, entity){
+    return database
+      .delete()
+      .from(this.constructor.tableName)
+      .where('id', entity.id);
+  }
+
+  /**
+   * @return {Class} Используемый класс конструктора запросов.
+   */
+  static get queryBuilder(){
+    return QueryBuilder;
+  }
+
+  /**
    * @param {Knex} database Подключение к базе данных.
    */
   constructor(database){
     this.database = database;
-  }
-
-  /**
-   * @return {String} Наименование таблицы в базе данных.
-   */
-  get tableName(){
   }
 
   /**
@@ -57,17 +113,12 @@ module.exports = class{
    *
    * @return {Promise}
    */
-  save(entity){
+  async save(entity){
     if(this.isNew(entity)){
-      return this.database
-        .insert(this.extract(entity))
-        .into(this.tableName);
+      return this.constructor.getInsertStatement(this.database, entity).then();
     }
     else{
-      return this.database
-        .update(this.extract(entity))
-        .from(this.tableName)
-        .where('id', entity.id);
+      return this.constructor.getUpdateStatement(this.database, entity).then();
     }
   }
 
@@ -78,11 +129,8 @@ module.exports = class{
    *
    * @return {Promise}
    */
-  remove(entity){
-    return this.database
-      .delete()
-      .from(this.tableName)
-      .where('id', entity.id);
+  async remove(entity){
+    return this.constructor.getDeleteStatement(this.database, entity).then();
   }
 
   /**
@@ -91,19 +139,21 @@ module.exports = class{
    *
    * @return {Object|null} Сущность или null - если она не найдена.
    */
-  find(field, value){
-    return this.database
-      .select('*')
-      .from(this.tableName)
-      .where(field, value)
-      .limit(1)
-      .then(function(data){
+  async find(field, value){
+    /*
+    return new Promise(resolve => {
+      this.constructor.getFindStatement(this.database, field, value)
+        .then(resolve)
+    });
+    */
+    return this.constructor.getFindStatement(this.database, field, value)
+      .then((data) => {
         if(data.length == 0){
-          return null;
+          return;
         }
-
+    
         return this.hydrate(data[0]);
-      }.bind(this));
+      });
   }
 
   /**
@@ -112,10 +162,10 @@ module.exports = class{
    * @return {QueryBuilder} Конструктор запросов.
    */
   select(alias = 'e'){
-    return new QueryBuilder(
+    return new (this.constructor.queryBuilder)(
       this.database
-        .select(`${this.tableName}.*`)
-        .from(this.tableName),
+        .select(`${this.constructor.tableName}.*`)
+        .from(this.constructor.tableName).as(alias),
       alias
     );
   }

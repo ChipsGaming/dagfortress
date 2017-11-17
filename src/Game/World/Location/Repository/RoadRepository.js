@@ -3,8 +3,12 @@ const QueryBuilder = require('./RoadQueryBuilder');
 const Entity = require('../Road');
 
 module.exports = class extends EntityRepository{
-  get tableName(){
+  static get tableName(){
     return 'road';
+  }
+
+  static get queryBuilder(){
+    return QueryBuilder;
   }
 
   extract(entity){
@@ -28,14 +32,5 @@ module.exports = class extends EntityRepository{
 
   isNew(entity){
     return entity.added === null;
-  }
-
-  select(alias = 'e'){
-    return new QueryBuilder(
-      this.database
-        .select(`${this.tableName}.*`)
-        .from(this.tableName),
-      alias
-    );
   }
 };
