@@ -1,12 +1,12 @@
 const fs = require('fs');
 const Util = require('util');
 
-module.exports = {
+module.exports = class{
   async build(options, container){
     try {
-      const fsAsync = Util.promisify(fs.readFile);
-      const data = await fsAsync(container.get('config_path'), 'utf8');
-      return JSON.parse(data);
+      return JSON.parse(
+        await Util.promisify(fs.readFile)(container.get('config_path'), 'utf8')
+      );
     } catch(err) {
       throw err;
     }
