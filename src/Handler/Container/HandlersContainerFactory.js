@@ -15,7 +15,7 @@ module.exports = class{
       'DefaultState/CreateWorldHandler': new SharingFactory(new (require('../DefaultState/Container/CreateWorldHandlerFactory'))),
 
       // InWorldState
-      'InWorldState/PingHandler': new (require('../InWorldState/PingHandler')),
+      'InWorldState/PingHandler': new (require('../InWorldState/Container/PingHandlerFactory')),
       'InWorldState/HelpHandler': new SharingFactory(new InvokableFactory(require('../InWorldState/HelpHandler'))),
       'InWorldState/EnterLocationHandler': new (require('../InWorldState/Container/EnterLocationHandlerFactory')),
       'InWorldState/ExitWorldHandler': new (require('../InWorldState/Container/ExitWorldHandlerFactory')),
