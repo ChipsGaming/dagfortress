@@ -1,5 +1,10 @@
 Вы стоите в {{location.name}}
-{{location.description}}
+	{{location.description}}
+
+Здесь вы видите
+	{{#nearbyPlayers}}
+	{{name}}
+	{{/nearbyPlayers}}
 
 Недалеко вы видите
 	{{#nearbyLocations}}

@@ -12,9 +12,11 @@
 module.exports = class{
   /**
    * @param {Object} services [optional] Службы.
+   * @param {Container} parent [optional] Родительский контейнер.
    */
-  constructor(services = {}){
+  constructor(services = {}, parent = null){
     this.services = services;
+    this.parent = parent;
   }
 
   /**
@@ -35,7 +37,14 @@ module.exports = class{
    * @return {Boolean} true - если служба существует.
    */
   has(id){
-    return id in this.services;
+    if(id in this.services){
+      return true;
+    }
+    if(this.parent !== null){
+      return this.parent.has(id);
+    }
+
+    return false;
   }
 
   /**
@@ -53,6 +62,11 @@ module.exports = class{
       throw new Error(`Service "${id}" not found`);
     }
 
-    return this.services[id];
+    if(id in this.services){
+      return this.services[id];
+    }
+    else{
+      return this.parent.get(id);
+    }
   }
 };

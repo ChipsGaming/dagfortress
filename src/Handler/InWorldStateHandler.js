@@ -3,6 +3,10 @@ const RegexRoute = require('../Router/RegexRoute');
 const QueueRoute = require('../Router/QueueRoute');
 
 module.exports = class{
+  /**
+   * @param {HandlersContainer} container
+   * @param {Player} player
+   */
   constructor(container, player){
     this.container = container;
     this.player = player;
@@ -11,28 +15,31 @@ module.exports = class{
   async process(message){
     const match = new QueueRoute([
       new RegexRoute(/^help$/i, [], {
-        middleware: new (require('./InWorldState/HelpHandler'))
+        middleware: 'InWorldState/HelpHandler'
       }),
       new RegexRoute(/^ping$/i, [], {
-        middleware: new (require('./InWorldState/PingHandler'))(this.player)
+        middleware: 'InWorldState/PingHandler'
       }),
       new RegexRoute(/^осмотреться$/i, [], {
-        middleware: new (require('./InWorldState/ViewLocationHandler'))(this.container, this.player)
+        middleware: 'InWorldState/ViewLocationHandler'
       }),
       new RegexRoute(/^пойти ([a-zа-я0-9- ]+)$/i, ['name'], {
-        middleware: new (require('./InWorldState/EnterLocationHandler'))(this.container, this.player)
+        middleware: 'InWorldState/EnterLocationHandler'
       }),
       new RegexRoute(/^выйти$/i, [], {
-        middleware: new (require('./InWorldState/ExitWorldHandler'))(this.container, this.player)
+        middleware: 'InWorldState/ExitWorldHandler'
       }),
       new NullRoute({
-        middleware: {
-          process: async function(){}
-        }
+        middleware: 'NullHandler'
       })
     ])
       .route(message);
-    
-    return match.middleware.process(message, match);
+
+    const handler = await this.container.get(match.middleware)
+      .build({
+        player: this.player
+      }, this.container);
+
+    return await handler.process(message, match);
   }
 };

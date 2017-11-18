@@ -4,42 +4,51 @@ const Player = require('../../Game/Object/Dynamic/Player/Player');
 const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
-  constructor(container){
+  constructor(
+    container,
+    config,
+    worldRepository,
+    locationRepository,
+    roadRepository,
+    playerRepository,
+    worldGenerator
+  ){
     this.container = container;
+    this.config = config;
+    this.worldRepository = worldRepository;
+    this.locationRepository = locationRepository;
+    this.roadRepository = roadRepository;
+    this.playerRepository = playerRepository;
+    this.worldGenerator = worldGenerator;
   }
 
   async process(message, match){
-    const config = await this.container.get('Config').build({}, this.container);
-    if(config.game.world.maxPlayers < 1){
+    if(this.config.game.world.maxPlayers < 1){
       return 'Лимит свободных слотов для игроков в этом мире истек';
     }
 
-    const worldRepository = await this.container.get('WorldRepository').build({}, this.container),
-      locationRepository = await this.container.get('LocationRepository').build({}, this.container),
-      roadRepository = await this.container.get('RoadRepository').build({}, this.container),
-      playerRepository = await this.container.get('PlayerRepository').build({}, this.container),
-      worldGenerator = await this.container.get('WorldGenerator').build({}, this.container);
-
-    const worldsCount = await worldRepository.select()
+    const worldsCount = await this.worldRepository.select()
         .build()
         .count('id as count');
 
-    if(parseInt(worldsCount[0].count) + 1 > config.game.maxWorlds){
+    if(parseInt(worldsCount[0].count) + 1 > this.config.game.maxWorlds){
       return 'Лимит свободных слотов для миров истек';
     }
 
-    const world = worldGenerator.generate(parseInt(match.seed));
-    await worldRepository.save(world);
+    const world = this.worldGenerator.generate(
+      parseInt(match.seed)
+    );
+    await this.worldRepository.save(world);
 
     const locationList = await new SandboxGenerator(this.container, world).generate();
 
     locationList
       .locationsForEach(async (location) => {
-        await locationRepository.save(location)
+        await this.locationRepository.save(location)
       });
     locationList
       .roadsForEach(async (road) => {
-        await roadRepository.save(road)
+        await this.roadRepository.save(road)
       });
 
     const player = new Player(
@@ -48,7 +57,7 @@ module.exports = class{
       message.author.username,
       message.author.id
     );
-    await playerRepository.save(player);
+    await this.playerRepository.save(player);
 
     return new ViewModel('default_state/create_world', {
       world: world,

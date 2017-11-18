@@ -1,0 +1,11 @@
+const ExitWorldHandler = require('../ExitWorldHandler');
+
+module.exports = class{
+  async build(options, container){
+    return new ExitWorldHandler(
+      options.player,
+      await container.get('WorldRepository').build({}, container),
+      await container.get('PlayerRepository').build({}, container)
+    );
+  }
+};

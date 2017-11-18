@@ -1,28 +1,29 @@
 const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
-  constructor(container, player){
-    this.container = container;
+  constructor(
+    player,
+    locationRepository,
+    roadRepository,
+    playerRepository
+  ){
     this.player = player;
+    this.locationRepository = locationRepository;
+    this.roadRepository = roadRepository;
+    this.playerRepository = playerRepository;
   }
 
   async process(message, match){
-    const config = await this.container.get('Config').build({}, this.container),
-      worldRepository = await this.container.get('WorldRepository').build({}, this.container),
-      locationRepository = await this.container.get('LocationRepository').build({}, this.container),
-      roadRepository = await this.container.get('RoadRepository').build({}, this.container),
-      playerRepository = await this.container.get('PlayerRepository').build({}, this.container);
-
-    const nearbyLocations = await locationRepository.select('location')
-      .joinRoad(roadRepository, 'road')
+    const nearbyLocations = await this.locationRepository.select('location')
+      .joinRoad(this.roadRepository, 'road')
         .nearby(this.player.location)
         .build()
       .where('location.id', '!=', this.player.location);
 
-    for(let location of locationRepository.hydrateAll(nearbyLocations)){
+    for(let location of this.locationRepository.hydrateAll(nearbyLocations)){
       if(match.name == location.name){
         this.player.location = location.id;
-        playerRepository.save(this.player).then();
+        this.playerRepository.save(this.player).then();
 
         return new ViewModel('in_world_state/enter_location', {
           location: location

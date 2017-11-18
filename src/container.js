@@ -1,5 +1,6 @@
 const Container = require('./Container/Container');
 const SharingFactory = require('./Container/Factory/SharingFactory');
+const InvokableFactory = require('./Container/Factory/InvokableFactory');
 
 module.exports = new Container({
   'config_path': process.argv[2]? process.argv[2] : './config/config.json',
@@ -16,5 +17,10 @@ module.exports = new Container({
 
   // Generator
   'WorldGenerator': new SharingFactory(new (require('./Game/World/Generator/Container/WorldRandomGeneratorFactory'))),
-  'LocationGenerator': new SharingFactory(new (require('./Game/World/Location/Generator/Container/LocationRandomGeneratorFactory')))
+  'LocationGenerator': new SharingFactory(new (require('./Game/World/Location/Generator/Container/LocationRandomGeneratorFactory'))),
+
+  // Handler
+  'HandlersContainer': new SharingFactory(new (require('./Handler/Container/HandlersContainerFactory'))),
+  'DefaultStateHandler': new (require('./Handler/Container/DefaultStateHandlerFactory')),
+  'InWorldStateHandler': new (require('./Handler/Container/InWorldStateHandlerFactory'))
 });

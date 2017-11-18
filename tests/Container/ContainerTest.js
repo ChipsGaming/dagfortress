@@ -10,6 +10,25 @@ describe('constructor', () => {
   });
 });
 
+describe('has', () => {
+  it('Should expect service', () => {
+    const container = new Container({'foo': 'bar'});
+
+    assert.equal(true, container.has('foo'));
+    assert.equal(false, container.has('foz'));
+  });
+
+  it('Should delegate expection parent', function(){
+    const container = new Container(
+      {'foo': 'bar'},
+      new Container({'foz': 'baz'})
+    );
+
+    assert.equal(true, container.has('foo'));
+    assert.equal(true, container.has('foz'));
+  });
+});
+
 describe('get', () => {
   it('Should return service', () => {
     const container = new Container({'foo': 'bar'});
@@ -17,7 +36,7 @@ describe('get', () => {
     assert.equal('bar', container.get('foo'));
   });
 
-  it('Should throw exception if service not set', function(done){
+  it('Should throw exception if service not set', (done) => {
     const container = new Container;
   
     try{
@@ -28,6 +47,16 @@ describe('get', () => {
       done();
     }
   });
+
+  it('Should delegate parent', () => {
+    const container = new Container(
+      {'foo': 'bar'},
+      new Container({'foz': 'baz'})
+    );
+
+    assert.equal('bar', container.get('foo'));
+    assert.equal('baz', container.get('foz'));
+  })
 });
 
 describe('set', () => {

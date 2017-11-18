@@ -26,10 +26,10 @@ module.exports = class{
 
     let handler = null;
     if(player === null){
-      handler = new (require('../Handler/DefaultStateHandler'))(this.container);
+      handler = await this.container.get('DefaultStateHandler').build({}, this.container);
     }
     else{
-      handler = new (require('../Handler/InWorldStateHandler'))(this.container, player);
+      handler = await this.container.get('InWorldStateHandler').build({player: player}, this.container);
     }
 
     let response = await handler.process(message);
