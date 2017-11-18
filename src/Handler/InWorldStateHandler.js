@@ -44,4 +44,12 @@ module.exports = class extends RouteHandler{
       })
     ]);
   }
+
+  async process(message){
+    if(this.player.isDie){
+      return 'Вы мертвы';
+    }
+    
+    return await super.process(message);
+  }
 };

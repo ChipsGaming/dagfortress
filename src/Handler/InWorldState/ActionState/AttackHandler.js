@@ -34,6 +34,9 @@ module.exports = class{
     if(target === null){
       return `Рядом с вами нет ${match.target}`;
     }
+    if(target.id == this.player.id){
+      return 'Мазахист? А ну пшел атседава!';
+    }
 
     const targetOrgan = await this.organRepository.find({
       dynamic: target.id,
@@ -54,16 +57,17 @@ module.exports = class{
       targetOrgan: targetOrgan
     });
 
-    const damage = Math.floor(Math.random() * 30);
+    //const damage = Math.floor(Math.random() * 30);
+    const damage = 100;
     targetOrgan.damage += damage;
 
-    let isDie = false,
-      isTornAway = false,
+    let isTornAway = false,
       strongLevel = damage > 20? 'ломает кости ударом' : damage > 10? 'сильно калечит' : 'бьет';
-    if(targetOrgan.damage > 100){
+    if(targetOrgan.damage >= 100){
       isTornAway = true;
       if(targetOrgan.isVital){
-        isDie = true;
+        target.isDie = true;
+        await this.playerRepository.save(target);
       }
 
       await this.organRepository.remove(targetOrgan);
@@ -77,7 +81,6 @@ module.exports = class{
       weapon: weapon,
       target: target,
       targetOrgan: targetOrgan,
-      isDie: isDie,
       isTornAway: isTornAway,
       strongLevel: strongLevel
     });

@@ -5,5 +5,6 @@ module.exports = class extends Object{
     super(world, location, name);
     this.endurance = 1;
     this.currentEndurance = this.endurance;
+    this.isDie = false;
   }
 };

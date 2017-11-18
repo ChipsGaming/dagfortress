@@ -15,7 +15,8 @@ module.exports = class extends ObjectRepository{
     return {
       id: entity.id,
       endurance: entity.endurance,
-      currentEndurance: entity.currentEndurance
+      currentEndurance: entity.currentEndurance,
+      isDie: entity.isDie
     };
   }
 
@@ -24,6 +25,7 @@ module.exports = class extends ObjectRepository{
 
     entity.endurance = data.endurance;
     entity.currentEndurance = data.currentEndurance;
+    entity.isDie = data.isDie;
 
     return entity;
   }
@@ -32,7 +34,8 @@ module.exports = class extends ObjectRepository{
     return ObjectRepository.getFindStatement(database, where)
       .column(
         `${this.tableName}.endurance`,
-        `${this.tableName}.currentEndurance`
+        `${this.tableName}.currentEndurance`,
+        `${this.tableName}.isDie`
       )
       .innerJoin(this.tableName, `${super.tableName}.id`, `${this.tableName}.id`);
   }
@@ -72,7 +75,8 @@ module.exports = class extends ObjectRepository{
         .select(`${super.constructor.tableName}.*`)
         .column(
           `${this.constructor.tableName}.endurance`,
-          `${this.constructor.tableName}.currentEndurance`
+          `${this.constructor.tableName}.currentEndurance`,
+          `${this.constructor.tableName}.isDie`
         )
         .from(super.constructor.tableName).as(objectAlias)
         .innerJoin(

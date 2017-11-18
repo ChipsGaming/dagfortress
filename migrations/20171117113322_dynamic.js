@@ -10,6 +10,9 @@ exports.up = function(knex, Promise) {
       .notNull();
     t.integer('currentEndurance')
       .notNull();
+    t.boolean('isDie')
+      .notNull()
+      .index();
   });
 };
 

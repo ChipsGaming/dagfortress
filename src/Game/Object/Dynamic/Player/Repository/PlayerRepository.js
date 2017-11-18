@@ -71,6 +71,7 @@ module.exports = class extends DynamicRepository{
         .column(
           `${DynamicRepository.tableName}.endurance`,
           `${DynamicRepository.tableName}.currentEndurance`,
+          `${DynamicRepository.tableName}.isDie`,
           `${this.constructor.tableName}.discordUser`
         )
         .from(ObjectRepository.tableName).as(objectAlias)
