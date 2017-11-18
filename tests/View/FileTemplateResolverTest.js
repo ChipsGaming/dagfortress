@@ -1,16 +1,13 @@
 var assert = require('assert'),
   FileTemplateResolver = require('../../src/View/FileTemplateResolver');
 
-describe('resolve', function(){
-  it('Should resolve template by name', function(){
+describe('resolve', () => {
+  it('Should resolve template by name', async () => {
     const resolver = new FileTemplateResolver(
       __dirname + '/fixtures',
       '.mustache'
     );
 
-    resolver.resolve('file_template')
-      .then(function(template){
-        assert.equal("Hello world\n", template);
-      });
+    assert.equal("Hello world\n", await resolver.resolve('file_template'));
   });
 });

@@ -7,7 +7,7 @@ module.exports = class{
     this.container = container;
   }
 
-  process(message, next){
+  async process(message){
     const match = new QueueRoute([
       new RegexRoute(/^help$/i, [], {
         middleware: new (require('./DefaultState/HelpHandler'))
@@ -26,11 +26,11 @@ module.exports = class{
       }),
       new NullRoute({
         middleware: {
-          process: function(){}
+          process: async function(){}
         }
       })
     ])
-      .route(message)
+      .route(message);
 
     return match.middleware.process(message, match);
   }

@@ -11,7 +11,7 @@ module.exports = class extends EntityRepository{
     return QueryBuilder;
   }
 
-  extract(entity){
+  static extract(entity){
     entity.added = new Date;
 
     return {
@@ -22,7 +22,7 @@ module.exports = class extends EntityRepository{
     };
   }
 
-  hydrate(data){
+  static hydrate(data){
     const entity = new Entity(data.start, data,end);
     entity.id = data.id
     entity.added = new Date(data.added);

@@ -4,11 +4,10 @@ module.exports = class{
     this.templateResolver = templateResolver;
   }
 
-  render(viewModel){
-    return this.templateResolver.resolve(viewModel.templateName)
-      .then(function(template){
-        return this.mustache
-          .render(template, viewModel.model)
-      }.bind(this));
+  async render(viewModel){
+    return this.mustache.render(
+      await this.templateResolver.resolve(viewModel.templateName),
+      viewModel.model
+    );
   }
 };

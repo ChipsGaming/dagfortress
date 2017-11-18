@@ -13,11 +13,11 @@ module.exports = class extends QueryBuilder{
     }
 
     this.query
-      .where(function(query){
+      .where((query) => {
         query
           .where(`${this.alias}.start`, location)
           .orWhere(`${this.alias}.end`, location);
-      }.bind(this));
+      });
   
     return this;
   }

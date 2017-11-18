@@ -6,7 +6,7 @@ Promise.all([
   container.get('Config').build({}, container),
   container.get('Discord').build({}, container)
 ])
-  .then(function([config, discord]){
+  .then(([config, discord]) => {
     new Game(container).listen(discord);
 
     discord.login(config.bot.token);

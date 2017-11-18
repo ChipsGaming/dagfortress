@@ -4,8 +4,8 @@ var assert = require('assert'),
   Location = require('../../../../src/Game/World/Location/Location'),
   Road = require('../../../../src/Game/World/Location/Road');
 
-describe('constructor', function(){
-  it('Should set start location', function(){
+describe('constructor', () => {
+  it('Should set start location', () => {
     const location = new Location('123').setStart(true),
       list = new LocationList(location);
 
@@ -14,8 +14,8 @@ describe('constructor', function(){
   });
 });
 
-describe('hasLocation', function(){
-  it('Should expect location in list', function(){
+describe('hasLocation', () => {
+  it('Should expect location in list', () => {
     const location = new Location('123').setStart(true),
       list = new LocationList(location);
 
@@ -24,8 +24,8 @@ describe('hasLocation', function(){
   });
 });
 
-describe('locationsForEach', function(){
-  it('Should for each locations', function(){
+describe('locationsForEach', () => {
+  it('Should for each locations', () => {
     const location = new Location('123').setStart(true),
       spy = sinon.spy(),
       list = new LocationList(location);
@@ -37,8 +37,8 @@ describe('locationsForEach', function(){
   });
 });
 
-describe('hasRoad', function(){
-  it('Should expect road in list', function(){
+describe('hasRoad', () => {
+  it('Should expect road in list', () => {
     const location = new Location('123').setStart(true),
       road = new Road(location.id, location.id),
       list = new LocationList(location);
@@ -49,8 +49,8 @@ describe('hasRoad', function(){
   });
 });
 
-describe('roadsForEach', function(){
-  it('Should for each roads', function(){
+describe('roadsForEach', () => {
+  it('Should for each roads', () => {
     const location = new Location('123').setStart(true),
       spy = sinon.spy(),
       list = new LocationList(location);
@@ -63,8 +63,8 @@ describe('roadsForEach', function(){
   });
 });
 
-describe('addLocation', function(){
-  it('Should add location to list', function(){
+describe('addLocation', () => {
+  it('Should add location to list', () => {
     const location = new Location('123').setStart(true),
       list = new LocationList(location);
 
@@ -75,7 +75,7 @@ describe('addLocation', function(){
     assert.equal(2, list.locations.length);
   });
 
-  it('Should control duplicates', function(){
+  it('Should control duplicates', () => {
     const location = new Location('123').setStart(true),
       list = new LocationList(location);
 
@@ -87,8 +87,8 @@ describe('addLocation', function(){
   });
 });
 
-describe('addRoad', function(){
-  it('Should add road to list', function(){
+describe('addRoad', () => {
+  it('Should add road to list', () => {
     const location = new Location('123').setStart(true),
       list = new LocationList(location);
     list.addRoad(new Road(location.id, location.id));
@@ -100,7 +100,7 @@ describe('addRoad', function(){
     assert.equal(2, list.roads.length);
   });
 
-  it('Should control duplicates', function(){
+  it('Should control duplicates', () => {
     const location = new Location('123').setStart(true),
       road = new Road(location.id, location.id),
       list = new LocationList(location);
@@ -114,8 +114,8 @@ describe('addRoad', function(){
   });
 });
 
-describe('createRoad', function(){
-  it('Should create road and locations', function(){
+describe('createRoad', () => {
+  it('Should create road and locations', () => {
     const location = new Location('123').setStart(true),
       list = new LocationList(location);
 

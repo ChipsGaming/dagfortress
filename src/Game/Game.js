@@ -16,40 +16,33 @@ module.exports = class{
     console.log(`logged in as ${this.discord.user.tag}!`);
   }
 
-  onMessage(message){
+  async onMessage(message){
     console.log(
       message.author.username + '[' + moment(message.createdAt).format('DD.MM.YYYY hh:mm:ss') + ']: ' + message.content.substr(0, 10)
     );
 
-    this.container.get('PlayerRepository').build({}, this.container)
-      .then(function(playerRepository){
-        playerRepository.find('discordUser', message.author.id)
-          .then(function(player){
-            let handler = null;
-            if(player === null){
-              handler = new (require('../Handler/DefaultStateHandler'))(this.container);
-            }
-            else{
-              handler = new (require('../Handler/InWorldStateHandler'))(this.container, player);
-            }
+    const playerRepository = await this.container.get('PlayerRepository').build({}, this.container),
+      player = await playerRepository.find('player.discordUser', message.author.id);
 
-            Promise.all([
-              this.container.get('Render').build({}, this.container),
-              handler.process(message)
-            ])
-              .then(function([render, response]){
-                switch(typeof response){
-                  case 'string':
-                    message.reply(response);
-                    break;
-                  case 'object':
-                    render.render(response).then(
-                      message.reply.bind(message)
-                    );
-                    break;
-                }
-              });
-          }.bind(this));
-      }.bind(this));
+    let handler = null;
+    if(player === null){
+      handler = new (require('../Handler/DefaultStateHandler'))(this.container);
+    }
+    else{
+      handler = new (require('../Handler/InWorldStateHandler'))(this.container, player);
+    }
+
+    let response = await handler.process(message);
+
+    if(typeof response == 'object'){
+      const render = await this.container.get('Render').build({}, this.container);
+      response = await render.render(response);
+    }
+
+    if(response === undefined){
+      return;
+    }
+
+    message.reply(response);
   }
 };

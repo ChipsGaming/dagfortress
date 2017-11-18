@@ -6,7 +6,7 @@ module.exports = class extends EntityRepository{
     return 'object';
   }
 
-  extract(entity){
+  static extract(entity){
     entity.added = new Date;
 
     return {
@@ -18,7 +18,7 @@ module.exports = class extends EntityRepository{
     };
   }
 
-  hydrate(data){
+  static hydrate(data){
     const entity = new Entity;
 
     entity.id = data.id

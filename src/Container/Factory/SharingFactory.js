@@ -44,18 +44,11 @@ module.exports = class{
    * 
    * @return {Promise}
    */
-  build(options, container){
-    return Promise.resolve()
-      .then(function(){
-        if(this.instance === null){
-          return this.factory.build(options, container)
-            .then(function(service){
-              this.instance = service;
-              return this.instance;
-            }.bind(this));
-        }
+  async build(options, container){
+    if(this.instance === null){
+      this.instance = await this.factory.build(options, container);
+    }
 
-        return this.instance;
-      }.bind(this))
+    return this.instance;
   }
 };

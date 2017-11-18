@@ -1,5 +1,5 @@
 const World = require('../../Game/World/World');
-const Player = require('../../Game/Player/Player');
+const Player = require('../../Game/Object/Dynamic/Player/Player');
 const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
@@ -7,57 +7,49 @@ module.exports = class{
     this.container = container;
   }
 
-  process(message, match){
-    return Promise.all([
-      this.container.get('Config').build({}, this.container),
-      this.container.get('WorldRepository').build({}, this.container),
-      this.container.get('LocationRepository').build({}, this.container),
-      this.container.get('PlayerRepository').build({}, this.container)
-    ])
-      .then(function([
-        config,
-        worldRepository,
-        locationRepository,
-        playerRepository
-      ]){
-        return worldRepository
-          .find('name', match.name)
-          .then(function(world){
-            if(world === null){
-              return 'Мир с заданым идентификатором не найден';
-            }
+  async process(message, match){
+    const config = await this.container.get('Config').build({}, this.container),
+      worldRepository = await this.container.get('WorldRepository').build({}, this.container),
+      locationRepository = await this.container.get('LocationRepository').build({}, this.container),
+      roadRepository = await this.container.get('RoadRepository').build({}, this.container),
+      playerRepository = await this.container.get('PlayerRepository').build({}, this.container);
 
-            return playerRepository.select()
-              .build()
-              .where('world', world.id)
-              .count('id as count')
-              .then(function(data){
-                if(parseInt(data[0].count) + 1 > config.game.world.maxPlayers){
-                  return 'Лимит свободных слотов для игроков в этом мире истек';
-                }
+    const world = await worldRepository
+      .find('name', match.name);
 
-                return locationRepository.select()
-                  .build()
-                  .where('world', world.id)
-                  .where('isStart', true)
-                  .limit(1);
-              })
-              .then(function(data){
-                if(data.lendth == 0){
-                  return 'В данном мире нет стартовой локации. Вход невозможен';
-                }
+    if(world === null){
+      return 'Мир с заданым идентификатором не найден';
+    }
 
-                const location = locationRepository.hydrate(data[0]);
+    const playersCount = await playerRepository.select()
+      .build()
+      .where('world', world.id)
+      .count('player.id as count');
 
-                const player = new Player(message.author.id, world.id, location.id);
-                playerRepository.save(player).then();
+    if(parseInt(playersCount[0].count) + 1 > config.game.world.maxPlayers){
+      return 'Лимит свободных слотов для игроков в этом мире истек';
+    }
 
-                return new ViewModel('default_state/enter_world', {
-                  world: world,
-                  location: location
-                });
-              });
-          });
-      });
+    const startLocation = await locationRepository.find({
+      world: world.id,
+      isStart: true
+    });
+
+    if(startLocation === null){
+      return 'В данном мире нет стартовой локации. Вход невозможен';
+    }
+
+    const player = new Player(
+      world.id,
+      startLocation.id,
+      message.author.username,
+      message.author.id
+    );
+    await playerRepository.save(player);
+
+    return new ViewModel('default_state/enter_world', {
+      world: world,
+      location: startLocation
+    });
   }
 };

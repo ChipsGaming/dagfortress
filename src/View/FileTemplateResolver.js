@@ -1,4 +1,5 @@
 const fs = require('fs');
+const Util = require('util');
 
 module.exports = class{
   constructor(path, extension = ''){
@@ -6,15 +7,7 @@ module.exports = class{
     this.extension = extension;
   }
 
-  resolve(templateName){
-    return new Promise(function(resolve, reject){
-      fs.readFile(`${this.path}/${templateName}${this.extension}`, 'utf8', function(err, template){
-        if(err){
-          throw new Error(err);
-        }
-    
-        resolve(template);
-      });
-    }.bind(this));
+  async resolve(templateName){
+    return Util.promisify(fs.readFile)(`${this.path}/${templateName}${this.extension}`, 'utf8');
   }
 };

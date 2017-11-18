@@ -1,5 +1,5 @@
 module.exports = class{
-  process(message){
+  async process(message){
     return `Pong! ${message.author.id}`;
   }
 };

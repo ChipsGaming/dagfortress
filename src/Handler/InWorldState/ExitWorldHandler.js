@@ -4,36 +4,24 @@ module.exports = class{
     this.player = player;
   }
 
-  process(message, match){
-    return Promise.all([
-      this.container.get('Config').build({}, this.container),
-      this.container.get('WorldRepository').build({}, this.container),
-      this.container.get('PlayerRepository').build({}, this.container)
-    ])
-      .then(function([
-        config,
-        worldRepository,
-        playerRepository
-      ]){
-        return playerRepository.remove(this.player)
-          .then(function(count){
-            message.reply('Выход выполнен');
+  async process(message, match){
+    const config = await this.container.get('Config').build({}, this.container),
+      worldRepository = await this.container.get('WorldRepository').build({}, this.container),
+      playerRepository = await this.container.get('PlayerRepository').build({}, this.container);
+    
+    await playerRepository.remove(this.player)
+    
+    const playersCount = await playerRepository.select()
+      .build()
+      .where('object.world', this.player.world)
+      .count('object.id as count');
+    
+    if(parseInt(playersCount[0].count) == 0){
+      await worldRepository.remove(
+        await worldRepository.find('id', this.player.world)
+      );
+    }
 
-            return playerRepository.select()
-              .build()
-              .where('world', this.player.world)
-              .count('id as count')
-          }.bind(this))
-          .then(function(data){
-            if(parseInt(data[0].count) != 0){
-              return;
-            }
-
-            return worldRepository.find('id', this.player.world)
-              .then(function(world){
-                return worldRepository.remove(world).then();
-              });
-          }.bind(this));
-      }.bind(this));
+    return 'Выход выполнен';
   }
 };

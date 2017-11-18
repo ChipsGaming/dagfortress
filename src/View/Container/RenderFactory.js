@@ -3,14 +3,12 @@ const Mustache = require('mustache'),
   FileTemplateResolver = require('../FileTemplateResolver');
 
 module.exports = class{
-  build(options, container){
-    return new Promise(function(resolve, reject){
-      resolve(
-        new MustacheRender(
-          Mustache,
-          new FileTemplateResolver('./view', '.mustache')
-        )
-      );
-    });
+  async build(options, container){
+    return Promise.resolve(
+      new MustacheRender(
+        Mustache,
+        new FileTemplateResolver('./view', '.mustache')
+      )
+    );
   }
 };

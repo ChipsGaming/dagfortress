@@ -6,7 +6,13 @@ module.exports = class{
   }
 
   randomWith(list){
-    return list[Math.round(Math.random() * list.length - 1)];
+    if(list.length == 0){
+      return '';
+    }
+
+    return list[
+      Math.floor(Math.random() * list.length)
+    ];
   }
   
   generate(world){

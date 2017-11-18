@@ -3,7 +3,7 @@ module.exports = class{
     this.player = player;
   }
 
-  process(message){
+  async process(message){
     return `Pong! Аватар "${this.player.id}"`;
   }
 };

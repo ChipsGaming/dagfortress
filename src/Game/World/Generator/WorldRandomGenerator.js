@@ -6,14 +6,23 @@ module.exports = class{
   }
 
   randomWith(list){
-    return list[Math.round(Math.random() * list.length - 1)];
+    if(list.length == 0){
+      return '';
+    }
+
+    return list[
+      Math.floor(Math.random() * list.length)
+    ];
   }
   
   generate(seed){
     return new World(
       seed,
       this.randomWith(this.data.names),
-      this.randomWith(this.data.locationDescription) + '. ' + this.randomWith(this.data.usingDescription)
+      [
+        this.randomWith(this.data.locationDescription),
+        this.randomWith(this.data.usingDescription)
+      ].join('. ')
     );
   }
 };

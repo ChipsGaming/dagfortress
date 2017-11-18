@@ -1,7 +1,7 @@
 const Dynamic = require('../Dynamic');
 
 module.exports = class extends Dynamic{
-  constructor(discordUser, world, location, name){
+  constructor(world, location, name, discordUser){
     super(world, location, name);
     this.discordUser = discordUser;
   }

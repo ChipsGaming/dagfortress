@@ -1,8 +1,8 @@
 var assert = require('assert'),
   RegexRoute = require('../../src/Router/RegexRoute');
 
-describe('route', function(){
-  it('Should return matched values', function(){
+describe('route', () => {
+  it('Should return matched values', () => {
     const router = new RegexRoute(
       /hello (\w+)/i,
       ['name']
@@ -18,7 +18,7 @@ describe('route', function(){
     assert.equal('user', match.name);
   });
 
-  it('Should extend default values', function(){
+  it('Should extend default values', () => {
     const router = new RegexRoute(
       /hello (\w+)/i,
       ['name'],
@@ -33,7 +33,7 @@ describe('route', function(){
     assert.equal('hello', match.id);
   });
 
-  it('Should return NULL if not matched', function(){
+  it('Should return NULL if not matched', () => {
     const router = new RegexRoute(
       /hello (\w+)/i,
       ['name']

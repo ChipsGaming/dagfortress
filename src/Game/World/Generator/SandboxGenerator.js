@@ -12,24 +12,23 @@ module.exports = class{
    *
    * @return {LocationList} Сгенерированные локации.
    */
-  generate(){
-    return this.container.get('LocationGenerator').build({}, this.container)
-      .then(function(locationGenerator){
-        const list = new LocationList(
-          locationGenerator.generate(this.world.id).setStart(true)
-        );
+  async generate(){
+    const locationGenerator = await this.container.get('LocationGenerator').build({}, this.container);
 
-        list
-          .createRoad(
-            list.startLocation,
-            locationGenerator.generate(this.world.id)
-          )
-          .createRoad(
-            list.lastLocation,
-            locationGenerator.generate(this.world.id)
-          );
+    const list = new LocationList(
+      locationGenerator.generate(this.world.id).setStart(true)
+    );
 
-        return list;
-      }.bind(this));
+    list
+      .createRoad(
+        list.startLocation,
+        locationGenerator.generate(this.world.id)
+      )
+      .createRoad(
+        list.lastLocation,
+        locationGenerator.generate(this.world.id)
+      );
+
+    return list;
   }
 };

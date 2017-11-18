@@ -4,8 +4,8 @@ const assert = require('assert'),
   FileTemplateResolver = require('../../src/View/FileTemplateResolver'),
   ViewModel = require('../../src/View/ViewModel');
 
-describe('render', function(){
-  it('Should render view model', function(){
+describe('render', () => {
+  it('Should render view model', async () => {
     const render = new MustacheRender(
       Mustache,
       new FileTemplateResolver(__dirname + '/fixtures')
@@ -14,9 +14,6 @@ describe('render', function(){
         name: 'user'
       });
 
-    render.render(viewModel)
-      .then(function(result){
-        assert.equal("Hello, user\n", result);
-      });
+    assert.equal("Hello, user\n", await render.render(viewModel));
   });
 });

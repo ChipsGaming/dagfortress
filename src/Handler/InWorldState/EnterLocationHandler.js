@@ -6,38 +6,30 @@ module.exports = class{
     this.player = player;
   }
 
-  process(message, match){
-    return Promise.all([
-      this.container.get('Config').build({}, this.container),
-      this.container.get('LocationRepository').build({}, this.container),
-      this.container.get('RoadRepository').build({}, this.container),
-      this.container.get('PlayerRepository').build({}, this.container)
-    ])
-      .then(function([
-        config,
-        locationRepository,
-        roadRepository,
-        playerRepository
-      ]){
-        return locationRepository.select('location')
-          .joinRoad(roadRepository, 'road')
-            .nearby(this.player.location)
-            .build()
-          .where('location.id', '!=', this.player.location)
-          .then(function(data){
-            for(let location of locationRepository.hydrateAll(data)){
-              if(match.name == location.name){
-                this.player.location = location.id;
-                playerRepository.save(this.player).then();
+  async process(message, match){
+    const config = await this.container.get('Config').build({}, this.container),
+      worldRepository = await this.container.get('WorldRepository').build({}, this.container),
+      locationRepository = await this.container.get('LocationRepository').build({}, this.container),
+      roadRepository = await this.container.get('RoadRepository').build({}, this.container),
+      playerRepository = await this.container.get('PlayerRepository').build({}, this.container);
 
-                return new ViewModel('in_world_state/enter_location', {
-                  location: location
-                });
-              }
-            }
+    const nearbyLocations = await locationRepository.select('location')
+      .joinRoad(roadRepository, 'road')
+        .nearby(this.player.location)
+        .build()
+      .where('location.id', '!=', this.player.location);
 
-            return 'Вы не видите этой локации';
-          }.bind(this));
-      }.bind(this));
+    for(let location of locationRepository.hydrateAll(nearbyLocations)){
+      if(match.name == location.name){
+        this.player.location = location.id;
+        playerRepository.save(this.player).then();
+
+        return new ViewModel('in_world_state/enter_location', {
+          location: location
+        });
+      }
+    }
+
+    return 'Вы не видите этой локации';
   }
 };

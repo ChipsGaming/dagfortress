@@ -1,8 +1,8 @@
-const EntityRepository = require('../../Repository/ObjectRepository');
+const ObjectRepository = require('../../Repository/ObjectRepository');
 const QueryBuilder = require('./DynamicQueryBuilder');
 const Entity = require('../Dynamic');
 
-module.exports = class extends EntityRepository{
+module.exports = class extends ObjectRepository{
   static get tableName(){
     return 'dynamic';
   }
@@ -11,65 +11,15 @@ module.exports = class extends EntityRepository{
     return QueryBuilder;
   }
 
-  static getFindStatement(database, field, value){
-    return EntityRepository.getFindStatement(database, field, value)
-      .column(
-        `${this.tableName}.endurance`,
-        `${this.tableName}.currentEndurance`
-      )
-      .innerJoin(this.tableName, `${super.tableName}.id`, `${this.tableName}.id`);
-  }
-
-  static getInsertStatement(database, entity){
-    return [
-      () => new Promise(resolve => {
-        EntityRepository.getInsertStatement(database, entity).then(resolve)
-      }),
-      () => new Promise(resolve => {
-        this.database
-          .insert(this.extract(entity))
-          .into(this.constructor.tableName).then(resolve)
-      })
-    ];
-  }
-
-  static getUpdateStatement(database, entity){
-    return [
-      () => new Promise(resolve => {
-        EntityRepository.getUpdateStatement(database, entity).then(resolve)
-      }),
-      () => new Promise(resolve => {
-        this.database
-          .update(this.extract(entity))
-          .from(this.constructor.tableName)
-          .where('id', entity.id).then(resolve)
-      }),
-    ];
-  }
-
-  static getDeleteStatement(database, entity){
-    return [
-      () => new Promise(resolve => {
-        EntityRepository.getDeleteStatement(database, entity).then(resolve)
-      }),
-      () => new Promise(resolve => {
-        this.database
-          .delete()
-          .from(this.constructor.tableName)
-          .where('id', entity.id).then(resolve)
-      }),
-    ];
-  }
-
-  extract(entity){
+  static extract(entity){
     return {
       id: entity.id,
       endurance: entity.endurance,
-      currentEndurance: entity.endurance
+      currentEndurance: entity.currentEndurance
     };
   }
 
-  hydrate(data){
+  static hydrate(data){
     const entity = super.hydrate(data);
 
     entity.endurance = data.endurance;
@@ -78,32 +28,42 @@ module.exports = class extends EntityRepository{
     return entity;
   }
 
-  async save(entity){
-    if(this.isNew(entity)){
-      let res;
-      for(let statement of this.constructor.getInsertStatement(this.database, entity)){
-        res = await statement();
-      }
-
-      return res;
-    }
-    else{
-      let res;
-      for(let statement of this.constructor.getUpdateStatement(this.database, entity)){
-        res = await statement();
-      }
-
-      return res;
-    }
+  static getFindStatement(database, where){
+    return ObjectRepository.getFindStatement(database, where)
+      .column(
+        `${this.tableName}.endurance`,
+        `${this.tableName}.currentEndurance`
+      )
+      .innerJoin(this.tableName, `${super.tableName}.id`, `${this.tableName}.id`);
   }
 
-  async remove(entity){
-    let res;
-    for(let statement of this.constructor.getDeleteStatement(this.database, entity)){
-      res = await statement();
-    }
+  static getInsertStatement(database, entity){
+    return ObjectRepository.getInsertStatement(database, entity)
+      .concat([
+        database
+          .insert(this.extract(entity))
+          .into(this.tableName)
+      ]);
+  }
 
-    return res;
+  static getUpdateStatement(database, entity){
+    return ObjectRepository.getUpdateStatement(database, entity)
+      .concat([
+        database
+          .update(this.extract(entity))
+          .from(this.tableName)
+          .where('id', entity.id)
+      ]);
+  }
+
+  static getDeleteStatement(database, entity){
+    return ObjectRepository.getDeleteStatement(database, entity)
+      .concat([
+        database
+          .delete()
+          .from(this.tableName)
+          .where('id', entity.id)
+      ]);
   }
 
   select(objectAlias = 'object', dynamicAlias = 'dynamic'){
@@ -114,7 +74,7 @@ module.exports = class extends EntityRepository{
           `${this.constructor.tableName}.endurance`,
           `${this.constructor.tableName}.currentEndurance`
         )
-        .from(super.constructor.tableName).as(alias)
+        .from(super.constructor.tableName).as(objectAlias)
         .innerJoin(
           this.constructor.tableName,
           `${super.constructor.tableName}.id`,

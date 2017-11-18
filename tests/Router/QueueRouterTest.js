@@ -2,8 +2,8 @@ var assert = require('assert'),
   QueueRoute = require('../../src/Router/QueueRoute'),
   RegexRoute = require('../../src/Router/RegexRoute');
 
-describe('route', function(){
-  it('Should return first matched values', function(){
+describe('route', () => {
+  it('Should return first matched values', () => {
     const router = new QueueRoute([
       new RegexRoute(
         /foo (\w+)/i,
@@ -25,7 +25,7 @@ describe('route', function(){
     assert.equal('bar', match.id);
   });
 
-  it('Should return NULL if not matched', function(){
+  it('Should return NULL if not matched', () => {
     const router = new QueueRoute([
       new RegexRoute(
         /foo (\w+)/i,

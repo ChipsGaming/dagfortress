@@ -5,23 +5,18 @@ module.exports = class{
     this.container = container;
   }
 
-  process(message, match){
-    return Promise.all([
-      this.container.get('Config').build({}, this.container),
-      this.container.get('WorldRepository').build({}, this.container)
-    ])
-      .then(function([config, worldRepository]){
-        return worldRepository.select()
-          .build()
-          .then(function(data){
-            if(data.length == 0){
-              return 'Нет созданых миров';
-            }
+  async process(message, match){
+    const config = await this.container.get('Config').build({}, this.container),
+      worldRepository = await this.container.get('WorldRepository').build({}, this.container);
 
-            return new ViewModel('default_state/world_list', {
-              worlds: data.map(worldRepository.hydrate)
-            });
-          });
-      });
+    const worlds = await worldRepository.select().build();
+
+    if(worlds.length == 0){
+      return 'Нет созданых миров';
+    }
+
+    return new ViewModel('default_state/world_list', {
+      worlds: worlds.map(worldRepository.constructor.hydrate)
+    });
   }
 };

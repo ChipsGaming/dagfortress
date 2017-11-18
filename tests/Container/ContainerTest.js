@@ -2,16 +2,16 @@ var assert = require('assert'),
   sinon = require('sinon'),
   Container = require('../../src/Container/Container');
 
-describe('constructor', function(){
-  it('Get default services', function(){
+describe('constructor', () => {
+  it('Get default services', () => {
     const container = new Container({'foo': 'bar'});
 
     assert.ok(container.has('foo'));
   });
 });
 
-describe('get', function(){
-  it('Should return service', function(){
+describe('get', () => {
+  it('Should return service', () => {
     const container = new Container({'foo': 'bar'});
 
     assert.equal('bar', container.get('foo'));
@@ -30,8 +30,8 @@ describe('get', function(){
   });
 });
 
-describe('set', function(){
-  it('Should set service', function(){
+describe('set', () => {
+  it('Should set service', () => {
     const container = new Container;
 
     assert.equal(false, container.has('foo'));

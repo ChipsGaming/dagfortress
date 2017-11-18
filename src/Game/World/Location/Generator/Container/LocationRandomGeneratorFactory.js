@@ -1,21 +1,15 @@
 const fs = require('fs');
+const Util = require('util');
 const LocationRandomGenerator = require('../LocationRandomGenerator');
 
 module.exports = class{
-  build(options, container){
-    return container.get('Config').build({}, container)
-      .then(function(config){
-        return new Promise(function(resolve){
-          fs.readFile(config.game.world.location.randomGeneratorPath, 'utf8', function(err, data){
-            if(err){
-              throw new Error(err);
-            }
-        
-            resolve(
-              new LocationRandomGenerator(JSON.parse(data))
-            );
-          });
-        });
-      });
+  async build(options, container){
+    const config = await container.get('Config').build({}, container);
+
+    return new LocationRandomGenerator(
+      JSON.parse(
+        await Util.promisify(fs.readFile)(config.game.world.location.randomGeneratorPath, 'utf8')
+      )
+    );
   }
 };

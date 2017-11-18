@@ -1,4 +1,4 @@
-const Repository = require('../WorldRepository');
+const Repository = require('../DynamicRepository');
 
 module.exports = class{
   async build(options, container){

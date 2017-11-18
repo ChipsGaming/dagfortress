@@ -2,28 +2,24 @@ var assert = require('assert'),
   sinon = require('sinon'),
   SharingFactory = require('../../../src/Container/Factory/SharingFactory');
 
-describe('build', function(){
-  it('Should cached service', function(){
+describe('build', () => {
+  it('Should cached service', async () => {
     const spy = sinon.spy(),
       factory = new SharingFactory({
-        build: function(){
-          return new Promise(function(resolve, reject){
+        build: () => {
+          return new Promise((resolve, reject) => {
             spy();
             resolve('bar');
           });
         }
       });
 
-    factory.build()
-      .then(function(service){
-        assert.equal(1, spy.callCount);
-        assert.equal('bar', service);
+    let service = await factory.build();
+    assert.equal(1, spy.callCount);
+    assert.equal('bar', service);
 
-        return factory.build();
-      })
-      .then(function(service){
-        assert.equal(1, spy.callCount);
-        assert.equal('bar', service);
-      });
+    service = await factory.build();
+    assert.equal(1, spy.callCount);
+    assert.equal('bar', service);
   });
 });

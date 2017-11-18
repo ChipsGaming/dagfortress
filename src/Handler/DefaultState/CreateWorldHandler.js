@@ -1,6 +1,6 @@
 const World = require('../../Game/World/World');
 const SandboxGenerator = require('../../Game/World/Generator/SandboxGenerator');
-const Player = require('../../Game/Player/Player');
+const Player = require('../../Game/Object/Dynamic/Player/Player');
 const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
@@ -8,60 +8,52 @@ module.exports = class{
     this.container = container;
   }
 
-  process(message, match){
-    return Promise.all([
-      this.container.get('Config').build({}, this.container),
-      this.container.get('WorldRepository').build({}, this.container),
-      this.container.get('WorldGenerator').build({}, this.container),
-      this.container.get('LocationRepository').build({}, this.container),
-      this.container.get('RoadRepository').build({}, this.container),
-      this.container.get('PlayerRepository').build({}, this.container)
-    ])
-      .then(function([
-        config,
-        worldRepository,
-        worldGenerator,
-        locationRepository,
-        roadRepository,
-        playerRepository
-      ]){
-        if(config.game.world.maxPlayers < 1){
-          return 'Лимит свободных слотов для игроков в этом мире истек';
-        }
+  async process(message, match){
+    const config = await this.container.get('Config').build({}, this.container);
+    if(config.game.world.maxPlayers < 1){
+      return 'Лимит свободных слотов для игроков в этом мире истек';
+    }
 
-        return worldRepository.select()
-          .build()
-          .count('id as count')
-          .then(function(data){
-            if(parseInt(data[0].count) + 1 > config.game.maxWorlds){
-              return 'Лимит свободных слотов для миров истек';
-            }
+    const worldRepository = await this.container.get('WorldRepository').build({}, this.container),
+      locationRepository = await this.container.get('LocationRepository').build({}, this.container),
+      roadRepository = await this.container.get('RoadRepository').build({}, this.container),
+      playerRepository = await this.container.get('PlayerRepository').build({}, this.container),
+      worldGenerator = await this.container.get('WorldGenerator').build({}, this.container);
 
-            const world = worldGenerator.generate(parseInt(match.seed));
-            worldRepository.save(world).then();
+    const worldsCount = await worldRepository.select()
+        .build()
+        .count('id as count');
 
-            return new SandboxGenerator(this.container, world)
-              .generate()
-              .then(function(locationList){
-                locationList
-                  .locationsForEach((location) => { locationRepository.save(location).then() });
-                locationList
-                  .roadsForEach((road) => { roadRepository.save(road).then() });
+    if(parseInt(worldsCount[0].count) + 1 > config.game.maxWorlds){
+      return 'Лимит свободных слотов для миров истек';
+    }
 
-                const player = new Player(
-                  message.author.id,
-                  world.id,
-                  locationList.startLocation.id
-                );
-                playerRepository.save(player).then();
+    const world = worldGenerator.generate(parseInt(match.seed));
+    await worldRepository.save(world);
 
-                return new ViewModel('default_state/create_world', {
-                  world: world,
-                  location: locationList.startLocation,
-                  player: player
-                });
-              }.bind(this));
-          }.bind(this));
-      }.bind(this));
+    const locationList = await new SandboxGenerator(this.container, world).generate();
+
+    locationList
+      .locationsForEach(async (location) => {
+        await locationRepository.save(location)
+      });
+    locationList
+      .roadsForEach(async (road) => {
+        await roadRepository.save(road)
+      });
+
+    const player = new Player(
+      world.id,
+      locationList.startLocation.id,
+      message.author.username,
+      message.author.id
+    );
+    await playerRepository.save(player);
+
+    return new ViewModel('default_state/create_world', {
+      world: world,
+      location: locationList.startLocation,
+      player: player
+    });
   }
 };

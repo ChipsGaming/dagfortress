@@ -9,66 +9,81 @@ const ObjectRepository = require('../src/Game/Object/Repository/ObjectRepository
 const Object = require('../src/Game/Object/Object');
 const DynamicRepository = require('../src/Game/Object/Dynamic/Repository/DynamicRepository');
 const Dynamic = require('../src/Game/Object/Dynamic/Dynamic');
+const PlayerRepository = require('../src/Game/Object/Dynamic/Player/Repository/PlayerRepository');
+const Player = require('../src/Game/Object/Dynamic/Player/Player');
 
 container.get('Database').build({}, container)
-.then(async (db) => {
-  const dynamicRepository = new DynamicRepository(db);
-
-  const dynamic = await dynamicRepository.find('id', 'd330a862-b1b7-4248-856d-17ce0fdfb443');
-
   /*
+.then(async (db) => {
+  const worldRepository = new WorldRepository(db);
+  const locationRepository = new LocationRepository(db);
+
+  const world = new World(
+    123,
+    'Тестовый мир',
+    'Описание'
+  );
+  world.id = '1d89b866-61f1-4ca7-9bc9-946fc6c744a4';
+  await worldRepository.save(world);
+  
+  const location = new Location(
+    '1d89b866-61f1-4ca7-9bc9-946fc6c744a4',
+    'Тестовая локация',
+    'Описание'
+  );
+  location.id = '57c664c0-5a93-4e9b-9976-68fe26609c50';
+  await locationRepository.save(location);
+})
+  */
+  /*
+.then(async (db) => {
+  const objectRepository = new ObjectRepository(db);
+  const dynamicRepository = new DynamicRepository(db);
+  const playerRepository = new PlayerRepository(db);
+
   const object = new Object(
     '1d89b866-61f1-4ca7-9bc9-946fc6c744a4',
     '57c664c0-5a93-4e9b-9976-68fe26609c50',
     'Hello'
   );
-  objectRepository.save(object).then();
+  await objectRepository.save(object);
   
   const dynamic = new Dynamic(
     '1d89b866-61f1-4ca7-9bc9-946fc6c744a4',
     '57c664c0-5a93-4e9b-9976-68fe26609c50',
     'Hello'
   );
-  dynamicRepository.save(dynamic).then(function(){
-    console.log(1);
-  });
-  */
+  dynamic.id = '8e620ea8-4070-48f0-addf-6d1f87d300b6';
+  await dynamicRepository.save(dynamic);
 
+  for(let dynamic of dynamicRepository.hydrateAll(await dynamicRepository.select().build())){
+    console.log(dynamic);
+  }
 
-  return db;
+  const player = new Player(
+    '1d89b866-61f1-4ca7-9bc9-946fc6c744a4',
+    '57c664c0-5a93-4e9b-9976-68fe26609c50',
+    'Hello',
+    123321
+  );
+  await playerRepository.save(player);
+
+  for(let player of playerRepository.hydrateAll(await playerRepository.select().build())){
+    console.log(player);
+  }
 })
+*/
 /*
 .then((db) => {
   return Promise.all([
     db.select('*').from('object'),
-    db.select('*').from('dynamic')
+    db.select('*').from('dynamic'),
+    db.select('*').from('player')
   ]);
 })
-.then(([objects, dynamics]) => {
+.then(([objects, dynamics, player]) => {
   console.log(objects);
   console.log(dynamics);
+  console.log(player);
 });
 */
-/*
-.then((data) => {
-  console.log(data);
-});
-*/
-
-    /*
-    function method(x, y){
-      return new Promise(function(resolve){
-        resolve(x + y)
-      });
-    }
-    
-    async function runer(){
-      const result = await method(1, 2);
-    
-      return result;
-    }
-    
-    runer().then(function(data){
-      console.log(data);
-    });
-    */
