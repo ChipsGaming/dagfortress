@@ -15,7 +15,7 @@ module.exports = class{
       'object.location': this.player.location
     });
     if(target === null){
-      return 'Вы бьете пустоту. С вами точно все в порядке?';'
+      return 'Вы бьете пустоту. С вами точно все в порядке?';
     }
 
     return new ViewModel('in_world_state/attack', {
