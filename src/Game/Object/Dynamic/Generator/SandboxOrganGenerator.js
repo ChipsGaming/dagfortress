@@ -24,10 +24,10 @@ module.exports = class{
         .setKeeping(true),
       new Organ(this.dynamic, 'Левая нога')
         .setLegs(true)
-        .setKeeping(true),
+        .setWeapon(true),
       new Organ(this.dynamic, 'Правая нога')
         .setLegs(true)
-        .setKeeping(true),
+        .setWeapon(true),
     ];
   }
 };

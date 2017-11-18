@@ -16,9 +16,19 @@ module.exports = class{
   }
   
   generate(world){
+    /*
     return new Location(
       world,
       this.randomWith(this.data.names),
+      this.randomWith(this.data.locationDescription)
+    );
+    */
+    return new Location(
+      world,
+      [
+        this.randomWith(this.data.namesA),
+        this.randomWith(this.data.namesB)
+      ].join(' '),
       this.randomWith(this.data.locationDescription)
     );
   }
