@@ -26,6 +26,9 @@ module.exports = class{
       new RegexRoute(/^пойти ([a-zа-я0-9- ]+)$/i, ['name'], {
         middleware: 'InWorldState/EnterLocationHandler'
       }),
+      new RegexRoute(/^ударить (.+)$/i, ['name'], {
+        middleware: 'InWorldState/AttackHandler'
+      }),
       new RegexRoute(/^выйти$/i, [], {
         middleware: 'InWorldState/ExitWorldHandler'
       }),

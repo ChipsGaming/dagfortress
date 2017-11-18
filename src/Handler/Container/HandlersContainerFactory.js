@@ -19,7 +19,8 @@ module.exports = class{
       'InWorldState/HelpHandler': new SharingFactory(new InvokableFactory(require('../InWorldState/HelpHandler'))),
       'InWorldState/EnterLocationHandler': new (require('../InWorldState/Container/EnterLocationHandlerFactory')),
       'InWorldState/ExitWorldHandler': new (require('../InWorldState/Container/ExitWorldHandlerFactory')),
-      'InWorldState/ViewLocationHandler': new (require('../InWorldState/Container/ViewLocationHandlerFactory'))
+      'InWorldState/ViewLocationHandler': new (require('../InWorldState/Container/ViewLocationHandlerFactory')),
+      'InWorldState/AttackHandler': new (require('../InWorldState/Container/AttackHandlerFactory'))
     }, container);
   }
 };
