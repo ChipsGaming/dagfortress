@@ -1,5 +1,6 @@
 const World = require('../../Game/World/World');
 const Player = require('../../Game/Object/Dynamic/Player/Player');
+const SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator');
 const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
@@ -7,12 +8,14 @@ module.exports = class{
     config,
     worldRepository,
     locationRepository,
-    playerRepository
+    playerRepository,
+    organRepository
   ){
     this.config = config;
     this.worldRepository = worldRepository;
     this.locationRepository = locationRepository;
     this.playerRepository = playerRepository;
+    this.organRepository = organRepository;
   }
 
   async process(message, match){
@@ -48,6 +51,11 @@ module.exports = class{
       message.author.id
     );
     await this.playerRepository.save(player);
+
+    const organs = await new SandboxOrganGenerator(player.id).generate();
+    for(const organ of organs){
+      await this.organRepository.save(organ);
+    }
 
     return new ViewModel('default_state/enter_world', {
       world: world,

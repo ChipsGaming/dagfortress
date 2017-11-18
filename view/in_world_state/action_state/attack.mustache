@@ -1,4 +1,7 @@
-{{player.name}} бьет смачную пощечину {{target.name}}
+{{player.name}} {{strongLevel}} {{weapon.name}} по {{targetOrgan.name}} {{target.name}}
+{{#isTornAway}}
+	{{targetOrgan.name}} {{target.name}} оторвало
+{{/isTornAway}}
 {{#isDie}}
-	{{target.name}} падает на землю, заливаясь слезами от боли
+	{{target.name}} больше не дышит
 {{/isDie}}

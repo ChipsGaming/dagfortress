@@ -11,9 +11,10 @@ const DynamicRepository = require('../src/Game/Object/Dynamic/Repository/Dynamic
 const Dynamic = require('../src/Game/Object/Dynamic/Dynamic');
 const PlayerRepository = require('../src/Game/Object/Dynamic/Player/Repository/PlayerRepository');
 const Player = require('../src/Game/Object/Dynamic/Player/Player');
+const OrganRepository = require('../src/Game/Object/Dynamic/Repository/OrganRepository');
 
 container.get('Database').build({}, container)
-  /*
+/*
 .then(async (db) => {
   const worldRepository = new WorldRepository(db);
   const locationRepository = new LocationRepository(db);
@@ -25,7 +26,7 @@ container.get('Database').build({}, container)
   );
   world.id = '1d89b866-61f1-4ca7-9bc9-946fc6c744a4';
   await worldRepository.save(world);
-  
+
   const location = new Location(
     '1d89b866-61f1-4ca7-9bc9-946fc6c744a4',
     'Тестовая локация',
@@ -34,7 +35,7 @@ container.get('Database').build({}, container)
   location.id = '57c664c0-5a93-4e9b-9976-68fe26609c50';
   await locationRepository.save(location);
 })
-  */
+*/
   /*
 .then(async (db) => {
   const objectRepository = new ObjectRepository(db);

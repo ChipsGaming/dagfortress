@@ -183,8 +183,8 @@ module.exports = class{
   select(alias = 'e'){
     return new (this.constructor.queryBuilder)(
       this.database
-        .select(`${this.constructor.tableName}.*`)
-        .from(this.constructor.tableName).as(alias),
+        .select(`${alias}.*`)
+        .from(`${this.constructor.tableName} AS ${alias}`),
       alias
     );
   }

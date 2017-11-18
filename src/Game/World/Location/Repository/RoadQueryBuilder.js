@@ -3,9 +3,11 @@ const QueryBuilder = require('../../../../Storage/QueryBuilder');
 module.exports = class extends QueryBuilder{
   // Filters
   /**
-   * @param {Location|string} location Целевая локация.
+   * Дороги, по которым можно перейти из целевой локации.
    *
-   * @return {Road[]} Дороги, по которым можно перейти из целевой локации.
+   * @param {Location|String} location Целевая локация.
+   *
+   * @return {RoadQueryBuilder} 
    */
   nearby(location){
     if(typeof location == 'object'){

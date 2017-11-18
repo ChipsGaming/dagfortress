@@ -1,5 +1,6 @@
 const World = require('../../Game/World/World');
 const SandboxGenerator = require('../../Game/World/Generator/SandboxGenerator');
+const SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator');
 const Player = require('../../Game/Object/Dynamic/Player/Player');
 const ViewModel = require('../../View/ViewModel');
 
@@ -11,6 +12,7 @@ module.exports = class{
     locationRepository,
     roadRepository,
     playerRepository,
+    organRepository,
     worldGenerator
   ){
     this.container = container;
@@ -19,6 +21,7 @@ module.exports = class{
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
     this.playerRepository = playerRepository;
+    this.organRepository = organRepository;
     this.worldGenerator = worldGenerator;
   }
 
@@ -58,6 +61,11 @@ module.exports = class{
       message.author.id
     );
     await this.playerRepository.save(player);
+
+    const organs = await new SandboxOrganGenerator(player.id).generate();
+    for(const organ of organs){
+      await this.organRepository.save(organ);
+    }
 
     return new ViewModel('default_state/create_world', {
       world: world,
