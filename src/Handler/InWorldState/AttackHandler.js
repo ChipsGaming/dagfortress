@@ -11,8 +11,8 @@ module.exports = class{
 
   async process(message, match){
     const target = await this.playerRepository.find({
-      'object.name', match.name,
-      'object.location', this.player.location
+      'object.name': match.name,
+      'object.location': this.player.location
     });
     if(target === null){
       return 'Вы бьете пустоту. С вами точно все в порядке?';'
