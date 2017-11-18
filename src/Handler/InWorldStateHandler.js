@@ -1,48 +1,43 @@
+const RouteHandler = require('./RouteHandler');
 const NullRoute = require('../Router/NullRoute');
 const RegexRoute = require('../Router/RegexRoute');
 const QueueRoute = require('../Router/QueueRoute');
 
-module.exports = class{
+module.exports = class extends RouteHandler{
   /**
    * @param {HandlersContainer} container
    * @param {Player} player
    */
   constructor(container, player){
-    this.container = container;
+    super(container);
     this.player = player;
   }
 
-  async process(message){
-    const match = new QueueRoute([
+  getRouter(){
+    return new QueueRoute([
       new RegexRoute(/^help$/i, [], {
-        middleware: 'InWorldState/HelpHandler'
+        middleware: 'InWorldState/HelpHandler',
+        player: this.player
       }),
       new RegexRoute(/^ping$/i, [], {
-        middleware: 'InWorldState/PingHandler'
+        middleware: 'InWorldState/PingHandler',
+        player: this.player
       }),
       new RegexRoute(/^осмотреться$/i, [], {
-        middleware: 'InWorldState/ViewLocationHandler'
-      }),
-      new RegexRoute(/^пойти ([a-zа-я0-9- ]+)$/i, ['name'], {
-        middleware: 'InWorldState/EnterLocationHandler'
-      }),
-      new RegexRoute(/^ударить (.+)$/i, ['name'], {
-        middleware: 'InWorldState/AttackHandler'
+        middleware: 'InWorldState/ViewLocationHandler',
+        player: this.player
       }),
       new RegexRoute(/^выйти$/i, [], {
-        middleware: 'InWorldState/ExitWorldHandler'
+        middleware: 'InWorldState/ExitWorldHandler',
+        player: this.player
+      }),
+      new RegexRoute(/^(пойти|ударить) /i, [], {
+        middleware: 'InWorldState/ActionHandler',
+        player: this.player
       }),
       new NullRoute({
         middleware: 'NullHandler'
       })
-    ])
-      .route(message);
-
-    const handler = await this.container.get(match.middleware)
-      .build({
-        player: this.player
-      }, this.container);
-
-    return await handler.process(message, match);
+    ]);
   }
 };

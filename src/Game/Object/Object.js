@@ -1,4 +1,5 @@
 const Uuid = require('uuid/v4');
+const EventJournal = require('../../Event/EventJournal');
 
 module.exports = class{
   constructor(world, location, name){
@@ -7,5 +8,7 @@ module.exports = class{
     this.location = location;
     this.name = name;
     this.added = null;
+
+    this.events = new EventJournal;
   }
 };

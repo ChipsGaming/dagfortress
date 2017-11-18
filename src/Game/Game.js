@@ -35,8 +35,9 @@ module.exports = class{
     let response = await handler.process(message);
 
     if(typeof response == 'object'){
-      const render = await this.container.get('Render').build({}, this.container);
-      response = await render.render(response);
+      response = await response.render(
+        await this.container.get('Render').build({}, this.container)
+      );
     }
 
     if(response === undefined){

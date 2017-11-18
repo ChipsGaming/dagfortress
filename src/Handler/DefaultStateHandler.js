@@ -1,17 +1,11 @@
+const RouteHandler = require('./RouteHandler');
 const NullRoute = require('../Router/NullRoute');
 const RegexRoute = require('../Router/RegexRoute');
 const QueueRoute = require('../Router/QueueRoute');
 
-module.exports = class{
-  /**
-   * @param {HandlersContainer} container
-   */
-  constructor(container){
-    this.container = container;
-  }
-
-  async process(message){
-    const match = new QueueRoute([
+module.exports = class extends RouteHandler{
+  getRouter(){
+    return new QueueRoute([
       new RegexRoute(/^ping$/i, [], {
         middleware: 'DefaultState/PingHandler'
       }),
@@ -30,11 +24,6 @@ module.exports = class{
       new NullRoute({
         middleware: 'NullHandler'
       })
-    ])
-      .route(message);
-
-    const handler = await this.container.get(match.middleware).build({}, this.container);
-
-    return await handler.process(message, match);
+    ]);
   }
 };

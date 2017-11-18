@@ -1,4 +1,4 @@
-const ViewModel = require('../../View/ViewModel');
+const ViewModel = require('../../../View/ViewModel');
 
 module.exports = class{
   constructor(
@@ -25,7 +25,11 @@ module.exports = class{
         this.player.location = location.id;
         this.playerRepository.save(this.player).then();
 
-        return new ViewModel('in_world_state/enter_location', {
+        this.player.events.trigger('EnterLocation', {
+          location: location
+        });
+
+        return new ViewModel('in_world_state/action_state/enter_location', {
           location: location
         });
       }

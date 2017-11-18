@@ -17,10 +17,12 @@ module.exports = class{
       // InWorldState
       'InWorldState/PingHandler': new (require('../InWorldState/Container/PingHandlerFactory')),
       'InWorldState/HelpHandler': new SharingFactory(new InvokableFactory(require('../InWorldState/HelpHandler'))),
-      'InWorldState/EnterLocationHandler': new (require('../InWorldState/Container/EnterLocationHandlerFactory')),
       'InWorldState/ExitWorldHandler': new (require('../InWorldState/Container/ExitWorldHandlerFactory')),
       'InWorldState/ViewLocationHandler': new (require('../InWorldState/Container/ViewLocationHandlerFactory')),
-      'InWorldState/AttackHandler': new (require('../InWorldState/Container/AttackHandlerFactory'))
+      // --ActionState
+      'InWorldState/ActionHandler': new (require('../InWorldState/Container/ActionHandlerFactory')),
+      'InWorldState/ActionState/EnterLocationHandler': new (require('../InWorldState/ActionState/Container/EnterLocationHandlerFactory')),
+      'InWorldState/ActionState/AttackHandler': new (require('../InWorldState/ActionState/Container/AttackHandlerFactory'))
     }, container);
   }
 };

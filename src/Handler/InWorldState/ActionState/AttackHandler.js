@@ -1,4 +1,4 @@
-const ViewModel = require('../../View/ViewModel');
+const ViewModel = require('../../../View/ViewModel');
 
 module.exports = class{
   constructor(
@@ -18,7 +18,11 @@ module.exports = class{
       return 'Вы бьете пустоту. С вами точно все в порядке?';
     }
 
-    return new ViewModel('in_world_state/attack', {
+    this.player.events.trigger('Attack', {
+      target: target
+    });
+
+    return new ViewModel('in_world_state/action_state/attack', {
       player: this.player,
       target: target,
       isDie: Math.floor(Math.random() * 10) < 2

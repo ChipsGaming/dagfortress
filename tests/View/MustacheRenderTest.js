@@ -16,4 +16,18 @@ describe('render', () => {
 
     assert.equal("Hello, user\n", await render.render(viewModel));
   });
+
+  it('Should render children', async () => {
+    const render = new MustacheRender(
+      Mustache,
+      new FileTemplateResolver(__dirname + '/fixtures')
+    ),
+      viewModel = new ViewModel('parent.mustache', {
+        child: new ViewModel('mustache_template', {
+          name: 'user'
+        })
+      });
+
+    assert.equal("Hello, user\n\nParent content\n", await viewModel.render(render));
+  });
 });
