@@ -57,8 +57,7 @@ module.exports = class{
       targetOrgan: targetOrgan
     });
 
-    //const damage = Math.floor(Math.random() * 30);
-    const damage = 100;
+    const damage = Math.floor(Math.random() * 30);
     targetOrgan.damage += damage;
 
     let isTornAway = false,
