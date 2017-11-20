@@ -25,11 +25,11 @@ module.exports = class extends RouteHandler{
 
   getRouter(){
     return new QueueRoute([
-      new RegexRoute(/^пойти ([a-zа-я0-9- ]+)$/i, ['name'], {
+      new RegexRoute(/^п(?:ойти)? ([a-zа-я0-9- ]+)$/i, ['name'], {
         middleware: 'InWorldState/ActionState/EnterLocationHandler',
         player: this.player
       }),
-      new RegexRoute(/^ударить (.+)$/i, ['name'], {
+      new RegexRoute(/^у(?:дарить)? (.+)$/i, ['name'], {
         middleware: 'InWorldState/ActionState/AttackHandler',
         player: this.player
       }),

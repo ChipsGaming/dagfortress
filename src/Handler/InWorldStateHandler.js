@@ -15,31 +15,31 @@ module.exports = class extends RouteHandler{
 
   getRouter(){
     return new QueueRoute([
-      new RegexRoute(/^help$/i, [], {
+      new RegexRoute(/^h(?:elp)?$/i, [], {
         middleware: 'InWorldState/HelpHandler',
         player: this.player
       }),
-      new RegexRoute(/^ping$/i, [], {
+      new RegexRoute(/^p(?:ing)?$/i, [], {
         middleware: 'InWorldState/PingHandler',
         player: this.player
       }),
-      new RegexRoute(/^осмотреть$/i, [], {
+      new RegexRoute(/^о(?:смотреть)?$/i, [], {
         middleware: 'InWorldState/ViewLocationHandler',
         player: this.player
       }),
-      new RegexRoute(/^осмотреть себя$/i, [], {
+      new RegexRoute(/^о(?:смотреть)? себя$/i, [], {
         middleware: 'InWorldState/SelfStateHandler',
         player: this.player
       }),
-      new RegexRoute(/^осмотреть (.+)$/i, ['target'], {
+      new RegexRoute(/^о(?:смотреть) (.+)$/i, ['target'], {
         middleware: 'InWorldState/ObjectStateHandler',
         player: this.player
       }),
-      new RegexRoute(/^(пойти|ударить) /i, [], {
+      new RegexRoute(/^(п(?:ойти)?|у(?:дарить)?) /i, [], {
         middleware: 'InWorldState/ActionHandler',
         player: this.player
       }),
-      new RegexRoute(/^выйти$/i, [], {
+      new RegexRoute(/^в(?:ыйти)?$/i, [], {
         middleware: 'InWorldState/ExitWorldHandler',
         player: this.player
       }),

@@ -6,19 +6,19 @@ const QueueRoute = require('../Router/QueueRoute');
 module.exports = class extends RouteHandler{
   getRouter(){
     return new QueueRoute([
-      new RegexRoute(/^ping$/i, [], {
+      new RegexRoute(/^p(?:ing)?$/i, [], {
         middleware: 'DefaultState/PingHandler'
       }),
-      new RegexRoute(/^help$/i, [], {
+      new RegexRoute(/^h(?:elp)?$/i, [], {
         middleware: 'DefaultState/HelpHandler'
       }),
-      new RegexRoute(/^список$/i, [], {
+      new RegexRoute(/^с(?:писок)?$/i, [], {
         middleware: 'DefaultState/WorldListHandler'
       }),
       new RegexRoute(/^создать (\d+)$/i, ['seed'], {
         middleware: 'DefaultState/CreateWorldHandler'
       }),
-      new RegexRoute(/^войти ([a-zа-я0-9- ]+)$/i, ['name'], {
+      new RegexRoute(/^в(?:ойти)? ([a-zа-я0-9- ]+)$/i, ['name'], {
         middleware: 'DefaultState/EnterWorldHandler'
       }),
       new NullRoute({
