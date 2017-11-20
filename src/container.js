@@ -8,6 +8,7 @@ module.exports = new Container({
   'Discord': new SharingFactory(new (require('./Game/Container/DiscordFactory'))),
   'Database': new SharingFactory(new (require('./Storage/Container/DatabaseFactory'))),
   'Render': new SharingFactory(new (require('./View/Container/RenderFactory'))),
+  'ViewHelpers': new SharingFactory(new (require('./View/Container/HelpersFactory'))),
 
   // Repository
   'WorldRepository': new SharingFactory(new (require('./Game/World/Repository/Container/WorldRepositoryFactory'))),

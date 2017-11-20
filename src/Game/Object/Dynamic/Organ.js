@@ -5,11 +5,12 @@ module.exports = class{
     this.id = Uuid();
     this.dynamic = dynamic;
     this.name = name;
-    this.damage = 0;
+    this.damage = 0; // Уровень повреждения (0 - нет повреждений; 10 - недееспособно)
     this.isVital = false; // Жизненно важный
     this.isWeapon = false; // Может использоваться в качестве оружия
     this.isLegs = false; // Отвечает за передвижение
     this.isKeeping = false; // Может держать (хранить) предметы
+    this.mass = 3; // Масса
     this.added = null;
   }
 

@@ -23,12 +23,16 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/PingHandler',
         player: this.player
       }),
-      new RegexRoute(/^осмотреться$/i, [], {
+      new RegexRoute(/^осмотреть$/i, [], {
         middleware: 'InWorldState/ViewLocationHandler',
         player: this.player
       }),
       new RegexRoute(/^осмотреть себя$/i, [], {
         middleware: 'InWorldState/SelfStateHandler',
+        player: this.player
+      }),
+      new RegexRoute(/^осмотреть (.+)$/i, ['target'], {
+        middleware: 'InWorldState/ObjectStateHandler',
         player: this.player
       }),
       new RegexRoute(/^(пойти|ударить) /i, [], {

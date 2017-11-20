@@ -46,42 +46,35 @@ module.exports = class{
       return `У ${target.name} нет ${match.organ} для нанесения удара`;
     }
 
-    this.player.events.trigger('Attacks', {
-      weapon: weapon,
-      target: target,
-      targetOrgan: targetOrgan
-    });
-    target.events.trigger('Attacked', {
-      attaking: this.player,
-      weapon: weapon,
-      targetOrgan: targetOrgan
-    });
+    const damage = this.player.attack(
+      weapon,
+      target,
+      targetOrgan
+    );
 
-    const damage = Math.floor(Math.random() * 30);
-    targetOrgan.damage += damage;
-
-    let isTornAway = false,
-      strongLevel = damage > 20? 'ломает кости ударом' : damage > 10? 'сильно калечит' : 'бьет';
-    if(targetOrgan.damage >= 100){
-      isTornAway = true;
-      if(targetOrgan.isVital){
-        target.isDie = true;
-        await this.playerRepository.save(target);
-      }
-
+    if(targetOrgan.dynamic === null){
       await this.organRepository.remove(targetOrgan);
+
+      const legsCount = await this.organRepository.select()
+        .part(target)
+        .legs()
+        .build()
+        .count('id as count');
+      if(parseInt(legsCount[0].count) < 1){
+        target.endurance = 0;
+      }
     }
     else{
       await this.organRepository.save(targetOrgan);
     }
-    
+    await this.playerRepository.save(target);
+
     return new ViewModel('in_world_state/action_state/attack', {
       player: this.player,
       weapon: weapon,
       target: target,
       targetOrgan: targetOrgan,
-      isTornAway: isTornAway,
-      strongLevel: strongLevel
+      isMiss: damage == 0
     });
   }
 };

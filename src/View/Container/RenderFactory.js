@@ -4,11 +4,10 @@ const Mustache = require('mustache'),
 
 module.exports = class{
   async build(options, container){
-    return Promise.resolve(
-      new MustacheRender(
-        Mustache,
-        new FileTemplateResolver('./view', '.mustache')
-      )
+    return new MustacheRender(
+      Mustache,
+      new FileTemplateResolver('./view', '.mustache'),
+      await container.get('ViewHelpers').build({}, container)
     );
   }
 };

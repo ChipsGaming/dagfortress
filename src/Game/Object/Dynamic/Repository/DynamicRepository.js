@@ -21,7 +21,10 @@ module.exports = class extends ObjectRepository{
   }
 
   static hydrate(data){
-    const entity = super.hydrate(data);
+    const entity = Object.assign(
+      new Entity,
+      super.hydrate(data)
+    );
 
     entity.endurance = data.endurance;
     entity.currentEndurance = data.currentEndurance;
@@ -69,21 +72,23 @@ module.exports = class extends ObjectRepository{
       ]);
   }
 
+  static getSelectStatement(database, objectAlias = 'object', dynamicAlias = 'dynamic'){
+    return ObjectRepository.getSelectStatement(database, objectAlias)
+        .innerJoin(
+          `${this.tableName} AS ${dynamicAlias}`,
+          `${objectAlias}.id`,
+          `${dynamicAlias}.id`
+        )
+        .column(
+          `${dynamicAlias}.endurance`,
+          `${dynamicAlias}.currentEndurance`,
+          `${dynamicAlias}.isDie`
+        );
+  }
+
   select(objectAlias = 'object', dynamicAlias = 'dynamic'){
     return new (this.constructor.queryBuilder)(
-      this.database
-        .select(`${super.constructor.tableName}.*`)
-        .column(
-          `${this.constructor.tableName}.endurance`,
-          `${this.constructor.tableName}.currentEndurance`,
-          `${this.constructor.tableName}.isDie`
-        )
-        .from(super.constructor.tableName).as(objectAlias)
-        .innerJoin(
-          this.constructor.tableName,
-          `${super.constructor.tableName}.id`,
-          `${this.constructor.tableName}.id`
-        ).as(dynamicAlias),
+      this.constructor.getSelectStatement(this.database, objectAlias, dynamicAlias),
       objectAlias,
       dynamicAlias
     );

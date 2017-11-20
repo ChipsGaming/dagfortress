@@ -14,11 +14,9 @@ module.exports = class{
   }
 
   async process(message, match){
-    const nearbyLocations = await this.locationRepository.select('location')
-      .joinRoad(this.roadRepository, 'road')
-        .nearby(this.player.location)
-        .build()
-      .where('location.id', '!=', this.player.location);
+    const nearbyLocations = await this.locationRepository.select()
+      .nearby(this.roadRepository, this.player.location)
+      .build();
 
     for(let location of this.locationRepository.hydrateAll(nearbyLocations)){
       if(match.name == location.name){

@@ -25,6 +25,8 @@ exports.up = function(knex, Promise) {
     t.boolean('isKeeping')
       .notNull()
       .index();
+    t.integer('mass')
+      .notNull();
     t.dateTime('added')
       .notNull();
   });

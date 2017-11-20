@@ -20,7 +20,10 @@ module.exports = class extends DynamicRepository{
   }
 
   static hydrate(data){
-    const entity = super.hydrate(data);
+    const entity = Object.assign(
+      new Entity,
+      super.hydrate(data)
+    );
 
     entity.discordUser = data.discordUser;
 
@@ -64,29 +67,29 @@ module.exports = class extends DynamicRepository{
       ]);
   }
 
+  static getSelectStatement(
+    database,
+    objectAlias = 'object',
+    dynamicAlias = 'dynamic',
+    playerAlias = 'player'
+  ){
+    return DynamicRepository.getSelectStatement(database, objectAlias, dynamicAlias)
+        .innerJoin(
+          `${this.tableName} AS ${playerAlias}`,
+          `${dynamicAlias}.id`,
+          `${playerAlias}.id`
+        )
+        .column(
+          `${playerAlias}.discordUser`
+        );
+  }
+
   select(objectAlias = 'object', dynamicAlias = 'dynamic', playerAlias = 'player'){
     return new (this.constructor.queryBuilder)(
-      this.database
-        .select(`${ObjectRepository.tableName}.*`)
-        .column(
-          `${DynamicRepository.tableName}.endurance`,
-          `${DynamicRepository.tableName}.currentEndurance`,
-          `${DynamicRepository.tableName}.isDie`,
-          `${this.constructor.tableName}.discordUser`
-        )
-        .from(ObjectRepository.tableName).as(objectAlias)
-        .innerJoin(
-          DynamicRepository.tableName,
-          `${ObjectRepository.tableName}.id`,
-          `${DynamicRepository.tableName}.id`
-        ).as(dynamicAlias)
-        .innerJoin(
-          this.constructor.tableName,
-          `${DynamicRepository.tableName}.id`,
-          `${this.constructor.tableName}.id`
-        ).as(playerAlias),
+      this.constructor.getSelectStatement(this.database, objectAlias, dynamicAlias, playerAlias),
       objectAlias,
-      dynamicAlias
+      dynamicAlias,
+      playerAlias
     );
   }
 };

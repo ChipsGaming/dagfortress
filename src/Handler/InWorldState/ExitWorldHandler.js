@@ -13,8 +13,8 @@ module.exports = class{
     await this.playerRepository.remove(this.player)
     
     const playersCount = await this.playerRepository.select()
+      .inWorld(this.player.world)
       .build()
-      .where('object.world', this.player.world)
       .count('object.id as count');
     
     if(parseInt(playersCount[0].count) == 0){

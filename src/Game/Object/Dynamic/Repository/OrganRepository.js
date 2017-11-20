@@ -23,6 +23,7 @@ module.exports = class extends EntityRepository{
       isWeapon: entity.isWeapon,
       isLegs: entity.isLegs,
       isKeeping: entity.isKeeping,
+      mass: entity.mass,
       added: entity.added
     };
   }
@@ -38,6 +39,7 @@ module.exports = class extends EntityRepository{
     entity.isWeapon = data.isWeapon;
     entity.isLegs = data.isLegs;
     entity.isKeeping = data.isKeeping;
+    entity.mass = data.mass;
     entity.added = new Date(data.added);
 
     return entity;

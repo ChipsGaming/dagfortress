@@ -36,12 +36,20 @@ container.get('Database').build({}, container)
   await locationRepository.save(location);
 })
 */
-  /*
 .then(async (db) => {
   const objectRepository = new ObjectRepository(db);
   const dynamicRepository = new DynamicRepository(db);
   const playerRepository = new PlayerRepository(db);
 
+  console.log(
+    await dynamicRepository.select()
+      .alive()
+      .active()
+      .build()
+    .toString()
+  );
+
+  /*
   const object = new Object(
     '1d89b866-61f1-4ca7-9bc9-946fc6c744a4',
     '57c664c0-5a93-4e9b-9976-68fe26609c50',
@@ -56,11 +64,11 @@ container.get('Database').build({}, container)
   );
   dynamic.id = '8e620ea8-4070-48f0-addf-6d1f87d300b6';
   await dynamicRepository.save(dynamic);
-
+  
   for(let dynamic of dynamicRepository.hydrateAll(await dynamicRepository.select().build())){
     console.log(dynamic);
   }
-
+  
   const player = new Player(
     '1d89b866-61f1-4ca7-9bc9-946fc6c744a4',
     '57c664c0-5a93-4e9b-9976-68fe26609c50',
@@ -68,12 +76,12 @@ container.get('Database').build({}, container)
     123321
   );
   await playerRepository.save(player);
-
+  
   for(let player of playerRepository.hydrateAll(await playerRepository.select().build())){
     console.log(player);
   }
+  */
 })
-*/
 /*
 .then((db) => {
   return Promise.all([
@@ -88,3 +96,13 @@ container.get('Database').build({}, container)
   console.log(player);
 });
 */
+
+/*
+const world = {
+  id: 123
+};
+*/
+const world = '123';
+const id = world instanceof Object? world.id : world;
+
+console.log(id);

@@ -40,8 +40,8 @@ module.exports = class extends RouteHandler{
   }
 
   async process(message){
-    if(this.player.currentEndurance == 0){
-      return;
+    if(this.player.currentEndurance < 1){
+      return 'Вы слишком устали для этого';
     }
     
     let result = await super.process(message);
@@ -54,9 +54,9 @@ module.exports = class extends RouteHandler{
     }
 
     const activePlayersCount = await this.playerRepository.select()
+      .alive()
+      .active()
       .build()
-      .where('dynamic.currentEndurance', '>', 0)
-      .where('dynamic.isDie', '!=', true)
       .count('object.id as count');
     if(parseInt(activePlayersCount[0].count) < 1){
       const dynamics = await this.dynamicRepository.select()

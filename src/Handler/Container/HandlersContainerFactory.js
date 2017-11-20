@@ -17,9 +17,10 @@ module.exports = class{
       // InWorldState
       'InWorldState/PingHandler': new (require('../InWorldState/Container/PingHandlerFactory')),
       'InWorldState/HelpHandler': new SharingFactory(new InvokableFactory(require('../InWorldState/HelpHandler'))),
+      'InWorldState/ExitWorldHandler': new (require('../InWorldState/Container/ExitWorldHandlerFactory')),
       'InWorldState/ViewLocationHandler': new (require('../InWorldState/Container/ViewLocationHandlerFactory')),
       'InWorldState/SelfStateHandler': new (require('../InWorldState/Container/SelfStateHandlerFactory')),
-      'InWorldState/ExitWorldHandler': new (require('../InWorldState/Container/ExitWorldHandlerFactory')),
+      'InWorldState/ObjectStateHandler': new (require('../InWorldState/Container/ObjectStateHandlerFactory')),
       // --ActionState
       'InWorldState/ActionHandler': new (require('../InWorldState/Container/ActionHandlerFactory')),
       'InWorldState/ActionState/EnterLocationHandler': new (require('../InWorldState/ActionState/Container/EnterLocationHandlerFactory')),

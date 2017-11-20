@@ -27,8 +27,8 @@ module.exports = class{
     }
 
     const playersCount = await this.playerRepository.select()
+      .inWorld(world)
       .build()
-      .where('world', world.id)
       .count('player.id as count');
 
     if(parseInt(playersCount[0].count) + 1 > this.config.game.world.maxPlayers){

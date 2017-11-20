@@ -1,7 +1,12 @@
-{{player.name}} {{strongLevel}} {{weapon.name}} по {{targetOrgan.name}} {{target.name}}
-{{#isTornAway}}
+{{#isMiss}}
+{{player.name}} промазал {{weapon.name}} по {{targetOrgan.name}} {{target.name}}
+{{/isMiss}}
+{{^isMiss}}
+{{player.name}} бьет {{weapon.name}} по {{targetOrgan.name}} {{target.name}}
+{{/isMiss}}
+{{^targetOrgan.dynamic}}
 	{{targetOrgan.name}} {{target.name}} оторвало
-{{/isTornAway}}
+{{/targetOrgan.dynamic}}
 {{#target.isDie}}
 	{{target.name}} больше не дышит
 {{/target.isDie}}

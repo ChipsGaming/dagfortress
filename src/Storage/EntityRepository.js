@@ -8,6 +8,14 @@ module.exports = class{
   }
 
   /**
+   * @return {Class} Используемый класс конструктора запросов.
+   */
+  static get queryBuilder(){
+    return QueryBuilder;
+  }
+
+  /**
+   * @param {Knex} database Соединение с базой данных.
    * @param {Object} where Условие выборки.
    *
    * @return {Select} Выражение для поиска по заданному полю.
@@ -21,6 +29,7 @@ module.exports = class{
   }
 
   /**
+   * @param {Knex} database Соединение с базой данных.
    * @param {Object} entity Исходная сущность.
    *
    * @return {Select[]} Выражения для добавления состояния сущности.
@@ -34,6 +43,7 @@ module.exports = class{
   }
 
   /**
+   * @param {Knex} database Соединение с базой данных.
    * @param {Object} entity Исходная сущность.
    *
    * @return {Select[]} Выражения для обновления состояния сущности.
@@ -48,6 +58,7 @@ module.exports = class{
   }
 
   /**
+   * @param {Knex} database Соединение с базой данных.
    * @param {Object} entity Исходная сущность.
    *
    * @return {Select[]} Выражения для удаления состояния сущности.
@@ -62,10 +73,15 @@ module.exports = class{
   }
 
   /**
-   * @return {Class} Используемый класс конструктора запросов.
+   * @param {Knex} database Соединение с базой данных.
+   * @param {String} alias Используемый псевдоним.
+   *
+   * @return {QueryBuilder} Конструктор запросов.
    */
-  static get queryBuilder(){
-    return QueryBuilder;
+  static getSelectStatement(database, alias = 'e'){
+    return database
+      .select(`${alias}.*`)
+      .from(`${this.tableName} AS ${alias}`);
   }
 
   /**
@@ -182,9 +198,7 @@ module.exports = class{
    */
   select(alias = 'e'){
     return new (this.constructor.queryBuilder)(
-      this.database
-        .select(`${alias}.*`)
-        .from(`${this.constructor.tableName} AS ${alias}`),
+      this.constructor.getSelectStatement(this.database, alias),
       alias
     );
   }
