@@ -49,7 +49,7 @@ module.exports = class{
   }
 
   async process(message, match){
-    match = new RegexRoute(/^ударить (.+) по (.+) у (.+)/i, ['weapon', 'organ', 'target'])
+    match = new RegexRoute(/^у(?:дарить)? (.+) по (.+) у (.+)/i, ['weapon', 'organ', 'target'])
       .route(message);
 
     const weapon = await this.organRepository.find({

@@ -29,7 +29,7 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/ActionState/EnterLocationHandler',
         player: this.player
       }),
-      new RegexRoute(/^у(?:дарить)? (.+)$/i, ['name'], {
+      new RegexRoute(/^у(?:дарить)? .+$/i, [], {
         middleware: 'InWorldState/ActionState/AttackHandler',
         player: this.player
       }),
