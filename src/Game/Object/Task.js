@@ -8,6 +8,8 @@ module.exports = class{
     this.target = target;
     this.name = name;
     this.description = description;
+    this.priority = 1;
+    this.isComplete = false;
     this.added = null;
   }
 };

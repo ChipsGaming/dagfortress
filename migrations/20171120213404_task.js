@@ -17,6 +17,11 @@ exports.up = function(knex, Promise) {
       .notNull();
     t.string('description')
       .notNull();
+    t.string('priority')
+      .notNull();
+    t.boolean('isComplete')
+      .index()
+      .notNull();
     t.dateTime('added').notNull();
   });
 };

@@ -53,12 +53,15 @@ module.exports = class extends RouteHandler{
       .count('object.id as count');
     if(parseInt(activePlayersCount[0].count) < 1){
       const dynamics = await this.dynamicRepository.select()
-        .build()
-        .where('object.world', this.player.world);
+        .inWorld(this.player.world)
+        .build();
 
-      for(let dynamic of await this.dynamicRepository.hydrateAll(dynamics)){
+      for(const dynamic of await this.dynamicRepository.hydrateAll(dynamics)){
         dynamic.updateAI(this.container);
+        await this.dynamicRepository.save(dynamic);
+      }
 
+      for(const dynamic of await this.dynamicRepository.hydrateAll(dynamics)){
         dynamic.currentEndurance = dynamic.endurance;
         await this.dynamicRepository.save(dynamic);
       }

@@ -21,6 +21,8 @@ module.exports = class extends EntityRepository{
       target: entity.target,
       name: entity.name,
       description: entity.description,
+      priority: entity.priority,
+      isComplete: entity.isComplete,
       added: entity.added
     };
   }
@@ -34,6 +36,8 @@ module.exports = class extends EntityRepository{
     entity.target = data.target;
     entity.name = data.name;
     entity.description = data.description;
+    entity.priority = data.priority;
+    entity.isComplete = data.isComplete;
     entity.added = new Date(data.added);
 
     return entity;

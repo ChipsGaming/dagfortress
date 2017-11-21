@@ -64,5 +64,8 @@ module.exports = class extends Object{
    * @param {Container} container
    */
   async updateAI(container){
+    if(this.currentEndurance < 1){
+      return;
+    }
   }
 };

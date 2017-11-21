@@ -29,4 +29,40 @@ module.exports = class extends QueryBuilder{
 
     return this;
   }
+
+  /**
+   * Завершенные задачи.
+   *
+   * @return {TaskQueryBuilder}
+   */
+  completed(){
+    this.query.where(`${this.alias}.isComplete`, true);
+
+    return this;
+  }
+
+  /**
+   * Актуальные задачи.
+   *
+   * @return {TaskQueryBuilder}
+   */
+  actual(){
+    this.query.where(`${this.alias}.isComplete`, false);
+
+    return this;
+  }
+
+  // Order
+  /**
+   * Сортировка по приоритету.
+   *
+   * @param {String} type Тип сортировки.
+   *
+   * @return {TaskQueryBuilder}
+   */
+  orderByPriority(type = 'ASC'){
+    this.query.orderBy(`${this.alias}.priority`, type);
+
+    return this;
+  }
 };

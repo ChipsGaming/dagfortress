@@ -278,12 +278,19 @@ module.exports = class{
   taskByJson(group, json){
     group = group instanceof Object? group.id : group;
 
-    return new Task(
+    const task = new Task(
       group,
       json.type,
       json.target,
       json.name,
       json.description
     );
+    for(const prop of ['priority', 'isComplete']){
+      if(prop in json){
+        task[prop] = json[prop];
+      }
+    }
+
+    return task;
   }
 };
