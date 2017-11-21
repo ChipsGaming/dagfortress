@@ -1,6 +1,8 @@
 node_modules/
-config/*
+config/*.json
 !config/.gitkeep
 !config/config.example.json
+config/prototipes/*
+!config/prototipes/.gitkeep
 data/*
 !data/.gitkeep
