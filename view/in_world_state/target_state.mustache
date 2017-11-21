@@ -1,4 +1,9 @@
+{{#target.isDie}}
+Труп {{target.name}}
+{{/target.isDie}}
+{{^target.isDie}}
 {{target.name}} {{#tl}}endurance_{{target.currentEndurance}}{{/tl}}
+{{/target.isDie}}
 
 {{#organs}}
 	{{name}} [{{mass}}]

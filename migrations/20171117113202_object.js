@@ -14,7 +14,14 @@ exports.up = function(knex, Promise) {
       .references('id').inTable('location')
       .onDelete('cascade')
       .onUpdate('cascade');
+    t.string('group')
+      .notNull()
+      .index()
+      .references('id').inTable('group')
+      .onDelete('cascade')
+      .onUpdate('cascade');
     t.string('name')
+      .index()
       .notNull();
     t.dateTime('added').notNull();
   });

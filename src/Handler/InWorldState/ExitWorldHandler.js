@@ -14,6 +14,7 @@ module.exports = class{
     
     const playersCount = await this.playerRepository.select()
       .inWorld(this.player.world)
+      .alive()
       .build()
       .count('object.id as count');
     

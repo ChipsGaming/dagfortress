@@ -1,10 +1,10 @@
 {
-	"endurance_0": "**Нет сил**",
-	"endurance_1": "Очень устал",
-	"endurance_2": "Устал",
-	"endurance_3": "Утомлен",
-	"endurance_4": "Бодр",
-	"endurance_5": "Полон сил",
+	"endurance_0": "**нет сил**",
+	"endurance_1": "очень устал",
+	"endurance_2": "устал",
+	"endurance_3": "утомлен",
+	"endurance_4": "бодр",
+	"endurance_5": "полон сил",
 
 	"damage_0": "",
 	"damage_1": "*царапины на коше*",

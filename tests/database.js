@@ -96,13 +96,3 @@ container.get('Database').build({}, container)
   console.log(player);
 });
 */
-
-/*
-const world = {
-  id: 123
-};
-*/
-const world = '123';
-const id = world instanceof Object? world.id : world;
-
-console.log(id);

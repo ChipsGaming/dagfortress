@@ -6,12 +6,14 @@ module.exports = class{
     worldRepository,
     locationRepository,
     roadRepository,
+    dynamicRepository,
     playerRepository
   ){
     this.player = player;
     this.worldRepository = worldRepository;
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
+    this.dynamicRepository = dynamicRepository;
     this.playerRepository = playerRepository;
   }
 
@@ -23,15 +25,14 @@ module.exports = class{
         .nearby(this.roadRepository, this.player.location)
         .build();
 
-    const nearbyPlayers = await this.playerRepository.select()
+    const nearbyDynamics = await this.dynamicRepository.select()
       .nearby(this.player)
       .build();
 
     return new ViewModel('in_world_state/view_location', {
-      world: world,
       location: location,
       nearbyLocations: nearbyLocations,
-      nearbyPlayers: nearbyPlayers
+      nearbyDynamics: nearbyDynamics
     });
   }
 };

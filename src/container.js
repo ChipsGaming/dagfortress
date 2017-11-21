@@ -14,12 +14,17 @@ module.exports = new Container({
   'WorldRepository': new SharingFactory(new (require('./Game/World/Repository/Container/WorldRepositoryFactory'))),
   'LocationRepository': new SharingFactory(new (require('./Game/World/Location/Repository/Container/LocationRepositoryFactory'))),
   'RoadRepository': new SharingFactory(new (require('./Game/World/Location/Repository/Container/RoadRepositoryFactory'))),
-  // --Dynamic
+  // --Object
+  'AllianceRepository': new SharingFactory(new (require('./Game/Object/Repository/Container/AllianceRepositoryFactory'))),
+  'GroupRepository': new SharingFactory(new (require('./Game/Object/Repository/Container/GroupRepositoryFactory'))),
+  'TaskRepository': new SharingFactory(new (require('./Game/Object/Repository/Container/TaskRepositoryFactory'))),
+  // ----Dynamic
   'DynamicRepository': new SharingFactory(new (require('./Game/Object/Dynamic/Repository/Container/DynamicRepositoryFactory'))),
   'OrganRepository': new SharingFactory(new (require('./Game/Object/Dynamic/Repository/Container/OrganRepositoryFactory'))),
   'PlayerRepository': new SharingFactory(new (require('./Game/Object/Dynamic/Player/Repository/Container/PlayerRepositoryFactory'))),
 
   // Generator
+  'PrototypeList': new SharingFactory(new (require('./Game/Builder/Container/PrototypeListFactory'))),
   'WorldGenerator': new SharingFactory(new (require('./Game/World/Generator/Container/WorldRandomGeneratorFactory'))),
   'LocationGenerator': new SharingFactory(new (require('./Game/World/Location/Generator/Container/LocationRandomGeneratorFactory'))),
 

@@ -7,6 +7,7 @@ module.exports = class{
       await container.get('WorldRepository').build({}, container),
       await container.get('LocationRepository').build({}, container),
       await container.get('RoadRepository').build({}, container),
+      await container.get('DynamicRepository').build({}, container),
       await container.get('PlayerRepository').build({}, container)
     );
   }

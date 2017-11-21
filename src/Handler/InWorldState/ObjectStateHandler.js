@@ -3,16 +3,16 @@ const ViewModel = require('../../View/ViewModel');
 module.exports = class{
   constructor(
     player,
-    playerRepository,
+    dynamicRepository,
     organRepository
   ){
     this.player = player;
-    this.playerRepository = playerRepository;
+    this.dynamicRepository = dynamicRepository;
     this.organRepository = organRepository;
   }
 
   async process(message, match){
-    const target = await this.playerRepository.find({
+    const target = await this.dynamicRepository.find({
       'object.name': match.target,
       'object.location': this.player.location
     });

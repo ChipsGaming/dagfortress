@@ -1,28 +1,34 @@
 const World = require('../../Game/World/World');
-const SandboxGenerator = require('../../Game/World/Generator/SandboxGenerator');
+const WorldBuilder = require('../../Game/Builder/WorldBuilder');
 const SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator');
 const Player = require('../../Game/Object/Dynamic/Player/Player');
 const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
   constructor(
-    container,
     config,
+    prototypeList,
     worldRepository,
+    allianceRepository,
+    groupRepository,
+    taskRepository,
     locationRepository,
     roadRepository,
-    playerRepository,
+    dynamicRepository,
     organRepository,
-    worldGenerator
+    playerRepository
   ){
-    this.container = container;
     this.config = config;
+    this.prototypeList = prototypeList;
     this.worldRepository = worldRepository;
+    this.allianceRepository = allianceRepository;
+    this.groupRepository = groupRepository;
+    this.taskRepository = taskRepository;
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
-    this.playerRepository = playerRepository;
+    this.dynamicRepository = dynamicRepository;
     this.organRepository = organRepository;
-    this.worldGenerator = worldGenerator;
+    this.playerRepository = playerRepository;
   }
 
   async process(message, match){
@@ -33,43 +39,59 @@ module.exports = class{
     const worldsCount = await this.worldRepository.select()
         .build()
         .count('id as count');
-
+    
+    /*
     if(parseInt(worldsCount[0].count) + 1 > this.config.game.maxWorlds){
       return 'Лимит свободных слотов для миров истек';
     }
+    */
 
-    const world = this.worldGenerator.generate(
-      parseInt(match.seed)
-    );
-    await this.worldRepository.save(world);
+    const prototype = await this.prototypeList.get(match.name);
+    if(prototype === null){
+      return 'Прототип не найден';
+    }
 
-    const locationList = await new SandboxGenerator(this.container, world).generate();
+    const worldBuilder = WorldBuilder.fromJson(prototype);
 
-    locationList
-      .locationsForEach(async (location) => {
-        await this.locationRepository.save(location)
-      });
-    locationList
-      .roadsForEach(async (road) => {
-        await this.roadRepository.save(road)
-      });
+    await this.worldRepository.save(worldBuilder.world);
+    for(const alliance of worldBuilder.alliances){
+      await this.allianceRepository.save(alliance);
+    }
+    for(const group of worldBuilder.groups){
+      await this.groupRepository.save(group);
+    }
+    for(const task of worldBuilder.tasks){
+      await this.taskRepository.save(task);
+    }
+    for(const location of worldBuilder.locations){
+      await this.locationRepository.save(location);
+    }
+    for(const road of worldBuilder.roads){
+      await this.roadRepository.save(road);
+    }
+    for(const dynamic of worldBuilder.dynamics){
+      await this.dynamicRepository.save(dynamic);
+    }
+    for(const organ of worldBuilder.organs){
+      await this.organRepository.save(organ);
+    }
 
     const player = new Player(
-      world.id,
-      locationList.startLocation.id,
+      worldBuilder.world.id,
+      worldBuilder.findStartLocation().id,
+      worldBuilder.findGroupPlayer().id,
       message.author.username,
       message.author.id
     );
     await this.playerRepository.save(player);
-
-    const organs = await new SandboxOrganGenerator(player.id).generate();
-    for(const organ of organs){
+    
+    for(const organ of await new SandboxOrganGenerator(player.id).generate()){
       await this.organRepository.save(organ);
     }
-
+    
     return new ViewModel('default_state/create_world', {
-      world: world,
-      location: locationList.startLocation,
+      world: worldBuilder.world,
+      location: worldBuilder.findStartLocation(),
       player: player
     });
   }

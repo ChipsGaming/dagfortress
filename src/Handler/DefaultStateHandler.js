@@ -15,10 +15,10 @@ module.exports = class extends RouteHandler{
       new RegexRoute(/^с(?:писок)?$/i, [], {
         middleware: 'DefaultState/WorldListHandler'
       }),
-      new RegexRoute(/^создать (\d+)$/i, ['seed'], {
+      new RegexRoute(/^создать (.+)$/i, ['name'], {
         middleware: 'DefaultState/CreateWorldHandler'
       }),
-      new RegexRoute(/^в(?:ойти)? ([a-zа-я0-9- ]+)$/i, ['name'], {
+      new RegexRoute(/^в(?:ойти)? (.+)$/i, ['id'], {
         middleware: 'DefaultState/EnterWorldHandler'
       }),
       new NullRoute({

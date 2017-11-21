@@ -46,13 +46,6 @@ module.exports = class extends RouteHandler{
     
     let result = await super.process(message);
     
-    const actionsCount = this.player.events.find(['EnterLocation', 'Attacks']).length;
-    if(actionsCount > 0){
-      this.player.currentEndurance -= actionsCount;
-    
-      await this.playerRepository.save(this.player);
-    }
-
     const activePlayersCount = await this.playerRepository.select()
       .alive()
       .active()
@@ -64,6 +57,8 @@ module.exports = class extends RouteHandler{
         .where('object.world', this.player.world);
 
       for(let dynamic of await this.dynamicRepository.hydrateAll(dynamics)){
+        dynamic.updateAI(this.container);
+
         dynamic.currentEndurance = dynamic.endurance;
         await this.dynamicRepository.save(dynamic);
       }

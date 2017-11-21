@@ -1,2 +1,12 @@
 Вы прошли в {{location.name}}
 	{{location.description}}
+
+Здесь вы видите
+	{{#nearbyDynamics}}
+	{{name}}
+	{{/nearbyDynamics}}
+
+Недалеко вы видите
+	{{#nearbyLocations}}
+	{{name}}
+	{{/nearbyLocations}}

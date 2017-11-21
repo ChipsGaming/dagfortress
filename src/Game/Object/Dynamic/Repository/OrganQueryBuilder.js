@@ -18,6 +18,17 @@ module.exports = class extends QueryBuilder{
   }
 
   /**
+   * Являющиеся жизненноважными.
+   *
+   * @return {OrganQueryBuilder}
+   */
+  vital(){
+    this.query.where(`${this.alias}.isVital`, true);
+
+    return this;
+  }
+
+  /**
    * Являющиеся оружием.
    *
    * @return {OrganQueryBuilder}
@@ -46,6 +57,20 @@ module.exports = class extends QueryBuilder{
    */
   keeping(){
     this.query.where(`${this.alias}.isKeeping`, true);
+
+    return this;
+  }
+
+  // Order
+  /**
+   * Сортировка по массе.
+   *
+   * @param {String} type Тип сортировки.
+   *
+   * @return {OrganQueryBuilder}
+   */
+  orderByMass(type = 'ASC'){
+    this.query.orderBy(`${this.alias}.mass`, type);
 
     return this;
   }

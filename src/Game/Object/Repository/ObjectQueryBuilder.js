@@ -1,6 +1,19 @@
 const QueryBuilder = require('../../../Storage/QueryBuilder');
+const GroupQueryBuilder = require('./GroupQueryBuilder');
 
 module.exports = class extends QueryBuilder{
+  // Joins
+  joinGroup(groupRepository, alias = 'group'){
+    this.query
+      .innerJoin(
+        `${groupRepository.constructor.tableName} AS ${alias}`,
+        `${alias}.id`,
+        `${this.alias}.group`
+      );
+
+    return new GroupQueryBuilder(this.query, alias, this);
+  }
+
   // Filters
   /**
    * Объекты из данного мира.
@@ -42,6 +55,24 @@ module.exports = class extends QueryBuilder{
   nearby(object){
     this.inLocation(object.location)
       .query.where(`${this.alias}.id`, '!=', object.id);
+
+    return this;
+  }
+
+  /**
+   * Вражеские объекты для данной группы.
+   *
+   * @param {GroupRepository} groupRepository
+   * @param {Group|String} group Целевая группа.
+   * @param {String} alias [optional] Псевдоним подключаемой сущности.
+   *
+   * @return {ObjectQueryBuilder}
+   */
+  enemies(groupRepository, group, alias = 'group'){
+    group = group instanceof Object? group.id : group;
+
+    this.joinGroup(groupRepository, alias)
+      .enemies(group);
 
     return this;
   }

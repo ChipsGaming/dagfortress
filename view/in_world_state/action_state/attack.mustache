@@ -1,12 +1,15 @@
-{{#isMiss}}
-{{player.name}} промазал {{weapon.name}} по {{targetOrgan.name}} {{target.name}}
-{{/isMiss}}
-{{^isMiss}}
-{{player.name}} бьет {{weapon.name}} по {{targetOrgan.name}} {{target.name}}
-{{/isMiss}}
-{{^targetOrgan.dynamic}}
-	{{targetOrgan.name}} {{target.name}} оторвало
-{{/targetOrgan.dynamic}}
-{{#target.isDie}}
-	{{target.name}} больше не дышит
-{{/target.isDie}}
+{{#attacks}}
+{{#data.isMiss}}
+{{data.attacking.name}} промазал {{data.weapon.name}} по {{data.targetOrgan.name}} {{data.target.name}}
+{{/data.isMiss}}
+{{^data.isMiss}}
+{{data.attacking.name}} бьет {{data.weapon.name}} по {{data.targetOrgan.name}} {{data.target.name}}
+{{/data.isMiss}}
+{{^data.targetOrgan.dynamic}}
+	{{data.targetOrgan.name}} {{data.target.name}} оторвало
+{{/data.targetOrgan.dynamic}}
+{{#data.target.isDie}}
+	{{data.target.name}} больше не дышит
+{{/data.target.isDie}}
+
+{{/attacks}}

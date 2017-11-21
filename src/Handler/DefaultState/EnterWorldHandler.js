@@ -8,20 +8,20 @@ module.exports = class{
     config,
     worldRepository,
     locationRepository,
+    groupRepository,
     playerRepository,
     organRepository
   ){
     this.config = config;
     this.worldRepository = worldRepository;
     this.locationRepository = locationRepository;
+    this.groupRepository = groupRepository;
     this.playerRepository = playerRepository;
     this.organRepository = organRepository;
   }
 
   async process(message, match){
-    const world = await this.worldRepository
-      .find('name', match.name);
-
+    const world = await this.worldRepository.find('id', match.id);
     if(world === null){
       return 'Мир с заданым идентификатором не найден';
     }
@@ -30,7 +30,6 @@ module.exports = class{
       .inWorld(world)
       .build()
       .count('player.id as count');
-
     if(parseInt(playersCount[0].count) + 1 > this.config.game.world.maxPlayers){
       return 'Лимит свободных слотов для игроков в этом мире истек';
     }
@@ -39,21 +38,28 @@ module.exports = class{
       world: world.id,
       isStart: true
     });
-
     if(startLocation === null){
       return 'В данном мире нет стартовой локации. Вход невозможен';
+    }
+
+    const playerGroup = await this.groupRepository.find({
+      world: world.id,
+      isPlayer: true
+    });
+    if(playerGroup === null){
+      return 'В данном мире нет клана для игроков. Вход невозможен';
     }
 
     const player = new Player(
       world.id,
       startLocation.id,
+      playerGroup.id,
       message.author.username,
       message.author.id
     );
     await this.playerRepository.save(player);
 
-    const organs = await new SandboxOrganGenerator(player.id).generate();
-    for(const organ of organs){
+    for(const organ of await new SandboxOrganGenerator(player.id).generate()){
       await this.organRepository.save(organ);
     }
 

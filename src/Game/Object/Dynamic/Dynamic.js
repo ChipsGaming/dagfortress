@@ -1,8 +1,8 @@
 const Object = require('../Object');
 
 module.exports = class extends Object{
-  constructor(world, location, name){
-    super(world, location, name);
+  constructor(world, location, group, name){
+    super(world, location, group, name);
     this.endurance = 3;
     this.currentEndurance = this.endurance;
     this.isDie = false;
@@ -15,28 +15,19 @@ module.exports = class extends Object{
    * @param {Organ} weapon Используемое для атаки оружие.
    * @param {Dynamic} target Атакуемый объект.
    * @param {Organ} targetOrgan Атакуемый орган.
-   *
-   * @return {Integer} Нанесенный урон (0 - промах, 6 - максимальный урон).
    */
   attack(weapon, target, targetOrgan){
     const thisEnergy = this.currentEndurance / this.endurance,
-      targetEnergy = target.currentEndurance / target.endurance;
+      targetEnergy = target.currentEndurance / target.endurance,
+      fatigue = thisEnergy * 1.5 / targetEnergy;
 
     let damage = weapon.mass;
-    // Попадение
-    if((Math.random() * 10) * thisEnergy * 2 > 5){
-      let power = (1 - (targetOrgan.mass - 1) / weapon.mass);
-      if(targetEnergy < 1){
-        power = power * (1 + targetEnergy);
-      }
-
-      damage = damage * power;
-    }
     // Промах
-    else{
+    if(Math.random() * fatigue < 0.5){
       damage = 0;
     }
-    damage = Math.floor(damage);
+    const power = weapon.mass / targetOrgan.mass * thisEnergy;
+    damage = Math.floor(damage * power);
 
     targetOrgan.damage += damage;
     if(targetOrgan.damage >= 10){
@@ -47,19 +38,31 @@ module.exports = class extends Object{
       }
     }
 
+    this.currentEndurance--;
+
     this.events.trigger('Attacks', {
+      attacking: this,
       weapon: weapon,
       target: target,
       targetOrgan: targetOrgan,
-      damage: damage
+      damage: damage,
+      isMiss: damage === 0
     });
     target.events.trigger('Attacked', {
       attaking: this,
       weapon: weapon,
+      target: target,
       targetOrgan: targetOrgan,
-      damage: damage
+      damage: damage,
+      isMiss: damage === 0
     });
+  }
 
-    return damage;
+  /**
+   * Выполняет обновление с использованием искуственного интеллекта.
+   *
+   * @param {Container} container
+   */
+  async updateAI(container){
   }
 };

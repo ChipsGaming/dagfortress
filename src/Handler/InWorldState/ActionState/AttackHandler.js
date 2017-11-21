@@ -4,12 +4,48 @@ const ViewModel = require('../../../View/ViewModel');
 module.exports = class{
   constructor(
     player,
-    playerRepository,
+    container,
+    dynamicRepository,
     organRepository
   ){
     this.player = player;
-    this.playerRepository = playerRepository;
+    this.container = container;
+    this.dynamicRepository = dynamicRepository;
     this.organRepository = organRepository;
+  }
+
+  async attack(attacking, attacked, weapon = null, targetOrgan = null){
+    if(weapon === null){
+      weapon = await this.organRepository
+        .select()
+        .part(attacking)
+        .weapon()
+        .orderByMass('DESC')
+        .build();
+      if(weapon.length < 1){
+        return;
+      }
+      weapon = this.organRepository.constructor.hydrate(weapon[0]);
+    }
+
+    if(targetOrgan === null){
+      targetOrgan = await this.organRepository
+        .select()
+        .part(attacked)
+        .vital()
+        .orderByMass('ASC')
+        .build();
+      if(targetOrgan.length < 1){
+        return;
+      }
+      targetOrgan = this.organRepository.constructor.hydrate(targetOrgan[0]);
+    }
+
+    attacking.attack(
+      weapon,
+      attacked,
+      targetOrgan
+    );
   }
 
   async process(message, match){
@@ -27,7 +63,7 @@ module.exports = class{
       return `${weapon.name} не является оружием`;
     }
 
-    const target = await this.playerRepository.find({
+    const target = await this.dynamicRepository.find({
       'object.name': match.target,
       'object.location': this.player.location
     });
@@ -46,35 +82,48 @@ module.exports = class{
       return `У ${target.name} нет ${match.organ} для нанесения удара`;
     }
 
-    const damage = this.player.attack(
-      weapon,
+    await this.attack(
+      this.player,
       target,
+      weapon,
       targetOrgan
     );
 
-    if(targetOrgan.dynamic === null){
-      await this.organRepository.remove(targetOrgan);
+    if(target.currentEndurance > 0){
+      await this.attack(
+        target,
+        this.player
+      );
+    }
 
-      const legsCount = await this.organRepository.select()
-        .part(target)
-        .legs()
-        .build()
-        .count('id as count');
-      if(parseInt(legsCount[0].count) < 1){
-        target.endurance = 0;
+    const attacks = this.player.events.find('Attacks')
+      .concat(target.events.find('Attacks'));
+
+    for(const attack of attacks){
+      const target = attack.data.target,
+        targetOrgan = attack.data.targetOrgan;
+
+      if(targetOrgan.dynamic === null){
+        await this.organRepository.remove(targetOrgan);
+      
+        const legsCount = await this.organRepository.select()
+          .part(target)
+          .legs()
+          .build()
+          .count('id as count');
+        if(parseInt(legsCount[0].count) < 1){
+          target.endurance = 0;
+        }
       }
+      else{
+        await this.organRepository.save(targetOrgan);
+      }
+
+      await this.dynamicRepository.save(target);
     }
-    else{
-      await this.organRepository.save(targetOrgan);
-    }
-    await this.playerRepository.save(target);
 
     return new ViewModel('in_world_state/action_state/attack', {
-      player: this.player,
-      weapon: weapon,
-      target: target,
-      targetOrgan: targetOrgan,
-      isMiss: damage == 0
+      attacks: attacks
     });
   }
 };

@@ -1,9 +1,14 @@
 const EntityRepository = require('../../../Storage/EntityRepository');
-const Entity = require('../Object');
+const QueryBuilder = require('./GroupQueryBuilder');
+const Entity = require('../Group');
 
 module.exports = class extends EntityRepository{
   static get tableName(){
-    return 'object';
+    return 'group';
+  }
+
+  static get queryBuilder(){
+    return QueryBuilder;
   }
 
   static extract(entity){
@@ -11,10 +16,9 @@ module.exports = class extends EntityRepository{
 
     return {
       id: entity.id,
-      world: entity.world,
-      location: entity.location,
-      group: entity.group,
+      alliance: entity.alliance,
       name: entity.name,
+      isPlayer: entity.isPlayer,
       added: entity.added
     };
   }
@@ -23,10 +27,9 @@ module.exports = class extends EntityRepository{
     const entity = new Entity;
 
     entity.id = data.id;
-    entity.world = data.world;
-    entity.location = data.location;
-    entity.group = data.group;
+    entity.alliance = data.alliance;
     entity.name = data.name;
+    entity.isPlayer = data.isPlayer;
     entity.added = new Date(data.added);
 
     return entity;

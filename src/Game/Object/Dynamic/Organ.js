@@ -37,4 +37,10 @@ module.exports = class{
 
     return this;
   }
+
+  setMass(mass){
+    this.mass = mass;
+
+    return this;
+  }
 };
