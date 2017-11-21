@@ -6,6 +6,7 @@ module.exports = class{
       options.player,
       container,
       await container.get('DynamicRepository').build({}, container),
+      await container.get('PlayerRepository').build({}, container),
       await container.get('OrganRepository').build({}, container)
     );
   }

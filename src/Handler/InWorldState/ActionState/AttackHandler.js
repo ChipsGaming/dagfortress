@@ -6,11 +6,13 @@ module.exports = class{
     player,
     container,
     dynamicRepository,
+    playerRepository,
     organRepository
   ){
     this.player = player;
     this.container = container;
     this.dynamicRepository = dynamicRepository;
+    this.playerRepository = playerRepository;
     this.organRepository = organRepository;
   }
 
@@ -89,7 +91,8 @@ module.exports = class{
       targetOrgan
     );
 
-    if(target.currentEndurance > 0){
+    const targetIsPlayer = await this.playerRepository.find('id', target.id) !== null;
+    if(target.currentEndurance > 0 && !targetIsPlayer){
       await this.attack(
         target,
         this.player
