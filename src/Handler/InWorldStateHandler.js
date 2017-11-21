@@ -31,7 +31,7 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/SelfStateHandler',
         player: this.player
       }),
-      new RegexRoute(/^о(?:смотреть) (.+)$/i, ['target'], {
+      new RegexRoute(/^о(?:смотреть)? (.+)$/i, ['target'], {
         middleware: 'InWorldState/ObjectStateHandler',
         player: this.player
       }),
