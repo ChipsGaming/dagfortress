@@ -91,7 +91,7 @@ module.exports = class{
       targetOrgan
     );
 
-    const targetIsPlayer = await this.playerRepository.find('id', target.id) !== null;
+    const targetIsPlayer = await this.playerRepository.find('player.id', target.id) !== null;
     if(target.currentEndurance > 0 && !targetIsPlayer){
       await this.attack(
         target,
