@@ -8,6 +8,7 @@ module.exports = class{
     config,
     worldRepository,
     locationRepository,
+    allianceRepository,
     groupRepository,
     playerRepository,
     organRepository
@@ -15,6 +16,7 @@ module.exports = class{
     this.config = config;
     this.worldRepository = worldRepository;
     this.locationRepository = locationRepository;
+    this.allianceRepository = allianceRepository;
     this.groupRepository = groupRepository;
     this.playerRepository = playerRepository;
     this.organRepository = organRepository;
@@ -42,13 +44,15 @@ module.exports = class{
       return 'В данном мире нет стартовой локации. Вход невозможен';
     }
 
-    const playerGroup = await this.groupRepository.find({
-      world: world.id,
-      isPlayer: true
-    });
-    if(playerGroup === null){
+    let playerGroup = await this.groupRepository.select()
+      .inWorld(this.allianceRepository, world)
+      .forPlayer()
+      .build()
+      .limit(1);
+    if(playerGroup.length < 1){
       return 'В данном мире нет клана для игроков. Вход невозможен';
     }
+    playerGroup = this.groupRepository.constructor.hydrate(playerGroup[0]);
 
     const player = new Player(
       world.id,
