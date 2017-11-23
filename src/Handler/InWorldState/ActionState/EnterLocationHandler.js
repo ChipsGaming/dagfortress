@@ -16,37 +16,32 @@ module.exports = class{
   }
 
   async process(message, match){
-    const nearbyLocations = await this.locationRepository.select()
-      .nearby(this.roadRepository, this.player.location)
-      .build();
-
-    for(let location of this.locationRepository.hydrateAll(nearbyLocations)){
-      if(match.name == location.name){
-        this.player.location = location.id;
-        this.player.currentEndurance--;
-
-        this.player.events.trigger('EnterLocation', {
-          location: location
-        });
-
-        await this.playerRepository.save(this.player);
-
-        const nearbyLocations = await this.locationRepository.select()
-            .nearby(this.roadRepository, this.player.location)
-            .build();
-
-        const nearbyDynamics = await this.dynamicRepository.select()
-          .nearby(this.player)
-          .build();
-
-        return new ViewModel('in_world_state/action_state/enter_location', {
-          location: location,
-          nearbyLocations: nearbyLocations,
-          nearbyDynamics: nearbyDynamics
-        });
-      }
+    const location = await this.locationRepository.findWith(
+      this.locationRepository.select()
+        .withName(match.name)
+        .nearby(this.roadRepository, this.player.location)
+    );
+    if(location === null){
+      return 'Вы не видите этой локации';
     }
 
-    return 'Вы не видите этой локации';
+    this.player.move(location);
+    await this.playerRepository.save(this.player);
+
+    const nearbyLocations = await this.locationRepository.fetchAll(
+      this.locationRepository.select()
+        .nearby(this.roadRepository, this.player.location)
+    );
+
+    const nearbyDynamics = await this.dynamicRepository.fetchAll(
+      this.dynamicRepository.select()
+        .nearby(this.player)
+    );
+
+    return new ViewModel('in_world_state/action_state/enter_location', {
+      location: location,
+      nearbyLocations: nearbyLocations,
+      nearbyDynamics: nearbyDynamics
+    });
   }
 };

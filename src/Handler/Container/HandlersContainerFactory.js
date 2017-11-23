@@ -24,6 +24,7 @@ module.exports = class{
       'InWorldState/ObjectStateHandler': new (require('../InWorldState/Container/ObjectStateHandlerFactory')),
       // --ActionState
       'InWorldState/ActionHandler': new (require('../InWorldState/Container/ActionHandlerFactory')),
+      'InWorldState/ActionState/WaitHandler': new (require('../InWorldState/ActionState/Container/WaitHandlerFactory')),
       'InWorldState/ActionState/EnterLocationHandler': new (require('../InWorldState/ActionState/Container/EnterLocationHandlerFactory')),
       'InWorldState/ActionState/AttackHandler': new (require('../InWorldState/ActionState/Container/AttackHandlerFactory'))
     }, container);

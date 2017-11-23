@@ -13,6 +13,8 @@ exports.up = function(knex, Promise) {
     t.boolean('isDie')
       .notNull()
       .index();
+    t.string('ai')
+      .notNull();
   });
 };
 

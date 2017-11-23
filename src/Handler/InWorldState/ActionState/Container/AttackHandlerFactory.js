@@ -4,7 +4,7 @@ module.exports = class{
   async build(options, container){
     return new AttackHandler(
       options.player,
-      container,
+      await container.get('AIContainer').build({}, container),
       await container.get('DynamicRepository').build({}, container),
       await container.get('PlayerRepository').build({}, container),
       await container.get('OrganRepository').build({}, container)

@@ -12,13 +12,14 @@ module.exports = class{
   async process(message, match){
     await this.playerRepository.remove(this.player)
     
-    const playersCount = await this.playerRepository.select()
-      .inWorld(this.player.world)
-      .alive()
-      .build()
-      .count('object.id as count');
+    const playersCount = await this.playerRepository.getScalar(
+      this.playerRepository.select()
+        .inWorld(this.player.world)
+        .alive()
+        .count()
+    );
     
-    if(parseInt(playersCount[0].count) == 0){
+    if(playersCount == 0){
       await this.worldRepository.remove(
         await this.worldRepository.find('id', this.player.world)
       );

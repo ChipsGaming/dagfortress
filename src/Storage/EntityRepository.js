@@ -202,4 +202,75 @@ module.exports = class{
       alias
     );
   }
+
+  /**
+   * Использует SQL запрос для поиска сущности.
+   *
+   * @param {QueryBuilder|Knex} select Запрос.
+   *
+   * @return {Object|null} Сущность или null - если она не найдена.
+   */
+  async findWith(select){
+    if(select instanceof QueryBuilder){
+      select = select.build();
+    }
+
+    const data = await select.limit(1);
+    if(data.length < 1){
+      return null;
+    }
+
+    return this.constructor.hydrate(data[0]);
+  }
+
+  /**
+   * Использует SQL запрос для выборки сущностей.
+   *
+   * @param {QueryBuilder|Knex} select [optional] Запрос (по умолчанию 
+   * запрашиваются все сущности).
+   *
+   * @return {Object[]} Сущности, выбранные запросом.
+   */
+  async fetchAll(select = null){
+    if(select === null){
+      select = this.select();
+    }
+    if(select instanceof QueryBuilder){
+      select = select.build();
+    }
+
+    const data = await select;
+
+    return data.map(this.constructor.hydrate);
+  }
+
+  /**
+   * Запрашивает скалярное значение.
+   *
+   * @param {QueryBuilder|Knex} select SQL запрос.
+   * @param {String} field [optional] Искомое значение (запрашивается первое 
+   * доступное, если не указано).
+   *
+   * @return {mixed|null} Скалярное значение.
+   */
+  async getScalar(select, field = null){
+    if(select instanceof QueryBuilder){
+      select = select.build();
+    }
+
+    let data = await select;
+    if(data.length < 1){
+      return null;
+    }
+
+    data = data[0];
+    if(field === null){
+      field = Object.keys(data)[0];
+    }
+    if(!(field in data)){
+      return null;
+    }
+
+    return data[field];
+  }
 };

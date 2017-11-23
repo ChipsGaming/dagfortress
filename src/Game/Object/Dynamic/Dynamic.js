@@ -6,9 +6,36 @@ module.exports = class extends Object{
     this.endurance = 3;
     this.currentEndurance = this.endurance;
     this.isDie = false;
+    this.ai = 'default';
+  }
+
+  // Getters
+  /**
+   * @param {AIContainer} container Контейнер искусственного интеллекта.
+   *
+   * @return {AI} Искусственный интеллект объекта.
+   */
+  async getAI(container){
+    return container.get(this.ai)
+      .build({dynamic: this}, container);
   }
 
   // Actions
+  /**
+   * Переходит в соседнюю локацию.
+   *
+   * @param {Location} location Целевая локация.
+   */
+  move(location){
+    this.location = location.id;
+    this.currentEndurance--;
+
+    this.events.trigger('EnterLocation', {
+      dynamic: this,
+      location: location
+    });
+  }
+
   /**
    * Производит атаку.
    *
@@ -56,16 +83,5 @@ module.exports = class extends Object{
       damage: damage,
       isMiss: damage === 0
     });
-  }
-
-  /**
-   * Выполняет обновление с использованием искуственного интеллекта.
-   *
-   * @param {Container} container
-   */
-  async updateAI(container){
-    if(this.currentEndurance < 1){
-      return;
-    }
   }
 };

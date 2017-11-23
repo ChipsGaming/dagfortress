@@ -1,0 +1,117 @@
+{
+	"seed": "1",
+	"name": "Гризагин",
+	"description": "Оборона крепости",
+	"groups": [
+		{
+			"name": "Люди",
+			"isPlayer": true,
+			"tasks": [
+				{
+					"type": "sleep",
+					"target": 14,
+					"name": "Оборона крепости",
+					"description": "Продержаться 14 дней"
+				}
+			]
+		},
+		{
+			"name": "Орки",
+			"tasks": [
+				{
+					"type": "move",
+					"target": "Крепость Гризагин",
+					"name": "Осада",
+					"description": "Занять крепость"
+				}
+			]
+		}
+	],
+	"locations": [
+		{
+			"name": "Крепость Гризагин",
+			"description": "",
+			"isStart": true
+		},
+		{
+			"name": "Поля",
+			"description": "",
+			"roads": [
+				"Крепость Гризагин"
+			]
+		},
+		{
+			"name": "Мост через реку Обез",
+			"description": "",
+			"roads": [
+				"Поля"
+			]
+		},
+		{
+			"name": "Подножье горы Агрек",
+			"description": "",
+			"roads": [
+				"Мост через реку Обез"
+			],
+			"mobs": [
+				{
+					"name": "Орк Аркх",
+					"group": "Орки",
+					"organs": [
+						{"name": "Голова", "mass": 3, "isVital": true},
+						{"name": "Тело", "mass": 3, "isVital": true},
+						{"name": "Правая рука", "mass": 3, "isWeapon": true},
+						{"name": "Левая рука", "mass": 3, "isWeapon": true},
+						{"name": "Правая нога", "mass": 3, "isWeapon": true, "isLegs": true},
+						{"name": "Левая нога", "mass": 3, "isWeapon": true, "isLegs": true}
+					]
+				},
+				{
+					"name": "Орк Иктах",
+					"group": "Орки",
+					"organs": [
+						{"name": "Голова", "mass": 3, "isVital": true},
+						{"name": "Тело", "mass": 3, "isVital": true},
+						{"name": "Правая рука", "mass": 3, "isWeapon": true},
+						{"name": "Левая рука", "mass": 3, "isWeapon": true},
+						{"name": "Правая нога", "mass": 3, "isWeapon": true, "isLegs": true},
+						{"name": "Левая нога", "mass": 3, "isWeapon": true, "isLegs": true}
+					]
+				},
+				{
+					"name": "Орк Раахах",
+					"group": "Орки",
+					"organs": [
+						{"name": "Голова", "mass": 4, "isVital": true},
+						{"name": "Тело", "mass": 4, "isVital": true},
+						{"name": "Правая рука", "mass": 4, "isWeapon": true},
+						{"name": "Левая рука", "mass": 4, "isWeapon": true},
+						{"name": "Правая нога", "mass": 4, "isWeapon": true, "isLegs": true},
+						{"name": "Левая нога", "mass": 4, "isWeapon": true, "isLegs": true}
+					]
+				}
+			]
+		},
+		{
+			"name": "Пещеры Древних",
+			"description": "",
+			"roads": [
+				"Мост через реку Обез"
+			],
+			"mobs": [
+				{
+					"name": "Горный тролль Маал",
+					"group": "Орки",
+					"organs": [
+						{"name": "Голова", "mass": 8, "isVital": true},
+						{"name": "Тело", "mass": 8, "isVital": true},
+						{"name": "Правая рука", "mass": 8, "isWeapon": true},
+						{"name": "Левая рука", "mass": 8, "isWeapon": true},
+						{"name": "Правая нога", "mass": 8, "isWeapon": true, "isLegs": true},
+						{"name": "Левая нога", "mass": 8, "isWeapon": true, "isLegs": true}
+					]
+				}
+			]
+		}
+	]
+}

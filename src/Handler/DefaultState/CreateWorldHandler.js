@@ -9,6 +9,7 @@ module.exports = class{
     config,
     prototypeList,
     worldRepository,
+    chronoRepository,
     allianceRepository,
     groupRepository,
     taskRepository,
@@ -21,6 +22,7 @@ module.exports = class{
     this.config = config;
     this.prototypeList = prototypeList;
     this.worldRepository = worldRepository;
+    this.chronoRepository = chronoRepository;
     this.allianceRepository = allianceRepository;
     this.groupRepository = groupRepository;
     this.taskRepository = taskRepository;
@@ -36,15 +38,13 @@ module.exports = class{
       return 'Лимит свободных слотов для игроков в этом мире истек';
     }
 
-    const worldsCount = await this.worldRepository.select()
-        .build()
-        .count('id as count');
-    
-    /*
-    if(parseInt(worldsCount[0].count) + 1 > this.config.game.maxWorlds){
+    const worldsCount = await this.worldRepository.getScalar(
+      this.worldRepository.select()
+        .count()
+    );
+    if(worldsCount + 1 > this.config.game.maxWorlds){
       return 'Лимит свободных слотов для миров истек';
     }
-    */
 
     const prototype = await this.prototypeList.get(match.name);
     if(prototype === null){
@@ -54,6 +54,7 @@ module.exports = class{
     const worldBuilder = WorldBuilder.fromJson(prototype);
 
     await this.worldRepository.save(worldBuilder.world);
+    await this.chronoRepository.save(worldBuilder.chrono);
     for(const alliance of worldBuilder.alliances){
       await this.allianceRepository.save(alliance);
     }

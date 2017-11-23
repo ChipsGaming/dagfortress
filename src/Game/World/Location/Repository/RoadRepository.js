@@ -23,7 +23,7 @@ module.exports = class extends EntityRepository{
   }
 
   static hydrate(data){
-    const entity = new Entity(data.start, data,end);
+    const entity = new Entity(data.start, data.end);
     entity.id = data.id
     entity.added = new Date(data.added);
 

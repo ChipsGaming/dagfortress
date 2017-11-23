@@ -28,11 +28,12 @@ module.exports = class{
       return 'Мир с заданым идентификатором не найден';
     }
 
-    const playersCount = await this.playerRepository.select()
-      .inWorld(world)
-      .build()
-      .count('player.id as count');
-    if(parseInt(playersCount[0].count) + 1 > this.config.game.world.maxPlayers){
+    const playersCount = await this.playerRepository.getScalar(
+      this.playerRepository.select()
+        .inWorld(world)
+        .count()
+    );
+    if(playersCount + 1 > this.config.game.world.maxPlayers){
       return 'Лимит свободных слотов для игроков в этом мире истек';
     }
 
@@ -44,15 +45,14 @@ module.exports = class{
       return 'В данном мире нет стартовой локации. Вход невозможен';
     }
 
-    let playerGroup = await this.groupRepository.select()
-      .inWorld(this.allianceRepository, world)
-      .forPlayer()
-      .build()
-      .limit(1);
-    if(playerGroup.length < 1){
+    const playerGroup = await this.groupRepository.findWith(
+      this.groupRepository.select()
+        .forPlayer()
+        .inWorld(this.allianceRepository, world)
+    );
+    if(playerGroup === null){
       return 'В данном мире нет клана для игроков. Вход невозможен';
     }
-    playerGroup = this.groupRepository.constructor.hydrate(playerGroup[0]);
 
     const player = new Player(
       world.id,

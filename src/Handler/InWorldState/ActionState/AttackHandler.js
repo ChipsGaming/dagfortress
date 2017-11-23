@@ -4,50 +4,16 @@ const ViewModel = require('../../../View/ViewModel');
 module.exports = class{
   constructor(
     player,
-    container,
+    aiContainer,
     dynamicRepository,
     playerRepository,
     organRepository
   ){
     this.player = player;
-    this.container = container;
+    this.aiContainer = aiContainer;
     this.dynamicRepository = dynamicRepository;
     this.playerRepository = playerRepository;
     this.organRepository = organRepository;
-  }
-
-  async attack(attacking, attacked, weapon = null, targetOrgan = null){
-    if(weapon === null){
-      weapon = await this.organRepository
-        .select()
-        .part(attacking)
-        .weapon()
-        .orderByMass('DESC')
-        .build();
-      if(weapon.length < 1){
-        return;
-      }
-      weapon = this.organRepository.constructor.hydrate(weapon[0]);
-    }
-
-    if(targetOrgan === null){
-      targetOrgan = await this.organRepository
-        .select()
-        .part(attacked)
-        .vital()
-        .orderByMass('ASC')
-        .build();
-      if(targetOrgan.length < 1){
-        return;
-      }
-      targetOrgan = this.organRepository.constructor.hydrate(targetOrgan[0]);
-    }
-
-    attacking.attack(
-      weapon,
-      attacked,
-      targetOrgan
-    );
   }
 
   async process(message, match){
@@ -84,19 +50,25 @@ module.exports = class{
       return `У ${target.name} нет ${match.organ} для нанесения удара`;
     }
 
-    await this.attack(
-      this.player,
-      target,
+    this.player.attack(
       weapon,
+      target,
       targetOrgan
     );
 
     const targetIsPlayer = await this.playerRepository.find('player.id', target.id) !== null;
     if(target.currentEndurance > 0 && !targetIsPlayer){
-      await this.attack(
-        target,
-        this.player
-      );
+      const ai = await target.getAI(this.aiContainer),
+        weapon = await ai.attack.getWeapon(target),
+        targetOrgan = await ai.attack.getTargetOrgan(target);
+
+      if(weapon !== null && targetOrgan !== null){
+        target.attack(
+          weapon,
+          this.player,
+          targetOrgan
+        );
+      }
     }
 
     const attacks = this.player.events.find('Attacks')
@@ -109,12 +81,13 @@ module.exports = class{
       if(targetOrgan.dynamic === null){
         await this.organRepository.remove(targetOrgan);
       
-        const legsCount = await this.organRepository.select()
-          .part(target)
-          .legs()
-          .build()
-          .count('id as count');
-        if(parseInt(legsCount[0].count) < 1){
+        const legsCount = await this.organRepository.getScalar(
+          this.organRepository.select()
+            .part(target)
+            .legs()
+            .count()
+        );
+        if(legsCount < 1){
           target.endurance = 0;
         }
       }

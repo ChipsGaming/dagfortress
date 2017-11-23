@@ -3,10 +3,10 @@ const Util = require('util');
 
 module.exports = class{
   /**
-   * @param {String} prototipesDir Адрес каталога прототипов.
+   * @param {String} prototypesDir Адрес каталога прототипов.
    */
-  constructor(prototipesDir){
-    this.prototipesDir = prototipesDir;
+  constructor(prototypesDir){
+    this.prototypesDir = prototypesDir;
   }
 
   /**
@@ -15,7 +15,7 @@ module.exports = class{
    * @return {Boolean} true - если прототип существует.
    */
   has(name){
-    return fs.existsSync(`${this.prototipesDir}/${name}.json`);
+    return fs.existsSync(`${this.prototypesDir}/${name}.json`);
   }
 
   /**
@@ -29,7 +29,7 @@ module.exports = class{
     }
 
     return JSON.parse(
-      await Util.promisify(fs.readFile)(`${this.prototipesDir}/${name}.json`, 'utf8')
+      await Util.promisify(fs.readFile)(`${this.prototypesDir}/${name}.json`, 'utf8')
     );
   }
 };

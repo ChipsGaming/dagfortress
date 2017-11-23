@@ -10,9 +10,10 @@ module.exports = class{
   }
 
   async process(message){
-    const organs = await this.organRepository.select()
-      .part(this.player.id)
-      .build();
+    const organs = await this.organRepository.fetchAll(
+      this.organRepository.select()
+        .part(this.player)
+    );
 
     return new ViewModel('in_world_state/self_state', {
       player: this.player,

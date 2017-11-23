@@ -6,6 +6,7 @@ module.exports = class{
       await container.get('Config').build({}, container),
       await container.get('PrototypeList').build({}, container),
       await container.get('WorldRepository').build({}, container),
+      await container.get('ChronoRepository').build({}, container),
       await container.get('AllianceRepository').build({}, container),
       await container.get('GroupRepository').build({}, container),
       await container.get('TaskRepository').build({}, container),

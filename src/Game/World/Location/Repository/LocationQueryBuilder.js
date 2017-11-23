@@ -16,6 +16,19 @@ module.exports = class extends QueryBuilder{
 
   // Filters
   /**
+   * Локации с заданым наименованием.
+   *
+   * @param {String} name Наименование целевых локаций.
+   *
+   * @return {LocationQueryBuilder}
+   */
+  withName(name){
+    this.query.where(`${this.alias}.name`, name);
+
+    return this;
+  }
+
+  /**
    * Соседние локации.
    *
    * @param {RoadRepository} roadRepository

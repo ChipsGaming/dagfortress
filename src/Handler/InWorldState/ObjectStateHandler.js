@@ -20,9 +20,10 @@ module.exports = class{
       return `Рядом с вами нет ${match.target}`;
     }
 
-    const organs = await this.organRepository.select()
-      .part(target.id)
-      .build();
+    const organs = await this.organRepository.fetchAll(
+      this.organRepository.select()
+        .part(target)
+    );
 
     return new ViewModel('in_world_state/target_state', {
       target: target,

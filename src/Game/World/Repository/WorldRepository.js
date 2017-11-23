@@ -24,7 +24,7 @@ module.exports = class extends EntityRepository{
       data.name,
       data.description
     );
-    entity.id = data.id
+    entity.id = data.id;
     entity.added = new Date(data.added);
 
     return entity;

@@ -1,4 +1,5 @@
 const World = require('../World/World'),
+  Chrono = require('../World/Chrono'),
   Location = require('../World/Location/Location'),
   Road = require('../World/Location/Road'),
   Dynamic = require('../Object/Dynamic/Dynamic'),
@@ -10,6 +11,7 @@ const World = require('../World/World'),
 module.exports = class{
   constructor(){
     this.world = null;
+    this.chrono = null;
     this.locations = [];
     this.roads = [];
     this.dynamics = [];
@@ -20,23 +22,42 @@ module.exports = class{
   }
 
   static fromJson(json){
+    const worldJson = json.world;
+
     const worldBuilder = new this;
     worldBuilder.world = new World(
-      json.seed,
-      json.name,
-      json.description
+      worldJson.seed,
+      worldJson.name,
+      worldJson.description
     );
 
-    for(const allianceJson of json.alliances){
+    worldBuilder.chrono = new Chrono(worldBuilder.world.id);
+    if('chrono' in worldJson){
+      worldBuilder.chrono = worldBuilder.chronoByJson(worldBuilder.world, worldJson.chrono);
+    }
+
+    for(let allianceJson of worldJson.alliances){
+      if('prototype' in allianceJson){
+        allianceJson = Object.assign(json.prototypes.alliance[allianceJson.prototype], allianceJson);
+      }
+
       const alliance = worldBuilder.allianceByJson(worldBuilder.world, allianceJson);
       worldBuilder.addAlliance(alliance);
 
-      for(const groupJson of allianceJson.groups){
+      for(let groupJson of allianceJson.groups){
+        if('prototype' in groupJson){
+          groupJson = Object.assign(json.prototypes.group[groupJson.prototype], groupJson);
+        }
+
         const group = worldBuilder.groupByJson(alliance, groupJson);
         worldBuilder.addGroup(group);
       
         if('tasks' in groupJson){
-          for(const taskJson of groupJson.tasks){
+          for(let taskJson of groupJson.tasks){
+            if('prototype' in taskJson){
+              taskJson = Object.assign(json.prototypes.task[taskJson.prototype], taskJson);
+            }
+
             worldBuilder.addTask(
               worldBuilder.taskByJson(group, taskJson)
             );
@@ -45,7 +66,11 @@ module.exports = class{
       }
     }
     
-    for(const locationJson of json.locations){
+    for(let locationJson of worldJson.locations){
+      if('prototype' in locationJson){
+        locationJson = Object.assign(json.prototypes.location[locationJson.prototype], locationJson);
+      }
+
       const location = worldBuilder.locationByJson(worldBuilder.world, locationJson);
       worldBuilder.addLocation(location);
     
@@ -57,12 +82,20 @@ module.exports = class{
         }
       }
     
-      if('mobs' in locationJson){
-        for(const mobJson of locationJson.mobs){
-          const dynamic = worldBuilder.dynamicByJson(worldBuilder.world, location, mobJson);
+      if('dynamics' in locationJson){
+        for(let dynamicJson of locationJson.dynamics){
+          if('prototype' in dynamicJson){
+            dynamicJson = Object.assign(json.prototypes.dynamic[dynamicJson.prototype], dynamicJson);
+          }
+
+          const dynamic = worldBuilder.dynamicByJson(worldBuilder.world, location, dynamicJson);
           worldBuilder.addDynamic(dynamic);
     
-          for(const organJson of mobJson.organs){
+          for(let organJson of dynamicJson.organs){
+            if('prototype' in organJson){
+              organJson = Object.assign(json.prototypes.organ[organJson.prototype], organJson);
+            }
+
             worldBuilder.addOrgan(
               worldBuilder.organByJson(dynamic, organJson)
             );
@@ -136,6 +169,19 @@ module.exports = class{
   }
 
   // Actions
+  chronoByJson(world, json){
+    world = world instanceof Object? world.id : world;
+
+    const chrono = new Chrono(world);
+    for(const prop of ['day']){
+      if(prop in json){
+        chrono[prop] = json[prop];
+      }
+    }
+
+    return chrono;
+  }
+
   addLocation(location){
     if(this.hasLocation(location)){
       return;
@@ -193,7 +239,7 @@ module.exports = class{
       this.findGroupByName(json.group).id,
       json.name
     );
-    for(const prop of ['endurance', 'currentEndurance', 'isDie']){
+    for(const prop of ['endurance', 'currentEndurance', 'isDie', 'ai']){
       if(prop in json){
         organ[prop] = json[prop];
       }
