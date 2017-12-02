@@ -42,6 +42,7 @@ $(function(){
             .replace(/(?:\r\n|\r|\n)/g, '<br />')
             .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
             .replace(/~~(.+?)~~/g, '<s>$1</s>')
+            .replace(/```(.+?)```/g, '<pre>$1</pre>')
         );
         $content.val('');
       });
