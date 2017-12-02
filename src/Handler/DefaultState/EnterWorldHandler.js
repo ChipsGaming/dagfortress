@@ -28,27 +28,19 @@ module.exports = class{
       return 'Мир с заданым идентификатором не найден';
     }
 
-    const playersCount = await this.playerRepository.getScalar(
-      this.playerRepository.select()
-        .inWorld(world)
-        .count()
-    );
+    const playersCount = await world.getPlayersCount(this.playerRepository);
     if(playersCount + 1 > this.config.game.world.maxPlayers){
       return 'Лимит свободных слотов для игроков в этом мире истек';
     }
 
-    const startLocation = await this.locationRepository.find({
-      world: world.id,
-      isStart: true
-    });
+    const startLocation = await world.getStartLocation(this.locationRepository);
     if(startLocation === null){
       return 'В данном мире нет стартовой локации. Вход невозможен';
     }
 
-    const playerGroup = await this.groupRepository.findWith(
-      this.groupRepository.select()
-        .forPlayer()
-        .inWorld(this.allianceRepository, world)
+    const playerGroup = await world.getPlayerGroup(
+      this.groupRepository,
+      this.allianceRepository
     );
     if(playerGroup === null){
       return 'В данном мире нет клана для игроков. Вход невозможен';

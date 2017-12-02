@@ -16,6 +16,21 @@ module.exports = class extends QueryBuilder{
 
   // Filters
   /**
+   * Локации, относящиеся к данному миру.
+   *
+   * @param {World|String} world Целевой мир.
+   *
+   * @return {LocationQueryBuilder}
+   */
+  inWorld(world){
+    world = world instanceof Object? world.id : world;
+
+    this.query.where(`${this.alias}.world`, world);
+
+    return this;
+  }
+
+  /**
    * Локации с заданым наименованием.
    *
    * @param {String} name Наименование целевых локаций.
@@ -24,6 +39,17 @@ module.exports = class extends QueryBuilder{
    */
   withName(name){
     this.query.where(`${this.alias}.name`, name);
+
+    return this;
+  }
+
+  /**
+   * Стартовая локация.
+   *
+   * @return {LocationQueryBuilder}
+   */
+  start(){
+    this.query.where(`${this.alias}.isStart`, true);
 
     return this;
   }

@@ -8,11 +8,6 @@ exports.up = function(knex, Promise) {
       .references('id').inTable('group')
       .onDelete('cascade')
       .onUpdate('cascade');
-    t.string('type')
-      .index()
-      .notNull();
-    t.string('target')
-      .notNull();
     t.string('name')
       .notNull();
     t.string('description')

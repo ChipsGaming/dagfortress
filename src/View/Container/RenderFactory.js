@@ -6,7 +6,7 @@ module.exports = class{
   async build(options, container){
     return new MustacheRender(
       Mustache,
-      new FileTemplateResolver('./view', '.mustache'),
+      new FileTemplateResolver(__dirname + '/../../../view', '.mustache'),
       await container.get('ViewHelpers').build({}, container)
     );
   }

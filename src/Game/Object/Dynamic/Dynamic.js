@@ -1,4 +1,7 @@
-const Object = require('../Object');
+const Object = require('../Object'),
+  WaitEvent = require('./Event/WaitEvent'),
+  MoveEvent = require('./Event/MoveEvent'),
+  AttacksEvent = require('./Event/AttacksEvent');
 
 module.exports = class extends Object{
   constructor(world, location, group, name){
@@ -11,6 +14,43 @@ module.exports = class extends Object{
 
   // Getters
   /**
+   * @param {OrganRepository} organRepository
+   *
+   * @return {Organ[]} Органы объекта.
+   */
+  async getOrgans(organRepository){
+    return organRepository.fetchAll(
+      organRepository.select()
+        .part(this)
+    );
+  }
+
+  /**
+   * @param {OrganRepository} organRepository
+   *
+   * @return {Organ[]} Ноги объекта.
+   */
+  async getLegs(organRepository){
+    return organRepository.fetchAll(
+      organRepository.select()
+        .part(this)
+        .legs()
+    );
+  }
+
+  /**
+   * @param {DynamicRepository} dynamicRepository
+   *
+   * @return {Dynamic[]} Органы объекта.
+   */
+  async getNearbyDynamics(dynamicRepository){
+    return dynamicRepository.fetchAll(
+      dynamicRepository.select()
+        .nearby(this)
+    );
+  }
+
+  /**
    * @param {AIContainer} container Контейнер искусственного интеллекта.
    *
    * @return {AI} Искусственный интеллект объекта.
@@ -22,18 +62,19 @@ module.exports = class extends Object{
 
   // Actions
   /**
+   * Пропуск хода.
+   */
+  wait(){
+    this.events.trigger(new WaitEvent(this));
+  }
+
+  /**
    * Переходит в соседнюю локацию.
    *
    * @param {Location} location Целевая локация.
    */
   move(location){
-    this.location = location.id;
-    this.currentEndurance--;
-
-    this.events.trigger('EnterLocation', {
-      dynamic: this,
-      location: location
-    });
+    this.events.trigger(new MoveEvent(this, location));
   }
 
   /**
@@ -56,32 +97,13 @@ module.exports = class extends Object{
     const power = weapon.mass / targetOrgan.mass * thisEnergy;
     damage = Math.floor(damage * power);
 
-    targetOrgan.damage += damage;
-    if(targetOrgan.damage >= 10){
-      targetOrgan.dynamic = null;
-
-      if(targetOrgan.isVital){
-        target.isDie = true;
-      }
-    }
-
-    this.currentEndurance--;
-
-    this.events.trigger('Attacks', {
-      attacking: this,
-      weapon: weapon,
-      target: target,
-      targetOrgan: targetOrgan,
-      damage: damage,
-      isMiss: damage === 0
-    });
-    target.events.trigger('Attacked', {
-      attaking: this,
-      weapon: weapon,
-      target: target,
-      targetOrgan: targetOrgan,
-      damage: damage,
-      isMiss: damage === 0
-    });
+    this.events.trigger(new AttacksEvent(
+      this,
+      weapon,
+      target,
+      targetOrgan,
+      damage,
+      damage === 0
+    ));
   }
 };

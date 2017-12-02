@@ -12,7 +12,6 @@ module.exports = class{
 
   async process(message, match){
     const worlds = await this.worldRepository.fetchAll();
-
     if(worlds.length == 0){
       return 'Нет созданых миров';
     }

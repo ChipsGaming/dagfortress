@@ -7,6 +7,7 @@
 		"migrate_up": "./node_modules/.bin/knex migrate:latest",
 		"migrate_down": "./node_modules/.bin/knex migrate:rollback",
 		"start": "nodejs src/index.js config/config.json",
+		"dev": "nodejs tests/http/server.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"repository": {
@@ -21,7 +22,7 @@
 	"homepage": "https://github.com/ChipsGaming/dagfortress#readme",
 	"dependencies": {
 		"discord.js": "^11.0",
-		"knex": "^0.14.1",
+		"knex": "^0.14.2",
 		"moment": "^2.0",
 		"mustache": "^2.0",
 		"sqlite3": "^3.0",
@@ -30,6 +31,7 @@
 	},
 	"devDependencies": {
 		"mocha": "^4.0",
-		"sinon": "^4.0"
+		"sinon": "^4.0",
+		"express": "^4.0"
 	}
 }

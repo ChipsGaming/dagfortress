@@ -14,7 +14,10 @@ describe('render', () => {
         name: 'user'
       });
 
-    assert.equal("Hello, user\n", await render.render(viewModel));
+    assert.equal(
+      "Hello, user\n",
+      await render.render(viewModel.templateName, viewModel.model)
+    );
   });
 
   it('Should render children', async () => {
@@ -28,6 +31,9 @@ describe('render', () => {
         })
       });
 
-    assert.equal("Hello, user\n\nParent content\n", await viewModel.render(render));
+    assert.equal(
+      "Hello, user\n\nParent content\n",
+      await viewModel.render(render)
+    );
   });
 });

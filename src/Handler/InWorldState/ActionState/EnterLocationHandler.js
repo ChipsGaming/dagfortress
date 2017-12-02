@@ -1,14 +1,16 @@
-const ViewModel = require('../../../View/ViewModel');
+const PresetViewModel = require('../../../View/PresetViewModel');
 
 module.exports = class{
   constructor(
     player,
+    globalEvents,
     locationRepository,
     roadRepository,
     dynamicRepository,
     playerRepository
   ){
     this.player = player;
+    this.globalEvents = globalEvents;
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
     this.dynamicRepository = dynamicRepository;
@@ -26,22 +28,8 @@ module.exports = class{
     }
 
     this.player.move(location);
-    await this.playerRepository.save(this.player);
+    this.globalEvents.merge(this.player.events);
 
-    const nearbyLocations = await this.locationRepository.fetchAll(
-      this.locationRepository.select()
-        .nearby(this.roadRepository, this.player.location)
-    );
-
-    const nearbyDynamics = await this.dynamicRepository.fetchAll(
-      this.dynamicRepository.select()
-        .nearby(this.player)
-    );
-
-    return new ViewModel('in_world_state/action_state/enter_location', {
-      location: location,
-      nearbyLocations: nearbyLocations,
-      nearbyDynamics: nearbyDynamics
-    });
+    return new PresetViewModel('Ваш ход зарегистрирован');
   }
 };

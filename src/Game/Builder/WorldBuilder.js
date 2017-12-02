@@ -6,19 +6,25 @@ const World = require('../World/World'),
   Organ = require('../Object/Dynamic/Organ'),
   Alliance = require('../Object/Alliance'),
   Group = require('../Object/Group'),
-  Task = require('../Object/Task');
+  Task = require('../Object/Task/Task'),
+  TaskCondition = require('../Object/Task/Condition'),
+  TaskAction = require('../Object/Task/Action'),
+  TaskReward = require('../Object/Task/Reward');
 
 module.exports = class{
   constructor(){
     this.world = null;
     this.chrono = null;
+    this.alliances = [];
+    this.groups = [];
+    this.tasks = [];
+    this.tasksConditions = [];
+    this.tasksActions = [];
+    this.tasksRewards = [];
     this.locations = [];
     this.roads = [];
     this.dynamics = [];
     this.organs = [];
-    this.alliances = [];
-    this.groups = [];
-    this.tasks = [];
   }
 
   static fromJson(json){
@@ -58,9 +64,30 @@ module.exports = class{
               taskJson = Object.assign(json.prototypes.task[taskJson.prototype], taskJson);
             }
 
-            worldBuilder.addTask(
-              worldBuilder.taskByJson(group, taskJson)
-            );
+            const task = worldBuilder.taskByJson(group, taskJson);
+            worldBuilder.addTask(task);
+
+            if('conditions' in taskJson){
+              for(const taskConditionJson of taskJson.conditions){
+                worldBuilder.addTaskCondition(
+                  worldBuilder.taskConditionByJson(task, taskConditionJson)
+                );
+              }
+            }
+            if('actions' in taskJson){
+              for(const taskActionJson of taskJson.actions){
+                worldBuilder.addTaskAction(
+                  worldBuilder.taskActionByJson(task, taskActionJson)
+                );
+              }
+            }
+            if('rewards' in taskJson){
+              for(const taskRewardJson of taskJson.rewards){
+                worldBuilder.addTaskReward(
+                  worldBuilder.taskRewardByJson(task, taskRewardJson)
+                );
+              }
+            }
           }
         }
       }
@@ -107,7 +134,57 @@ module.exports = class{
     return worldBuilder;
   }
 
+  assign(object, json, properties){
+    for(const prop of properties){
+      if(prop in json){
+        object[prop] = json[prop];
+      }
+    }
+
+    return object;
+  }
+
   // Getters
+  hasAlliance(alliance){
+    return this.alliances.indexOf(alliance) !== -1;
+  }
+
+  hasGroup(group){
+    return this.groups.indexOf(group) !== -1;
+  }
+
+  findGroupByName(name){
+    for(const group of this.groups){
+      if(group.name == name){
+        return group;
+      }
+    }
+  }
+
+  findGroupPlayer(){
+    for(const group of this.groups){
+      if(group.isPlayer){
+        return group;
+      }
+    }
+  }
+
+  hasTask(task){
+    return this.tasks.indexOf(task) !== -1;
+  }
+
+  hasTaskCondition(taskCondition){
+    return this.tasksConditions.indexOf(taskCondition) !== -1;
+  }
+
+  hasTaskAction(taskAction){
+    return this.tasksActions.indexOf(taskAction) !== -1;
+  }
+
+  hasTaskReward(taskReward){
+    return this.tasksRewards.indexOf(taskReward) !== -1;
+  }
+
   hasLocation(location){
     return this.locations.indexOf(location) !== -1;
   }
@@ -140,136 +217,15 @@ module.exports = class{
     return this.organs.indexOf(organ) !== -1;
   }
 
-  hasAlliance(alliance){
-    return this.alliances.indexOf(alliance) !== -1;
-  }
-
-  hasGroup(group){
-    return this.groups.indexOf(group) !== -1;
-  }
-
-  findGroupByName(name){
-    for(const group of this.groups){
-      if(group.name == name){
-        return group;
-      }
-    }
-  }
-
-  findGroupPlayer(){
-    for(const group of this.groups){
-      if(group.isPlayer){
-        return group;
-      }
-    }
-  }
-
-  hasTask(task){
-    return this.tasks.indexOf(task) !== -1;
-  }
-
   // Actions
   chronoByJson(world, json){
     world = world instanceof Object? world.id : world;
 
-    const chrono = new Chrono(world);
-    for(const prop of ['day']){
-      if(prop in json){
-        chrono[prop] = json[prop];
-      }
-    }
-
-    return chrono;
-  }
-
-  addLocation(location){
-    if(this.hasLocation(location)){
-      return;
-    }
-
-    this.locations.push(location);
-  }
-
-  locationByJson(world, json){
-    world = world instanceof Object? world.id : world;
-
-    const location = new Location(
-      world,
-      json.name,
-      json.description
+    return this.assign(
+      new Chrono(world),
+      json,
+      ['day']
     );
-    for(const prop of ['isStart']){
-      if(prop in json){
-        location[prop] = json[prop];
-      }
-    }
-
-    return location;
-  }
-
-  addRoad(road){
-    if(this.hasRoad(road)){
-      return;
-    }
-
-    this.roads.push(road);
-  }
-
-  createRoad(locationStart, locationEnd){
-    locationStart = locationStart instanceof Object? locationStart.id : locationStart;
-    locationEnd = locationEnd instanceof Object? locationEnd.id : locationEnd;
-    return new Road(locationStart, locationEnd);
-  }
-
-  addDynamic(dynamic){
-    if(this.hasDynamic(dynamic)){
-      return;
-    }
-
-    this.dynamics.push(dynamic);
-  }
-
-  dynamicByJson(world, location, json){
-    world = world instanceof Object? world.id : world;
-    location = location instanceof Object? location.id : location;
-
-    const dynamic = new Dynamic(
-      world,
-      location,
-      this.findGroupByName(json.group).id,
-      json.name
-    );
-    for(const prop of ['endurance', 'currentEndurance', 'isDie', 'ai']){
-      if(prop in json){
-        organ[prop] = json[prop];
-      }
-    }
-
-    return dynamic;
-  }
-
-  addOrgan(organ){
-    if(this.hasOrgan(organ)){
-      return;
-    }
-
-    this.organs.push(organ);
-  }
-
-  organByJson(dynamic, json){
-    dynamic = dynamic instanceof Object? dynamic.id : dynamic;
-
-    const organ = new Organ(
-      dynamic,
-      json.name
-    );
-    for(const prop of ['damage', 'isVital', 'isWeapon', 'isLegs', 'isKeeping', 'mass']){
-      if(prop in json){
-        organ[prop] = json[prop];
-      }
-    }
-
-    return organ;
   }
 
   addAlliance(alliance){
@@ -300,17 +256,11 @@ module.exports = class{
   groupByJson(alliance, json){
     alliance = alliance instanceof Object? alliance.id : alliance;
 
-    const group = new Group(
-      alliance,
-      json.name
+    return this.assign(
+      new Group(alliance, json.name),
+      json,
+      ['isPlayer']
     );
-    for(const prop of ['isPlayer']){
-      if(prop in json){
-        group[prop] = json[prop];
-      }
-    }
-
-    return group;
   }
 
   addTask(task){
@@ -324,19 +274,133 @@ module.exports = class{
   taskByJson(group, json){
     group = group instanceof Object? group.id : group;
 
-    const task = new Task(
-      group,
-      json.type,
-      json.target,
-      json.name,
-      json.description
+    return this.assign(
+      new Task(group, json.name, json.description),
+      json,
+      ['priority', 'isComplete']
     );
-    for(const prop of ['priority', 'isComplete']){
-      if(prop in json){
-        task[prop] = json[prop];
-      }
+  }
+
+  addTaskCondition(taskCondition){
+    if(this.hasTaskCondition(taskCondition)){
+      return;
     }
 
-    return task;
+    this.tasksConditions.push(taskCondition);
+  }
+
+  taskConditionByJson(task, json){
+    task = task instanceof Object? task.id : task;
+
+    return this.assign(
+      new TaskCondition(task, json.type),
+      json,
+      ['target']
+    );
+  }
+
+  addTaskAction(taskAction){
+    if(this.hasTaskAction(taskAction)){
+      return;
+    }
+
+    this.tasksActions.push(taskAction);
+  }
+
+  taskActionByJson(task, json){
+    task = task instanceof Object? task.id : task;
+
+    return this.assign(
+      new TaskAction(task, json.type),
+      json,
+      ['target']
+    );
+  }
+
+  addTaskReward(taskReward){
+    if(this.hasTaskReward(taskReward)){
+      return;
+    }
+
+    this.tasksRewards.push(taskReward);
+  }
+
+  taskRewardByJson(task, json){
+    task = task instanceof Object? task.id : task;
+
+    return this.assign(
+      new TaskReward(task, json.type),
+      json,
+      ['target']
+    );
+  }
+
+  addLocation(location){
+    if(this.hasLocation(location)){
+      return;
+    }
+
+    this.locations.push(location);
+  }
+
+  locationByJson(world, json){
+    world = world instanceof Object? world.id : world;
+
+    return this.assign(
+      new Location(world, json.name, json.description),
+      json,
+      ['isStart']
+    );
+  }
+
+  addRoad(road){
+    if(this.hasRoad(road)){
+      return;
+    }
+
+    this.roads.push(road);
+  }
+
+  createRoad(locationStart, locationEnd){
+    locationStart = locationStart instanceof Object? locationStart.id : locationStart;
+    locationEnd = locationEnd instanceof Object? locationEnd.id : locationEnd;
+    return new Road(locationStart, locationEnd);
+  }
+
+  addDynamic(dynamic){
+    if(this.hasDynamic(dynamic)){
+      return;
+    }
+
+    this.dynamics.push(dynamic);
+  }
+
+  dynamicByJson(world, location, json){
+    world = world instanceof Object? world.id : world;
+    location = location instanceof Object? location.id : location;
+
+    return this.assign(
+      new Dynamic(world, location, this.findGroupByName(json.group).id, json.name),
+      json,
+      ['endurance', 'currentEndurance', 'isDie', 'ai']
+    );
+  }
+
+  addOrgan(organ){
+    if(this.hasOrgan(organ)){
+      return;
+    }
+
+    this.organs.push(organ);
+  }
+
+  organByJson(dynamic, json){
+    dynamic = dynamic instanceof Object? dynamic.id : dynamic;
+
+    return this.assign(
+      new Organ(dynamic, json.name),
+      json,
+      ['damage', 'isVital', 'isWeapon', 'isLegs', 'isKeeping', 'mass']
+    );
   }
 };

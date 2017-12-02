@@ -1,9 +1,8 @@
-{{#attacks}}
 {{#data.isMiss}}
-{{data.attacking.name}} промазал {{data.weapon.name}} по {{data.targetOrgan.name}} {{data.target.name}}
+**{{publisher.name}}** промазал {{data.weapon.name}} по {{data.targetOrgan.name}} {{data.target.name}}
 {{/data.isMiss}}
 {{^data.isMiss}}
-{{data.attacking.name}} бьет {{data.weapon.name}} по {{data.targetOrgan.name}} {{data.target.name}}
+**{{publisher.name}}** бьет {{data.weapon.name}} по {{data.targetOrgan.name}} {{data.target.name}}
 {{/data.isMiss}}
 {{^data.targetOrgan.dynamic}}
 	{{data.targetOrgan.name}} {{data.target.name}} оторвало
@@ -11,5 +10,3 @@
 {{#data.target.isDie}}
 	{{data.target.name}} больше не дышит
 {{/data.target.isDie}}
-
-{{/attacks}}

@@ -6,11 +6,11 @@ module.exports = class{
 
   async render(render){
     for(const child in this.model){
-      if(this.model[child] instanceof this.constructor){
-        this.model[child] = await render.render(this.model[child]);
+      if(typeof this.model[child] == 'object' && 'render' in this.model[child]){
+        this.model[child] = await this.model[child].render(render);
       }
     }
 
-    return render.render(this);
+    return render.render(this.templateName, this.model);
   }
 };

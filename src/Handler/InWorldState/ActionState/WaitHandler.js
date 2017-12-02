@@ -1,11 +1,13 @@
-const ViewModel = require('../../../View/ViewModel');
+const PresetViewModel = require('../../../View/PresetViewModel');
 
 module.exports = class{
   constructor(
     player,
+    globalEvents,
     playerRepository
   ){
     this.player = player;
+    this.globalEvents = globalEvents;
     this.playerRepository = playerRepository;
   }
 
@@ -15,13 +17,9 @@ module.exports = class{
       count = 1;
     }
     
-    while(this.player.currentEndurance > 0 && count > 0){
-      this.player.currentEndurance--;
-      count--;
-    }
+    this.player.wait(count);
+    this.globalEvents.merge(this.player.events);
 
-    await this.playerRepository.save(this.player);
-
-    return 'Вы пропустили ход';
+    return new PresetViewModel('Ваш ход зарегистрирован');
   }
 };

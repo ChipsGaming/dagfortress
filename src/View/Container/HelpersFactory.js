@@ -6,7 +6,7 @@ module.exports = class{
   async build(options, container){
     const tl = new TranslateHelper(
       JSON.parse(
-        await Util.promisify(fs.readFile)('./locale/ru_RU.json', 'utf8')
+        await Util.promisify(fs.readFile)(__dirname + '/../../../locale/ru_RU.json', 'utf8')
       )
     );
 

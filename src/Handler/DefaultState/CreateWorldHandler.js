@@ -13,6 +13,9 @@ module.exports = class{
     allianceRepository,
     groupRepository,
     taskRepository,
+    taskConditionRepository,
+    taskActionRepository,
+    taskRewardRepository,
     locationRepository,
     roadRepository,
     dynamicRepository,
@@ -26,6 +29,9 @@ module.exports = class{
     this.allianceRepository = allianceRepository;
     this.groupRepository = groupRepository;
     this.taskRepository = taskRepository;
+    this.taskConditionRepository = taskConditionRepository;
+    this.taskActionRepository = taskActionRepository;
+    this.taskRewardRepository = taskRewardRepository;
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
     this.dynamicRepository = dynamicRepository;
@@ -63,6 +69,15 @@ module.exports = class{
     }
     for(const task of worldBuilder.tasks){
       await this.taskRepository.save(task);
+    }
+    for(const taskCondition of worldBuilder.tasksConditions){
+      await this.taskConditionRepository.save(taskCondition);
+    }
+    for(const taskAction of worldBuilder.tasksActions){
+      await this.taskActionRepository.save(taskAction);
+    }
+    for(const taskReward of worldBuilder.tasksRewards){
+      await this.taskRewardRepository.save(taskReward);
     }
     for(const location of worldBuilder.locations){
       await this.locationRepository.save(location);

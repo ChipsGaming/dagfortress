@@ -1,4 +1,4 @@
-const EntityRepository = require('../../../Storage/EntityRepository');
+const EntityRepository = require('../../../../Storage/EntityRepository');
 const QueryBuilder = require('./TaskQueryBuilder');
 const Entity = require('../Task');
 
@@ -17,8 +17,6 @@ module.exports = class extends EntityRepository{
     return {
       id: entity.id,
       group: entity.group,
-      type: entity.type,
-      target: entity.target,
       name: entity.name,
       description: entity.description,
       priority: entity.priority,
@@ -32,8 +30,6 @@ module.exports = class extends EntityRepository{
 
     entity.id = data.id;
     entity.group = data.group;
-    entity.type = data.type;
-    entity.target = data.target;
     entity.name = data.name;
     entity.description = data.description;
     entity.priority = data.priority;

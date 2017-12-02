@@ -10,19 +10,8 @@ module.exports = class{
   }
 
   async process(message, match){
-    const actualTasks = await this.taskRepository.fetchAll(
-      this.taskRepository.select()
-        .forGroup(this.player.group)
-        .actual()
-        .orderByPriority()
-    );
-
-    const completedTasks = await this.taskRepository.fetchAll(
-      this.taskRepository.select()
-        .forGroup(this.player.group)
-        .completed()
-        .orderByPriority()
-    );
+    const actualTasks = await this.player.getActualTasks(this.taskRepository),
+      completedTasks = await this.player.getCompletedTasks(this.taskRepository);
 
     return new ViewModel('in_world_state/task_list', {
       actualTasks: actualTasks,

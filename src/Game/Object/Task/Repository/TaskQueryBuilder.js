@@ -1,6 +1,19 @@
-const QueryBuilder = require('../../../Storage/QueryBuilder');
+const QueryBuilder = require('../../../../Storage/QueryBuilder'),
+  GroupQueryBuilder = require('../../Repository/GroupQueryBuilder');
 
 module.exports = class extends QueryBuilder{
+  // Joins
+  joinGroup(groupRepository, alias = 'group'){
+    this.query
+      .innerJoin(
+        `${groupRepository.constructor.tableName} AS ${alias}`,
+        `${alias}.id`,
+        `${this.alias}.group`
+      );
+
+    return new GroupQueryBuilder(this.query, alias, this);
+  }
+
   // Filters
   /**
    * Задачи данной группы.

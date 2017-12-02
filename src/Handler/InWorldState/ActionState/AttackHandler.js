@@ -1,15 +1,17 @@
-const RegexRoute = require('../../../Router/RegexRoute');
-const ViewModel = require('../../../View/ViewModel');
+const RegexRoute = require('../../../Router/RegexRoute'),
+  PresetViewModel = require('../../../View/PresetViewModel');
 
 module.exports = class{
   constructor(
     player,
+    globalEvents,
     aiContainer,
     dynamicRepository,
     playerRepository,
     organRepository
   ){
     this.player = player;
+    this.globalEvents = globalEvents;
     this.aiContainer = aiContainer;
     this.dynamicRepository = dynamicRepository;
     this.playerRepository = playerRepository;
@@ -55,12 +57,13 @@ module.exports = class{
       target,
       targetOrgan
     );
+    this.globalEvents.merge(this.player.events);
 
     const targetIsPlayer = await this.playerRepository.find('player.id', target.id) !== null;
     if(target.currentEndurance > 0 && !targetIsPlayer){
       const ai = await target.getAI(this.aiContainer),
-        weapon = await ai.attack.getWeapon(target),
-        targetOrgan = await ai.attack.getTargetOrgan(target);
+        weapon = await ai.attack.getWeapon(this.player),
+        targetOrgan = await ai.attack.getTargetOrgan(this.player);
 
       if(weapon !== null && targetOrgan !== null){
         target.attack(
@@ -68,38 +71,13 @@ module.exports = class{
           this.player,
           targetOrgan
         );
+        this.globalEvents.merge(target.events);
       }
     }
 
-    const attacks = this.player.events.find('Attacks')
-      .concat(target.events.find('Attacks'));
+    const attacks = this.player.events.findByName('Attacks')
+      .concat(target.events.findByName('Attacks'));
 
-    for(const attack of attacks){
-      const target = attack.data.target,
-        targetOrgan = attack.data.targetOrgan;
-
-      if(targetOrgan.dynamic === null){
-        await this.organRepository.remove(targetOrgan);
-      
-        const legsCount = await this.organRepository.getScalar(
-          this.organRepository.select()
-            .part(target)
-            .legs()
-            .count()
-        );
-        if(legsCount < 1){
-          target.endurance = 0;
-        }
-      }
-      else{
-        await this.organRepository.save(targetOrgan);
-      }
-
-      await this.dynamicRepository.save(target);
-    }
-
-    return new ViewModel('in_world_state/action_state/attack', {
-      attacks: attacks
-    });
+    return new PresetViewModel('Ваш ход зарегистрирован');
   }
 };

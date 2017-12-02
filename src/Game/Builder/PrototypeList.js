@@ -15,7 +15,7 @@ module.exports = class{
    * @return {Boolean} true - если прототип существует.
    */
   has(name){
-    return fs.existsSync(`${this.prototypesDir}/${name}.json`);
+    return fs.existsSync(`${this.prototypesDir}/${name}.js`);
   }
 
   /**
@@ -28,8 +28,6 @@ module.exports = class{
       return null;
     }
 
-    return JSON.parse(
-      await Util.promisify(fs.readFile)(`${this.prototypesDir}/${name}.json`, 'utf8')
-    );
+    return require(`${this.prototypesDir}/${name}.js`);
   }
 };

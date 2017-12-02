@@ -1,12 +1,10 @@
 module.exports = class{
   constructor(
     dynamic,
-    taskRepository,
-    taskContainer
+    taskRepository
   ){
     this.dynamic = dynamic;
     this.taskRepository = taskRepository;
-    this.taskContainer = taskContainer;
   }
 
   /**
@@ -21,24 +19,5 @@ module.exports = class{
         .actual()
         .orderByPriority()
     );
-  }
-
-  /**
-   * Предоставляет способ выполнения задачи.
-   *
-   * @return {TaskPerformer} Алгоритм выполнения задачи.
-   */
-  async getTaskPerformer(task){
-    return this.taskContainer.get(task.type).build({}, this.taskContainer);
-  } 
-
-  /**
-   * Выполняет задачу.
-   *
-   * @param {TaskPerformer} performer Способ выполнения задачи.
-   * @param {Task} task Выполняемая задача.
-   */
-  async performTask(performer, task){
-    await performer.run(this.dynamic, task);
   }
 };

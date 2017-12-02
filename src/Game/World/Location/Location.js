@@ -10,9 +10,23 @@ module.exports = class{
     this.added = null;
   }
 
+  // Getters
   setStart(isStart){
     this.isStart = isStart;
 
     return this;
+  }
+
+  /**
+   * @param {LocationRepository} locationRepository
+   * @param {RoadRepository} roadRepository
+   *
+   * @return {Location[]} Соседние локации.
+   */
+  async getNearbyLocations(locationRepository, roadRepository){
+    return locationRepository.fetchAll(
+      locationRepository.select()
+        .nearby(roadRepository, this.id)
+    );
   }
 };

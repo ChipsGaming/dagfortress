@@ -11,37 +11,36 @@ module.exports = class{
     this.dynamicRepository = dynamicRepository;
   }
 
-  async check(task){
-    return false;
-  }
+  async run(dynamic, action, task, next){
+    const group = await dynamic.getGroup(this.groupRepository);
+    if(group === null){
+      return next(dynamic, action, task);
+    }
 
-  async run(dynamic, task){
-    const target = await this.dynamicRepository.findWith(
+    const enemy = await this.dynamicRepository.findWith(
       this.dynamicRepository.select()
         .inLocation(dynamic.location)
         .alive()
         .enemies(
-          await this.groupRepository.find('id', dynamic.group),
+          group.alliance,
           this.groupRepository,
           this.allianceRepository
         )
     );
-    if(target === null){
-      dynamic.currentEndurance = 0;
+    if(enemy === null){
+      return next(dynamic, action, task);
     }
 
     const ai = await dynamic.getAI(this.aiContainer),
-      weapon = await ai.attack.getWeapon(target),
-      targetOrgan = await ai.attack.getTargetOrgan(target);
-
+      weapon = await ai.attack.getWeapon(enemy),
+      targetOrgan = await ai.attack.getTargetOrgan(enemy);
     if(weapon === null || targetOrgan === null){
-      dynamic.currentEndurance = 0;
-      return;
+      return next(dynamic, action, task);
     }
 
     dynamic.attack(
       weapon,
-      target,
+      enemy,
       targetOrgan
     );
   }
