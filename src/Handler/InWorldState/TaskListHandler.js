@@ -2,16 +2,14 @@ const ViewModel = require('../../View/ViewModel');
 
 module.exports = class{
   constructor(
-    player,
-    taskRepository
+    player
   ){
     this.player = player;
-    this.taskRepository = taskRepository;
   }
 
   async process(message, match){
-    const actualTasks = await this.player.getActualTasks(this.taskRepository),
-      completedTasks = await this.player.getCompletedTasks(this.taskRepository);
+    const actualTasks = await this.player.getActualTasks(),
+      completedTasks = await this.player.getCompletedTasks();
 
     return new ViewModel('in_world_state/task_list', {
       actualTasks: actualTasks,

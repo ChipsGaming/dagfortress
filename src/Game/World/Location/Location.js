@@ -11,22 +11,39 @@ module.exports = class{
   }
 
   // Getters
+  /**
+   * @return {World} Мир, к которому относится локация.
+   */
+  async getWorld(){
+    return this.lazyLoader.loadWorld(this.world);
+  }
+  
+  /**
+   * @return {Location[]} Соседние локации.
+   */
+  async getNearbyLocations(){
+    return this.lazyLoader.loadNearbyLocations(this.id);
+  }
+
+  /**
+   * @return {Dynamic[]} Динамические объекты, присутствующие в данной локации.
+   */
+  async getDynamics(){
+    return this.lazyLoader.loadDynamics(this.id);
+  }
+
+  /**
+   * @return {Dynamic[]} Живые динамические объекты, присутствующие в данной 
+   * локации.
+   */
+  async getAliveDynamics(){
+    return this.lazyLoader.loadAliveDynamics(this.id);
+  }
+
+  // Actions
   setStart(isStart){
     this.isStart = isStart;
 
     return this;
-  }
-
-  /**
-   * @param {LocationRepository} locationRepository
-   * @param {RoadRepository} roadRepository
-   *
-   * @return {Location[]} Соседние локации.
-   */
-  async getNearbyLocations(locationRepository, roadRepository){
-    return locationRepository.fetchAll(
-      locationRepository.select()
-        .nearby(roadRepository, this.id)
-    );
   }
 };

@@ -8,4 +8,12 @@ module.exports = class{
     this.isPlayer = false;
     this.added = null;
   }
+
+  // Getters
+  /**
+   * @return {Alliance} Альянс, в которую входит группа.
+   */
+  async getAlliance(){
+    return this.lazyLoader.loadAlliance(this.alliance);
+  }
 };

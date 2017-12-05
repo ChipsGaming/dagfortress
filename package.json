@@ -6,7 +6,7 @@
 	"scripts": {
 		"migrate_up": "./node_modules/.bin/knex migrate:latest",
 		"migrate_down": "./node_modules/.bin/knex migrate:rollback",
-		"dev": "nodejs tests/http/server.js",
+		"dev": "nodejs --trace-warnings tests/http/server.js",
 		"prod": "nodejs src/index.js config/config.json",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

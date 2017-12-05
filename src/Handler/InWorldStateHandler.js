@@ -1,7 +1,8 @@
-const RouteHandler = require('./RouteHandler');
-const NullRoute = require('../Router/NullRoute');
-const RegexRoute = require('../Router/RegexRoute');
-const QueueRoute = require('../Router/QueueRoute');
+const RouteHandler = require('./RouteHandler'),
+  NullRoute = require('../Router/NullRoute'),
+  RegexRoute = require('../Router/RegexRoute'),
+  QueueRoute = require('../Router/QueueRoute'),
+  PresetViewModel = require('../View/PresetViewModel');
 
 module.exports = class extends RouteHandler{
   /**
@@ -47,6 +48,14 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/ExitWorldHandler',
         player: this.player
       }),
+      new RegexRoute(/^k(?:ick)? (.+)$/i, ['target'], {
+        middleware: 'InWorldState/CreatorState/KickHandler',
+        player: this.player
+      }),
+      new RegexRoute(/^r(?:eset)?$/i, [], {
+        middleware: 'InWorldState/CreatorState/ResetHandler',
+        player: this.player
+      }),
       new NullRoute({
         middleware: 'NullHandler'
       })
@@ -55,7 +64,7 @@ module.exports = class extends RouteHandler{
 
   async process(message){
     if(this.player.isDie){
-      return 'Вы мертвы';
+      return new PresetViewModel('Вы мертвы');
     }
     
     return await super.process(message);

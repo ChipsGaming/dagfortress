@@ -9,6 +9,8 @@ exports.up = function(knex, Promise) {
     t.string('discordUser')
       .notNull()
       .index();
+    t.boolean('isCreator')
+      .notNull();
   });
 };
 

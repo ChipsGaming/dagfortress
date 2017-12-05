@@ -33,16 +33,13 @@ module.exports = class{
     }
 
     let response = await handler.process(message);
-
-    if(typeof response == 'object'){
-      response = await response.render(
-        await this.container.get('Render').build({}, this.container)
-      );
-    }
-
-    if(response === undefined){
+    if(response === undefined || response === null){
       return;
     }
+
+    response = await response.render(
+      await this.container.get('Render').build({}, this.container)
+    );
 
     message.reply(response);
   }

@@ -1,8 +1,8 @@
-const PingHandler = require('../PingHandler');
+const Handler = require('../PingHandler');
 
 module.exports = class{
   async build(options, container){
-    return new PingHandler(
+    return new Handler(
       options.player
     );
   }

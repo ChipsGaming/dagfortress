@@ -11,136 +11,72 @@ module.exports = class{
 
   // Getters
   /**
-   * @param {ChronoRepository} chronoRepository
-   *
    * @return {Chrono} Хронология мира.
    */
-  async getChrono(chronoRepository){
-    return chronoRepository.findWith(
-      chronoRepository.select()
-        .inWorld(this)
-    );
+  async getChrono(){
+    return this.lazyLoader.loadChrono(this.id);
   }
 
   /**
-   * @param {LocationRepository} locationRepository
-   *
    * @return {Location} Стартовая локация мира.
    */
-  async getStartLocation(locationRepository){
-    return locationRepository.findWith(
-      locationRepository.select()
-        .inWorld(this)
-        .start()
-    );
+  async getStartLocation(){
+    return this.lazyLoader.loadStartLocation(this.id);
   }
 
   /**
-   * @param {DynamicRepository} dynamicRepository
-   *
    * @return {Dynamic[]} Динамические объекты мира.
    */
-  async getDynamics(dynamicRepository){
-    return dynamicRepository.fetchAll(
-      dynamicRepository.select()
-        .inWorld(this)
-    );
+  async getDynamics(){
+    return this.lazyLoader.loadDynamics(this.id);
   }
 
   /**
-   * @param {DynamicRepository} dynamicRepository
-   *
    * @return {Dynamic[]} Динамические, живые объекты мира.
    */
-  async getAliveDynamics(dynamicRepository){
-    return dynamicRepository.fetchAll(
-      dynamicRepository.select()
-        .inWorld(this)
-        .alive()
-    );
+  async getAliveDynamics(){
+    return this.lazyLoader.loadAliveDynamics(this.id);
   }
 
   /**
-   * @param {PlayerRepository} playerRepository
-   *
    * @return {Player[]} Игроки данного мира.
    */
-  async getPlayers(playerRepository){
-    return playerRepository.fetchAll(
-      playerRepository.select()
-        .inWorld(this)
-    );
+  async getPlayers(){
+    return this.lazyLoader.loadPlayers(this.id);
   }
 
   /**
-   * @param {PlayerRepository} playerRepository
-   *
    * @return {Integer} Количество игроков в данном мире.
    */
-  async getPlayersCount(playerRepository){
-    return playerRepository.getScalar(
-      playerRepository.select()
-        .inWorld(this)
-        .count()
-    );
+  async getPlayersCount(){
+    return this.lazyLoader.loadPlayersCount(this.id);
   }
 
   /**
-   * @param {PlayerRepository} playerRepository
-   *
    * @return {Integer} Количество живых игроков в данном мире.
    */
-  async getAlivePlayersCount(playerRepository){
-    return playerRepository.getScalar(
-      playerRepository.select()
-        .inWorld(this)
-        .alive()
-        .count()
-    );
+  async getAlivePlayersCount(){
+    return this.lazyLoader.loadAlivePlayersCount(this.id);
   }
 
   /**
-   * @param {PlayerRepository} playerRepository
-   *
    * @return {Integer} Количество активных игроков в данном мире.
    */
-  async getActivePlayersCount(playerRepository){
-    return playerRepository.getScalar(
-      playerRepository.select()
-        .inWorld(this)
-        .alive()
-        .active()
-        .count()
-    );
+  async getActivePlayersCount(){
+    return this.lazyLoader.loadActivePlayersCount(this.id);
   }
 
   /**
-   * @param {GroupRepository} groupRepository
-   * @param {AllianceRepository} allianceRepository
-   *
    * @return {Group} Группа для игроков данного мира.
    */
-  async getPlayerGroup(groupRepository, allianceRepository){
-    return groupRepository.findWith(
-      groupRepository.select()
-        .inWorld(allianceRepository, this)
-        .forPlayer()
-    );
+  async getPlayerGroup(){
+    return this.lazyLoader.loadPlayerGroup(this.id);
   }
 
   /**
-   * @param {TaskRepository} taskRepository
-   * @param {AllianceRepository} allianceRepository
-   * @param {GroupRepository} groupRepository
-   *
    * @return {Task[]} Актуальные задачи в этом мире.
    */
-  async getActualTasks(taskRepository, allianceRepository, groupRepository){
-    return taskRepository.fetchAll(
-      taskRepository.select()
-        .actual()
-        .joinGroup(groupRepository)
-        .inWorld(allianceRepository, this)
-    );
+  async getActualTasks(){
+    return this.lazyLoader.loadActualTasks(this.id);
   }
 };

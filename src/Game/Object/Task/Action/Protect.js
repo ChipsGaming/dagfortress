@@ -1,10 +1,12 @@
 module.exports = class{
   constructor(
+    globalEvents,
     aiContainer,
     allianceRepository,
     groupRepository,
     dynamicRepository
   ){
+    this.globalEvents = globalEvents;
     this.aiContainer = aiContainer;
     this.allianceRepository = allianceRepository;
     this.groupRepository = groupRepository;
@@ -39,6 +41,7 @@ module.exports = class{
     }
 
     dynamic.attack(
+      this.globalEvents,
       weapon,
       enemy,
       targetOrgan

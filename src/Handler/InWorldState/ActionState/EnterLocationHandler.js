@@ -5,16 +5,12 @@ module.exports = class{
     player,
     globalEvents,
     locationRepository,
-    roadRepository,
-    dynamicRepository,
-    playerRepository
+    roadRepository
   ){
     this.player = player;
     this.globalEvents = globalEvents;
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
-    this.dynamicRepository = dynamicRepository;
-    this.playerRepository = playerRepository;
   }
 
   async process(message, match){
@@ -24,11 +20,10 @@ module.exports = class{
         .nearby(this.roadRepository, this.player.location)
     );
     if(location === null){
-      return 'Вы не видите этой локации';
+      return new PresetViewModel('Вы не видите этой локации');
     }
 
-    this.player.move(location);
-    this.globalEvents.merge(this.player.events);
+    this.player.move(this.globalEvents, location);
 
     return new PresetViewModel('Ваш ход зарегистрирован');
   }

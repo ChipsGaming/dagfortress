@@ -1,15 +1,10 @@
-const ViewLocationHandler = require('../ViewLocationHandler');
+const Handler = require('../ViewLocationHandler');
 
 module.exports = class{
   async build(options, container){
-    return new ViewLocationHandler(
+    return new Handler(
       options.player,
-      await container.get('WorldRepository').build({}, container),
-      await container.get('ChronoRepository').build({}, container),
-      await container.get('LocationRepository').build({}, container),
-      await container.get('RoadRepository').build({}, container),
-      await container.get('DynamicRepository').build({}, container),
-      await container.get('PlayerRepository').build({}, container)
+      await container.get('WorldRepository').build({}, container)
     );
   }
 };

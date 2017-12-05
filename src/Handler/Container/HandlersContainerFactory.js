@@ -16,7 +16,7 @@ module.exports = class{
 
       // InWorldState
       'InWorldState/PingHandler': new (require('../InWorldState/Container/PingHandlerFactory')),
-      'InWorldState/HelpHandler': new SharingFactory(new InvokableFactory(require('../InWorldState/HelpHandler'))),
+      'InWorldState/HelpHandler': new (require('../InWorldState/Container/HelpHandlerFactory')),
       'InWorldState/TaskListHandler': new (require('../InWorldState/Container/TaskListHandlerFactory')),
       'InWorldState/ExitWorldHandler': new (require('../InWorldState/Container/ExitWorldHandlerFactory')),
       'InWorldState/ViewLocationHandler': new (require('../InWorldState/Container/ViewLocationHandlerFactory')),
@@ -26,7 +26,10 @@ module.exports = class{
       'InWorldState/ActionHandler': new (require('../InWorldState/Container/ActionHandlerFactory')),
       'InWorldState/ActionState/WaitHandler': new (require('../InWorldState/ActionState/Container/WaitHandlerFactory')),
       'InWorldState/ActionState/EnterLocationHandler': new (require('../InWorldState/ActionState/Container/EnterLocationHandlerFactory')),
-      'InWorldState/ActionState/AttackHandler': new (require('../InWorldState/ActionState/Container/AttackHandlerFactory'))
+      'InWorldState/ActionState/AttackHandler': new (require('../InWorldState/ActionState/Container/AttackHandlerFactory')),
+      // --CreatorState
+      'InWorldState/CreatorState/KickHandler': new (require('../InWorldState/CreatorState/Container/KickHandlerFactory')),
+      'InWorldState/CreatorState/ResetHandler': new (require('../InWorldState/CreatorState/Container/ResetHandlerFactory'))
     }, container);
   }
 };

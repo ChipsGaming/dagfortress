@@ -1,5 +1,4 @@
 const Uuid = require('uuid/v4');
-const EventJournal = require('../../Event/EventJournal');
 
 module.exports = class{
   constructor(world, location, group, name){
@@ -10,53 +9,42 @@ module.exports = class{
     this.name = name;
     this.added = null;
 
-    this.events = new EventJournal;
+    this.lazyLoader = null;
   }
 
   // Getters
   /**
-   * @param {LocationRepository} locationRepository
-   *
+   * @return {World} Мир, которому принадлежит объект.
+   */
+  async getWorld(){
+    return this.lazyLoader.loadWorld(this.world);
+  }
+
+  /**
    * @return {Location} Текущая локация объекта.
    */
-  async getCurrentLocation(locationRepository){
-    return locationRepository.find('id', this.location);
+  async getCurrentLocation(){
+    return this.lazyLoader.loadLocation(this.location);
   }
 
   /**
-   * @param {TaskRepository} taskRepository
-   *
    * @return {Task[]} Актуальные задачи.
    */
-  async getActualTasks(taskRepository){
-    return taskRepository.fetchAll(
-      taskRepository.select()
-        .forGroup(this.group)
-        .actual()
-        .orderByPriority()
-    );
+  async getActualTasks(){
+    return this.lazyLoader.loadActualTasks(this.group);
   }
 
   /**
-   * @param {TaskRepository} taskRepository
-   *
    * @return {Task[]} Завершенные задачи.
    */
-  async getCompletedTasks(taskRepository){
-    return taskRepository.fetchAll(
-      taskRepository.select()
-        .forGroup(this.group)
-        .completed()
-        .orderByPriority()
-    );
+  async getCompletedTasks(){
+    return this.lazyLoader.loadCompletedTasks(this.group);
   }
 
   /**
-   * @param {GroupRepository} groupRepository
-   *
    * @return {Group} Группа.
    */
-  async getGroup(groupRepository){
-    return groupRepository.find('id', this.group);
+  async getGroup(){
+    return this.lazyLoader.loadGroup(this.group);
   }
 };

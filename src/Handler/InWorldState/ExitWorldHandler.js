@@ -1,3 +1,5 @@
+const PresetViewModel = require('../../View/PresetViewModel');
+
 module.exports = class{
   constructor(
     player,
@@ -18,6 +20,6 @@ module.exports = class{
       await this.worldRepository.remove(world);
     }
 
-    return 'Выход выполнен';
+    return new PresetViewModel('Выход выполнен');
   }
 };

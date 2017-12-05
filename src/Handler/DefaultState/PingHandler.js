@@ -1,5 +1,7 @@
+const PresetViewModel = require('../../View/PresetViewModel');
+
 module.exports = class{
   async process(message){
-    return `Pong! ${message.author.id}`;
+    return new PresetViewModel(`Pong! ${message.author.id}`);
   }
 };

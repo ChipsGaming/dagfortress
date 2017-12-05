@@ -12,52 +12,46 @@ module.exports = class{
     this.added = null;
   }
 
+  // Getters
   /**
-   * @param {TaskConditionRepository} taskConditionRepository
-   *
+   * @return {Group} Група, которой поставлена задача.
+   */
+  async getGroup(){
+    return this.lazyLoader.loadGroup(this.group);
+  }
+
+  /**
    * @return {Condition[]} Условия выполнения задания.
    */
-  async getConditions(taskConditionRepository){
-    return taskConditionRepository.fetchAll(
-      taskConditionRepository.select()
-        .forTask(this)
-    );
+  async getConditions(){
+    return this.lazyLoader.loadConditions(this.id);
   }
 
   /**
-   * @param {TaskActionRepository} taskActionRepository
-   *
    * @return {Action[]} Действия для выполнения задания.
    */
-  async getActions(taskActionRepository){
-    return taskActionRepository.fetchAll(
-      taskActionRepository.select()
-        .forTask(this)
-    );
+  async getActions(){
+    return this.lazyLoader.loadActions(this.id);
   }
 
   /**
-   * @param {TaskActionRepository} taskActionRepository
+   * @param {World} world
    * @param {TaskActionContainer} taskActionContainer
    *
    * @return {ActionPipe} Конвеер действий, выполняющий задания
    */
-  async getActionsPipe(taskActionRepository, taskActionContainer){
+  async getActionsPipe(world, taskActionContainer){
     return new ActionPipe(
-      await this.getActions(taskActionRepository),
+      world,
+      await this.getActions(),
       taskActionContainer
     );
   }
 
   /**
-   * @param {TaskRewardRepository} taskRewardRepository
-   *
    * @return {Reward[]} Награды за выполнения задания.
    */
-  async getRewards(taskRewardRepository){
-    return taskRewardRepository.fetchAll(
-      taskRewardRepository.select()
-        .forTask(this)
-    );
+  async getRewards(){
+    return this.lazyLoader.loadRewards(this.id);
   }
 };

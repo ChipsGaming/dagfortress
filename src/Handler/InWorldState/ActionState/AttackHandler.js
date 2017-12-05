@@ -27,10 +27,10 @@ module.exports = class{
       name: match.weapon
     });
     if(weapon === null){
-      return 'У вас нет такого оружия';
+      return new PresetViewModel('У вас нет такого оружия');
     }
     if(!weapon.isWeapon){
-      return `${weapon.name} не является оружием`;
+      return new PresetViewModel(`${weapon.name} не является оружием`);
     }
 
     const target = await this.dynamicRepository.find({
@@ -38,10 +38,10 @@ module.exports = class{
       'object.location': this.player.location
     });
     if(target === null){
-      return `Рядом с вами нет ${match.target}`;
+      return new PresetViewModel(`Рядом с вами нет ${match.target}`);
     }
     if(target.id == this.player.id){
-      return 'Мазахист? А ну пшел атседава!';
+      return new PresetViewModel('Мазахист? А ну пшел атседава!');
     }
 
     const targetOrgan = await this.organRepository.find({
@@ -49,15 +49,15 @@ module.exports = class{
       name: match.organ
     });
     if(targetOrgan === null){
-      return `У ${target.name} нет ${match.organ} для нанесения удара`;
+      return new PresetViewModel(`У ${target.name} нет ${match.organ} для нанесения удара`);
     }
 
     this.player.attack(
+      this.globalEvents,
       weapon,
       target,
       targetOrgan
     );
-    this.globalEvents.merge(this.player.events);
 
     const targetIsPlayer = await this.playerRepository.find('player.id', target.id) !== null;
     if(target.currentEndurance > 0 && !targetIsPlayer){
@@ -67,16 +67,13 @@ module.exports = class{
 
       if(weapon !== null && targetOrgan !== null){
         target.attack(
+          this.globalEvents,
           weapon,
           this.player,
           targetOrgan
         );
-        this.globalEvents.merge(target.events);
       }
     }
-
-    const attacks = this.player.events.findByName('Attacks')
-      .concat(target.events.findByName('Attacks'));
 
     return new PresetViewModel('Ваш ход зарегистрирован');
   }

@@ -1,8 +1,8 @@
-const CreateWorldHandler = require('../CreateWorldHandler');
+const Handler = require('../CreateWorldHandler');
 
 module.exports = class{
   async build(options, container){
-    return new CreateWorldHandler(
+    return new Handler(
       await container.get('Config').build({}, container),
       await container.get('PrototypeList').build({}, container),
       await container.get('WorldRepository').build({}, container),

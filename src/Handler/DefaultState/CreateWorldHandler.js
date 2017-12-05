@@ -1,8 +1,9 @@
-const World = require('../../Game/World/World');
-const WorldBuilder = require('../../Game/Builder/WorldBuilder');
-const SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator');
-const Player = require('../../Game/Object/Dynamic/Player/Player');
-const ViewModel = require('../../View/ViewModel');
+const World = require('../../Game/World/World'),
+  WorldBuilder = require('../../Game/Builder/WorldBuilder'),
+  SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator'),
+  Player = require('../../Game/Object/Dynamic/Player/Player'),
+  ViewModel = require('../../View/ViewModel'),
+  PresetViewModel = require('../../View/PresetViewModel');
 
 module.exports = class{
   constructor(
@@ -40,21 +41,17 @@ module.exports = class{
   }
 
   async process(message, match){
-    if(this.config.game.world.maxPlayers < 1){
-      return 'Лимит свободных слотов для игроков в этом мире истек';
-    }
-
     const worldsCount = await this.worldRepository.getScalar(
       this.worldRepository.select()
         .count()
     );
     if(worldsCount + 1 > this.config.game.maxWorlds){
-      return 'Лимит свободных слотов для миров истек';
+      return new PresetViewModel('Лимит свободных слотов для миров истек');
     }
 
     const prototype = await this.prototypeList.get(match.name);
     if(prototype === null){
-      return 'Прототип не найден';
+      return new PresetViewModel('Прототип не найден');
     }
 
     const worldBuilder = WorldBuilder.fromJson(prototype);
@@ -99,6 +96,7 @@ module.exports = class{
       message.author.username,
       message.author.id
     );
+    player.isCreator = true;
     await this.playerRepository.save(player);
     
     for(const organ of await new SandboxOrganGenerator(player.id).generate()){

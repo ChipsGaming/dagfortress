@@ -2,10 +2,12 @@ const UG = require('ug');
 
 module.exports = class{
   constructor(
+    globalEvents,
     locationRepository,
     roadRepository,
     dynamicRepository
   ){
+    this.globalEvents = globalEvents;
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
     this.dynamicRepository = dynamicRepository;
@@ -37,6 +39,9 @@ module.exports = class{
       return next(dynamic, action, task);
     }
 
-    dynamic.move(path._raw[2].properties.entity);
+    dynamic.move(
+      this.globalEvents,
+      path._raw[2].properties.entity
+    );
   }
 };

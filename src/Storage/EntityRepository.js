@@ -241,7 +241,7 @@ module.exports = class{
 
     const data = await select;
 
-    return data.map(this.constructor.hydrate);
+    return data.map((data) => this.constructor.hydrate(data));
   }
 
   /**

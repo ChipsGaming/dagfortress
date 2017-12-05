@@ -1,5 +1,6 @@
 module.exports = class{
-  constructor(actions, taskActionContainer){
+  constructor(world, actions, taskActionContainer){
+    this.world = world;
     this.actions = actions;
     this.taskActionContainer = taskActionContainer;
   }
@@ -13,6 +14,7 @@ module.exports = class{
     const handler = await this.taskActionContainer
       .get(action.type)
       .build({
+        world: this.world,
         action: action,
         task: task
       }, this.taskActionContainer);

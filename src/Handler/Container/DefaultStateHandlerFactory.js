@@ -1,8 +1,8 @@
-const DefaultStateHandler = require('../DefaultStateHandler');
+const Handler = require('../DefaultStateHandler');
 
 module.exports = class{
   async build(options, container){
-    return new DefaultStateHandler(
+    return new Handler(
       await container.get('HandlersContainer').build({}, container)
     );
   }

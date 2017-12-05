@@ -35,10 +35,13 @@ module.exports = class{
 
   /**
    * Применяет зарегистрированные события для формирования нового состояния.
+   *
+   * @param {EventJournal} eventJournal Журнал применяемых событий.
+   * @param {ViewModelList} view Используемое для вывода представление.
    */
-  applyEvents(eventJournal){
+  applyEvents(eventJournal, view){
     for(const event of eventJournal.events){
-      event.apply(this);
+      event.apply(this, view);
     }
 
     for(const attacks of eventJournal.findByName('Attacks')){

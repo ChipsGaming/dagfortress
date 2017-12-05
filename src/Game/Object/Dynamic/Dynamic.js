@@ -10,44 +10,30 @@ module.exports = class extends Object{
     this.currentEndurance = this.endurance;
     this.isDie = false;
     this.ai = 'default';
+
+    this.lazyLoader = null;
   }
 
   // Getters
   /**
-   * @param {OrganRepository} organRepository
-   *
    * @return {Organ[]} Органы объекта.
    */
-  async getOrgans(organRepository){
-    return organRepository.fetchAll(
-      organRepository.select()
-        .part(this)
-    );
+  async getOrgans(){
+    return this.lazyLoader.loadOrgans(this.id);
   }
 
   /**
-   * @param {OrganRepository} organRepository
-   *
    * @return {Organ[]} Ноги объекта.
    */
-  async getLegs(organRepository){
-    return organRepository.fetchAll(
-      organRepository.select()
-        .part(this)
-        .legs()
-    );
+  async getLegs(){
+    return this.lazyLoader.loadLegs(this.id);
   }
 
   /**
-   * @param {DynamicRepository} dynamicRepository
-   *
    * @return {Dynamic[]} Органы объекта.
    */
-  async getNearbyDynamics(dynamicRepository){
-    return dynamicRepository.fetchAll(
-      dynamicRepository.select()
-        .nearby(this)
-    );
+  async getNearbyDynamics(){
+    return await this.lazyLoader.loadNearbyDynamics(this);
   }
 
   /**
@@ -63,28 +49,32 @@ module.exports = class extends Object{
   // Actions
   /**
    * Пропуск хода.
+   * 
+   * @param {EventJournal} events Журнал событий.
    */
-  wait(){
-    this.events.trigger(new WaitEvent(this));
+  wait(events){
+    events.trigger(new WaitEvent(this));
   }
 
   /**
    * Переходит в соседнюю локацию.
    *
+   * @param {EventJournal} events Журнал событий.
    * @param {Location} location Целевая локация.
    */
-  move(location){
-    this.events.trigger(new MoveEvent(this, location));
+  move(events, location){
+    events.trigger(new MoveEvent(this, location));
   }
 
   /**
    * Производит атаку.
    *
+   * @param {EventJournal} events Журнал событий.
    * @param {Organ} weapon Используемое для атаки оружие.
    * @param {Dynamic} target Атакуемый объект.
    * @param {Organ} targetOrgan Атакуемый орган.
    */
-  attack(weapon, target, targetOrgan){
+  attack(events, weapon, target, targetOrgan){
     const thisEnergy = this.currentEndurance / this.endurance,
       targetEnergy = target.currentEndurance / target.endurance,
       fatigue = thisEnergy * 1.5 / targetEnergy;
@@ -97,7 +87,7 @@ module.exports = class extends Object{
     const power = weapon.mass / targetOrgan.mass * thisEnergy;
     damage = Math.floor(damage * power);
 
-    this.events.trigger(new AttacksEvent(
+    events.trigger(new AttacksEvent(
       this,
       weapon,
       target,

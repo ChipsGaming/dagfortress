@@ -5,7 +5,8 @@ const RouteHandler = require('../RouteHandler'),
   WorldState = require('../../Game/World/WorldState'),
   Action = require('../../Game/Object/Task/Action'),
   ViewModelList = require('../../View/ViewModelList'),
-  ViewModel = require('../../View/ViewModel');
+  ViewModel = require('../../View/ViewModel'),
+  PresetViewModel = require('../../View/PresetViewModel');
 
 module.exports = class extends RouteHandler{
   constructor(
@@ -15,17 +16,11 @@ module.exports = class extends RouteHandler{
     aiContainer,
     worldRepository,
     chronoRepository,
-    allianceRepository,
-    groupRepository,
     dynamicRepository,
-    playerRepository,
     organRepository,
     taskRepository,
-    taskConditionRepository,
     taskConditionContainer,
-    taskActionRepository,
     taskActionContainer,
-    taskRewardRepository,
     taskRewardContainer
   ){
     super(container);
@@ -34,17 +29,11 @@ module.exports = class extends RouteHandler{
     this.aiContainer = aiContainer;
     this.worldRepository = worldRepository;
     this.chronoRepository = chronoRepository;
-    this.allianceRepository = allianceRepository;
-    this.groupRepository = groupRepository;
     this.dynamicRepository = dynamicRepository;
-    this.playerRepository = playerRepository;
     this.organRepository = organRepository;
     this.taskRepository = taskRepository;
-    this.taskConditionRepository = taskConditionRepository;
     this.taskConditionContainer = taskConditionContainer;
-    this.taskActionRepository = taskActionRepository;
     this.taskActionContainer = taskActionContainer;
-    this.taskRewardRepository = taskRewardRepository;
     this.taskRewardContainer = taskRewardContainer;
   }
 
@@ -58,7 +47,7 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/ActionState/AttackHandler',
         player: this.player
       }),
-      new RegexRoute(/^ж(?:дать)?(?: (\d+))?$/i, ['count'], {
+      new RegexRoute(/^ж(?:дать)?$/i, ['count'], {
         middleware: 'InWorldState/ActionState/WaitHandler',
         player: this.player
       }),
@@ -86,21 +75,21 @@ module.exports = class extends RouteHandler{
 
   async process(message){
     if(!this.isActive(this.player)){
-      return 'Вы слишком устали для этого';
+      return new PresetViewModel('Вы слишком устали для этого');
     }
 
     const world = await this.worldRepository.find('id', this.player.world);
     
-    let result = await super.process(message);
+    let view = await super.process(message);
 
-    if(this.getActionPlayersCount(await world.getPlayers(this.playerRepository)) < 1){
-      result = new ViewModelList([
+    if(this.getActionPlayersCount(await world.getPlayers()) < 1){
+      view = new ViewModelList([
         new ViewModel('in_world_state/action_state', {
-          content: result
+          content: view
         })
       ], "\n");
 
-      for(const dynamic of await world.getAliveDynamics(this.dynamicRepository)){
+      for(const dynamic of await world.getAliveDynamics()){
         if(!this.isActive(dynamic)){
           continue;
         }
@@ -112,42 +101,14 @@ module.exports = class extends RouteHandler{
           continue;
         }
 
-        const actionPipe = await task.getActionsPipe(this.taskActionRepository, this.taskActionContainer);
+        const actionPipe = await task.getActionsPipe(world, this.taskActionContainer);
         actionPipe.push(new Action(task.id, 'wait'));
         await actionPipe.run(dynamic, null, task);
-
-        this.globalEvents.merge(dynamic.events);
       }
 
-      const newState = new WorldState;
-      newState.applyEvents(this.globalEvents);
-      await newState.replaceCurrentState(
-        this.dynamicRepository,
-        this.organRepository
-      );
-
-      for(const event of this.globalEvents.events){
-        switch(event.name){
-          case 'Wait':
-            result.add(new ViewModel('in_world_state/action_state/wait', event));
-            break;
-          case 'Move':
-            result.add(new ViewModel('in_world_state/action_state/move', event));
-            break;
-          case 'Attacks':
-            result.add(new ViewModel('in_world_state/action_state/attack', event));
-            break;
-        }
-      }
-      this.globalEvents.clear();
-      
-      const chrono = await world.getChrono(this.chronoRepository);
-      chrono.day++;
-      await this.chronoRepository.save(chrono);
-      
-      for(const task of await world.getActualTasks(this.taskRepository, this.allianceRepository, this.groupRepository)){
+      for(const task of await world.getActualTasks()){
         let isCompleted = true;
-        for(const condition of await task.getConditions(this.taskConditionRepository)){
+        for(const condition of await task.getConditions()){
           const checking = await this.taskConditionContainer
             .get(condition.type)
             .build({
@@ -161,7 +122,7 @@ module.exports = class extends RouteHandler{
           task.isComplete = true;
           await this.taskRepository.save(task);
       
-          for(const reward of await task.getRewards(this.taskRewardRepository)){
+          for(const reward of await task.getRewards()){
             const rewarding = await this.taskRewardContainer
               .get(reward.type)
               .build({
@@ -172,8 +133,23 @@ module.exports = class extends RouteHandler{
           }
         }
       }
+
+      const newState = new WorldState;
+      newState.applyEvents(
+        this.globalEvents,
+        view
+      );
+      await newState.replaceCurrentState(
+        this.dynamicRepository,
+        this.organRepository
+      );
+      this.globalEvents.clear();
+      
+      const chrono = await world.getChrono();
+      chrono.day++;
+      await this.chronoRepository.save(chrono);
     }
 
-    return result;
+    return view;
   }
 };

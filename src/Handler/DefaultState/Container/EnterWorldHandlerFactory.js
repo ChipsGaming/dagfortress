@@ -1,13 +1,10 @@
-const EnterWorldHandler = require('../EnterWorldHandler');
+const Handler = require('../EnterWorldHandler');
 
 module.exports = class{
   async build(options, container){
-    return new EnterWorldHandler(
+    return new Handler(
       await container.get('Config').build({}, container),
       await container.get('WorldRepository').build({}, container),
-      await container.get('LocationRepository').build({}, container),
-      await container.get('AllianceRepository').build({}, container),
-      await container.get('GroupRepository').build({}, container),
       await container.get('PlayerRepository').build({}, container),
       await container.get('OrganRepository').build({}, container)
     );

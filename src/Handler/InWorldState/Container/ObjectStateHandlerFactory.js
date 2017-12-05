@@ -1,11 +1,10 @@
-const ObjectStateHandler = require('../ObjectStateHandler');
+const Handler = require('../ObjectStateHandler');
 
 module.exports = class{
   async build(options, container){
-    return new ObjectStateHandler(
+    return new Handler(
       options.player,
-      await container.get('DynamicRepository').build({}, container),
-      await container.get('OrganRepository').build({}, container)
+      await container.get('DynamicRepository').build({}, container)
     );
   }
 };

@@ -34,6 +34,8 @@ module.exports = class extends EntityRepository{
     entity.isStart = data.isStart;
     entity.added = new Date(data.added);
 
+    entity.lazyLoader = this.lazyLoader;
+
     return entity;
   }
 

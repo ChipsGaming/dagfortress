@@ -7,7 +7,7 @@ module.exports = class{
 
   async build(options, container){
     if(!('world' in options)){
-      throw new Error('Expected world');
+      throw new Error('Expected world for GlobalEventJournal');
     }
     const world = options.world instanceof Object? options.world.id : options.world;
 

@@ -1,10 +1,9 @@
-const TaskListHandler = require('../TaskListHandler');
+const Handler = require('../TaskListHandler');
 
 module.exports = class{
   async build(options, container){
-    return new TaskListHandler(
-      options.player,
-      await container.get('TaskRepository').build({}, container)
+    return new Handler(
+      options.player
     );
   }
 };

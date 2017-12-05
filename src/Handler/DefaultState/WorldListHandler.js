@@ -1,4 +1,5 @@
-const ViewModel = require('../../View/ViewModel');
+const ViewModel = require('../../View/ViewModel'),
+  PresetViewModel = require('../../View/PresetViewModel');
 
 module.exports = class{
   /**
@@ -13,7 +14,7 @@ module.exports = class{
   async process(message, match){
     const worlds = await this.worldRepository.fetchAll();
     if(worlds.length == 0){
-      return 'Нет созданых миров';
+      return new PresetViewModel('Нет созданых миров');
     }
 
     return new ViewModel('default_state/world_list', {

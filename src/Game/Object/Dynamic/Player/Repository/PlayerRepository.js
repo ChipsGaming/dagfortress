@@ -15,7 +15,8 @@ module.exports = class extends DynamicRepository{
   static extract(entity){
     return {
       id: entity.id,
-      discordUser: entity.discordUser
+      discordUser: entity.discordUser,
+      isCreator: entity.isCreator
     };
   }
 
@@ -26,6 +27,7 @@ module.exports = class extends DynamicRepository{
     );
 
     entity.discordUser = data.discordUser;
+    entity.isCreator = data.isCreator;
 
     return entity;
   }
@@ -33,7 +35,8 @@ module.exports = class extends DynamicRepository{
   static getFindStatement(database, where){
     return DynamicRepository.getFindStatement(database, where)
       .column(
-        `${this.tableName}.discordUser`
+        `${this.tableName}.discordUser`,
+        `${this.tableName}.isCreator`
       )
       .innerJoin(this.tableName, `${super.tableName}.id`, `${this.tableName}.id`);
   }
@@ -80,7 +83,8 @@ module.exports = class extends DynamicRepository{
           `${playerAlias}.id`
         )
         .column(
-          `${playerAlias}.discordUser`
+          `${playerAlias}.discordUser`,
+          `${playerAlias}.isCreator`
         );
   }
 

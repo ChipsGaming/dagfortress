@@ -6,7 +6,7 @@ module.exports = class{
   async build(options, container){
     return new Container({
       'custom': new (require('./CustomFactory')),
-      'wait': new SharingFactory(new InvokableFactory(require('../Wait'))),
+      'wait': new (require('./WaitFactory')),
       'protect': new SharingFactory(new (require('./ProtectFactory'))),
       'move': new SharingFactory(new (require('./MoveFactory')))
     }, container);

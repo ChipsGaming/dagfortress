@@ -1,23 +1,18 @@
-const World = require('../../Game/World/World');
-const Player = require('../../Game/Object/Dynamic/Player/Player');
-const SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator');
-const ViewModel = require('../../View/ViewModel');
+const World = require('../../Game/World/World'),
+  Player = require('../../Game/Object/Dynamic/Player/Player'),
+  SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator'),
+  ViewModel = require('../../View/ViewModel'),
+  PresetViewModel = require('../../View/PresetViewModel');
 
 module.exports = class{
   constructor(
     config,
     worldRepository,
-    locationRepository,
-    allianceRepository,
-    groupRepository,
     playerRepository,
     organRepository
   ){
     this.config = config;
     this.worldRepository = worldRepository;
-    this.locationRepository = locationRepository;
-    this.allianceRepository = allianceRepository;
-    this.groupRepository = groupRepository;
     this.playerRepository = playerRepository;
     this.organRepository = organRepository;
   }
@@ -25,25 +20,22 @@ module.exports = class{
   async process(message, match){
     const world = await this.worldRepository.find('id', match.id);
     if(world === null){
-      return 'Мир с заданым идентификатором не найден';
+      return new PresetViewModel('Мир с заданым идентификатором не найден');
     }
 
-    const playersCount = await world.getPlayersCount(this.playerRepository);
+    const playersCount = await world.getPlayersCount();
     if(playersCount + 1 > this.config.game.world.maxPlayers){
-      return 'Лимит свободных слотов для игроков в этом мире истек';
+      return new PresetViewModel('Лимит свободных слотов для игроков в этом мире истек');
     }
 
-    const startLocation = await world.getStartLocation(this.locationRepository);
+    const startLocation = await world.getStartLocation();
     if(startLocation === null){
-      return 'В данном мире нет стартовой локации. Вход невозможен';
+      return new PresetViewModel('В данном мире нет стартовой локации. Вход невозможен');
     }
 
-    const playerGroup = await world.getPlayerGroup(
-      this.groupRepository,
-      this.allianceRepository
-    );
+    const playerGroup = await world.getPlayerGroup();
     if(playerGroup === null){
-      return 'В данном мире нет клана для игроков. Вход невозможен';
+      return new PresetViewModel('В данном мире нет клана для игроков. Вход невозможен');
     }
 
     const player = new Player(

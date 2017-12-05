@@ -1,7 +1,7 @@
-const RouteHandler = require('./RouteHandler');
-const NullRoute = require('../Router/NullRoute');
-const RegexRoute = require('../Router/RegexRoute');
-const QueueRoute = require('../Router/QueueRoute');
+const RouteHandler = require('./RouteHandler'),
+  NullRoute = require('../Router/NullRoute'),
+  RegexRoute = require('../Router/RegexRoute'),
+  QueueRoute = require('../Router/QueueRoute');
 
 module.exports = class extends RouteHandler{
   getRouter(){

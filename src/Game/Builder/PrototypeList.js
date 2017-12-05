@@ -15,7 +15,7 @@ module.exports = class{
    * @return {Boolean} true - если прототип существует.
    */
   has(name){
-    return fs.existsSync(`${this.prototypesDir}/${name}.js`);
+    return fs.existsSync(`${this.prototypesDir}/${name}/index.js`);
   }
 
   /**
@@ -28,6 +28,6 @@ module.exports = class{
       return null;
     }
 
-    return require(`${this.prototypesDir}/${name}.js`);
+    return require(`${this.prototypesDir}/${name}/index.js`);
   }
 };
