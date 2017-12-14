@@ -1,50 +1,41 @@
+const AttacksEvent = require('../../Dynamic/Event/AttacksEvent');
+
 module.exports = class{
   constructor(
     globalEvents,
-    aiContainer,
     allianceRepository,
     groupRepository,
     dynamicRepository
   ){
     this.globalEvents = globalEvents;
-    this.aiContainer = aiContainer;
     this.allianceRepository = allianceRepository;
     this.groupRepository = groupRepository;
     this.dynamicRepository = dynamicRepository;
   }
 
   async run(dynamic, action, task, next){
-    const group = await dynamic.getGroup(this.groupRepository);
-    if(group === null){
-      return next(dynamic, action, task);
-    }
+    const ai = await dynamic.getAI();
 
-    const enemy = await this.dynamicRepository.findWith(
-      this.dynamicRepository.select()
-        .inLocation(dynamic.location)
-        .alive()
-        .enemies(
-          group.alliance,
-          this.groupRepository,
-          this.allianceRepository
-        )
-    );
+    const enemy = await ai.attack.getTarget();
     if(enemy === null){
       return next(dynamic, action, task);
     }
 
-    const ai = await dynamic.getAI(this.aiContainer),
-      weapon = await ai.attack.getWeapon(enemy),
+    const weapon = await ai.attack.getWeapon(enemy),
       targetOrgan = await ai.attack.getTargetOrgan(enemy);
     if(weapon === null || targetOrgan === null){
       return next(dynamic, action, task);
     }
 
-    dynamic.attack(
-      this.globalEvents,
+    const damage = await ai.attack.getDamage(weapon, enemy, targetOrgan);
+
+    this.globalEvents.trigger(new AttacksEvent(
+      dynamic,
       weapon,
       enemy,
-      targetOrgan
-    );
+      targetOrgan,
+      damage,
+      damage === 0
+    ));
   }
 };

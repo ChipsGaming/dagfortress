@@ -6,7 +6,6 @@ module.exports = class{
       container,
       options.player,
       await container.get('EventJournal').build({world: options.player.world}, container),
-      await container.get('AIContainer').build({}, container),
       await container.get('WorldRepository').build({}, container),
       await container.get('ChronoRepository').build({}, container),
       await container.get('DynamicRepository').build({}, container),

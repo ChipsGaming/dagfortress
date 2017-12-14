@@ -17,6 +17,10 @@ module.exports = class{
       return new PresetViewModel('Нет созданых миров');
     }
 
+    for(const world of worlds){
+      world.playerGroups = await world.getPlayerGroup();
+    }
+
     return new ViewModel('default_state/world_list', {
       worlds: worlds
     });

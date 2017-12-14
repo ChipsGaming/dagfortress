@@ -1,7 +1,4 @@
-const Object = require('../Object'),
-  WaitEvent = require('./Event/WaitEvent'),
-  MoveEvent = require('./Event/MoveEvent'),
-  AttacksEvent = require('./Event/AttacksEvent');
+const Object = require('../Object');
 
 module.exports = class extends Object{
   constructor(world, location, group, name){
@@ -9,7 +6,11 @@ module.exports = class extends Object{
     this.endurance = 3;
     this.currentEndurance = this.endurance;
     this.isDie = false;
-    this.ai = 'default';
+    this.ai = {
+      'attack': __dirname + '/AI/Default/Attack.js',
+      'task': __dirname + '/AI/Default/Task.js',
+      'move': __dirname + '/AI/Default/Move.js'
+    };
 
     this.lazyLoader = null;
   }
@@ -37,63 +38,9 @@ module.exports = class extends Object{
   }
 
   /**
-   * @param {AIContainer} container Контейнер искусственного интеллекта.
-   *
    * @return {AI} Искусственный интеллект объекта.
    */
-  async getAI(container){
-    return container.get(this.ai)
-      .build({dynamic: this}, container);
-  }
-
-  // Actions
-  /**
-   * Пропуск хода.
-   * 
-   * @param {EventJournal} events Журнал событий.
-   */
-  wait(events){
-    events.trigger(new WaitEvent(this));
-  }
-
-  /**
-   * Переходит в соседнюю локацию.
-   *
-   * @param {EventJournal} events Журнал событий.
-   * @param {Location} location Целевая локация.
-   */
-  move(events, location){
-    events.trigger(new MoveEvent(this, location));
-  }
-
-  /**
-   * Производит атаку.
-   *
-   * @param {EventJournal} events Журнал событий.
-   * @param {Organ} weapon Используемое для атаки оружие.
-   * @param {Dynamic} target Атакуемый объект.
-   * @param {Organ} targetOrgan Атакуемый орган.
-   */
-  attack(events, weapon, target, targetOrgan){
-    const thisEnergy = this.currentEndurance / this.endurance,
-      targetEnergy = target.currentEndurance / target.endurance,
-      fatigue = thisEnergy * 1.5 / targetEnergy;
-
-    let damage = weapon.mass;
-    // Промах
-    if(Math.random() * fatigue < 0.5){
-      damage = 0;
-    }
-    const power = weapon.mass / targetOrgan.mass * thisEnergy;
-    damage = Math.floor(damage * power);
-
-    events.trigger(new AttacksEvent(
-      this,
-      weapon,
-      target,
-      targetOrgan,
-      damage,
-      damage === 0
-    ));
+  async getAI(){
+    return await this.lazyLoader.loadAI(this);
   }
 };

@@ -1,4 +1,5 @@
-const PresetViewModel = require('../../../View/PresetViewModel');
+const PresetViewModel = require('../../../View/PresetViewModel'),
+  WaitEvent = require('../../../Game/Object/Dynamic/Event/WaitEvent');
 
 module.exports = class{
   constructor(
@@ -10,7 +11,9 @@ module.exports = class{
   }
 
   async process(message, match){
-    this.player.wait(this.globalEvents);
+    this.globalEvents.trigger(new WaitEvent(
+      this.player
+    ));
 
     return new PresetViewModel('Ваш ход зарегистрирован');
   }

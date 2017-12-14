@@ -44,7 +44,7 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/ActionHandler',
         player: this.player
       }),
-      new RegexRoute(/^в(?:ыйти)?$/i, [], {
+      new RegexRoute(/^выйти?$/i, [], {
         middleware: 'InWorldState/ExitWorldHandler',
         player: this.player
       }),

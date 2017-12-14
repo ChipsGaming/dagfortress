@@ -58,4 +58,17 @@ module.exports = class extends QueryBuilder{
 
     return this;
   }
+
+  /**
+   * Группы с данным наименованием.
+   *
+   * @param {String} name Целевое наименование.
+   *
+   * @return {GroupQueryBuilder}
+   */
+  withName(name){
+    this.query.where(`${this.alias}.name`, name);
+
+    return this;
+  }
 };

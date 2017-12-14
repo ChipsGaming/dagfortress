@@ -4,9 +4,7 @@ module.exports = class{
   async build(options, container){
     return new Action(
       await container.get('EventJournal').build({world: options.world}, container),
-      await container.get('LocationRepository').build({}, container),
-      await container.get('RoadRepository').build({}, container),
-      await container.get('DynamicRepository').build({}, container)
+      await container.get('LocationRepository').build({}, container)
     );
   }
 };

@@ -1,16 +1,13 @@
-const UG = require('ug');
+const UG = require('ug'),
+  MoveEvent = require('../../Dynamic/Event/MoveEvent');
 
 module.exports = class{
   constructor(
     globalEvents,
-    locationRepository,
-    roadRepository,
-    dynamicRepository
+    locationRepository
   ){
     this.globalEvents = globalEvents;
     this.locationRepository = locationRepository;
-    this.roadRepository = roadRepository;
-    this.dynamicRepository = dynamicRepository;
   }
 
   async run(dynamic, action, task, next){
@@ -19,29 +16,15 @@ module.exports = class{
       return next(dynamic, action, task);
     }
 
-    const graph = new UG.Graph(),
-      nodeIndex = {};
-    for(const location of await this.locationRepository.fetchAll()){
-      nodeIndex[location.id] = graph.createNode('location', {id: location.id, entity: location});
-    }
-    for(const road of await this.roadRepository.fetchAll()){
-      graph.createEdge('road').link(
-        nodeIndex[road.start],
-        nodeIndex[road.end]
-      );
-    }
-
-    const path = graph.trace(
-      nodeIndex[dynamic.location],
-      nodeIndex[targetLocation.id]
-    );
-    if(path.length() == 0){
+    const ai = await dynamic.getAI(),
+      nextLocation = await ai.move.getNextLocation(targetLocation);
+    if(nextLocation === null){
       return next(dynamic, action, task);
     }
 
-    dynamic.move(
-      this.globalEvents,
-      path._raw[2].properties.entity
-    );
+    this.globalEvents.trigger(new MoveEvent(
+      dynamic,
+      nextLocation
+    ));
   }
 };

@@ -29,7 +29,7 @@ module.exports = new Container({
   'PlayerRepository': new SharingFactory(new (require('./Game/Object/Dynamic/Player/Repository/Container/PlayerRepositoryFactory'))),
 
   // AI
-  'AIContainer': new SharingFactory(new (require('./Game/Object/Dynamic/AI/Container/AIContainerFactory'))),
+  'AI': new (require('./Game/Object/Dynamic/AI/Container/AIFactory')),
 
   // Task
   'TaskActionContainer': new SharingFactory(new (require('./Game/Object/Task/Action/Container/ActionContainerFactory'))),

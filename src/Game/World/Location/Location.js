@@ -6,7 +6,6 @@ module.exports = class{
     this.world = world;
     this.name = name;
     this.description = description;
-    this.isStart = false;
     this.added = null;
   }
 
@@ -38,12 +37,5 @@ module.exports = class{
    */
   async getAliveDynamics(){
     return this.lazyLoader.loadAliveDynamics(this.id);
-  }
-
-  // Actions
-  setStart(isStart){
-    this.isStart = isStart;
-
-    return this;
   }
 };

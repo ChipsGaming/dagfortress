@@ -13,7 +13,6 @@ module.exports = class extends RouteHandler{
     container,
     player,
     globalEvents,
-    aiContainer,
     worldRepository,
     chronoRepository,
     dynamicRepository,
@@ -26,7 +25,6 @@ module.exports = class extends RouteHandler{
     super(container);
     this.player = player;
     this.globalEvents = globalEvents;
-    this.aiContainer = aiContainer;
     this.worldRepository = worldRepository;
     this.chronoRepository = chronoRepository;
     this.dynamicRepository = dynamicRepository;
@@ -94,7 +92,7 @@ module.exports = class extends RouteHandler{
           continue;
         }
 
-        const ai = await dynamic.getAI(this.aiContainer);
+        const ai = await dynamic.getAI();
 
         const task = await ai.task.getCurrentTask();
         if(task === null){
@@ -106,6 +104,17 @@ module.exports = class extends RouteHandler{
         await actionPipe.run(dynamic, null, task);
       }
 
+      const newState = new WorldState;
+      newState.applyEvents(
+        this.globalEvents,
+        view
+      );
+      await newState.replaceCurrentState(
+        this.dynamicRepository,
+        this.organRepository
+      );
+      this.globalEvents.clear();
+
       for(const task of await world.getActualTasks()){
         let isCompleted = true;
         for(const condition of await task.getConditions()){
@@ -115,7 +124,7 @@ module.exports = class extends RouteHandler{
               condition: condition,
               task: task
             }, this.taskConditionContainer);
-          isCompleted = isCompleted && await checking.check(task, condition);
+          isCompleted = isCompleted && await checking.check(task, condition, view);
         }
       
         if(isCompleted){
@@ -129,21 +138,10 @@ module.exports = class extends RouteHandler{
                 reward: reward,
                 task: task
               }, this.taskRewardContainer);
-            await rewarding.reward(task, reward);
+            await rewarding.reward(task, reward, view);
           }
         }
       }
-
-      const newState = new WorldState;
-      newState.applyEvents(
-        this.globalEvents,
-        view
-      );
-      await newState.replaceCurrentState(
-        this.dynamicRepository,
-        this.organRepository
-      );
-      this.globalEvents.clear();
       
       const chrono = await world.getChrono();
       chrono.day++;

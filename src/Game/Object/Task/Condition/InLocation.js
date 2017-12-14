@@ -7,7 +7,7 @@ module.exports = class{
     this.dynamicRepository = dynamicRepository;
   }
 
-  async check(task, condition){
+  async check(task, condition, view){
     const location = await this.locationRepository.find('name', condition.target.location);
     if(location === null){
       return true;

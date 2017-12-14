@@ -18,13 +18,6 @@ module.exports = class{
   }
 
   /**
-   * @return {Location} Стартовая локация мира.
-   */
-  async getStartLocation(){
-    return this.lazyLoader.loadStartLocation(this.id);
-  }
-
-  /**
    * @return {Dynamic[]} Динамические объекты мира.
    */
   async getDynamics(){

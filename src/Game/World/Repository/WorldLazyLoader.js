@@ -10,16 +10,6 @@ module.exports = class extends LazyLoader{
     );
   }
 
-  async loadStartLocation(worldId){
-    const locationRepository = await this.container.get('LocationRepository').build({}, this.container);
-
-    return locationRepository.findWith(
-      locationRepository.select()
-        .inWorld(worldId)
-        .start()
-    );
-  }
-
   async loadDynamics(worldId){
     const dynamicRepository = await this.container.get('DynamicRepository').build({}, this.container);
 

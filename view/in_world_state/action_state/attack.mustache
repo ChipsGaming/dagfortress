@@ -4,9 +4,3 @@
 {{^data.isMiss}}
 **{{publisher.name}}** бьет {{data.weapon.name}} по {{data.targetOrgan.name}} {{data.target.name}}
 {{/data.isMiss}}
-{{^data.targetOrgan.dynamic}}
-	{{data.targetOrgan.name}} {{data.target.name}} оторвало
-{{/data.targetOrgan.dynamic}}
-{{#data.target.isDie}}
-	{{data.target.name}} больше не дышит
-{{/data.target.isDie}}

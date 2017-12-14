@@ -1,13 +1,11 @@
-module.exports = class{
-  constructor(container){
-    this.container = container;
-  }
+const ViewModel = require('../../../../View/ViewModel');
 
-  async reward(task, reward){
+module.exports = class{
+  async reward(task, reward, view){
     const alliance = await (await task.getGroup()).getAlliance();
 
-    alliance.win(
-      await this.container.get('EventJournal').build({world: alliance.world}, this.container)
+    view.add(
+      new ViewModel('in_world_state/action_state/win', alliance)
     );
   }
 };

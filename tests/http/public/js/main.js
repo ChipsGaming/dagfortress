@@ -7,7 +7,7 @@ $(function(){
             message +
           '</li>'
         );
-        if($el.find('li').length > 5){
+        if($el.find('li').length > 100){
           $el.find('li:last-child').remove();
         }
       }

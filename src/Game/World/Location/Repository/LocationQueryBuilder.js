@@ -44,17 +44,6 @@ module.exports = class extends QueryBuilder{
   }
 
   /**
-   * Стартовая локация.
-   *
-   * @return {LocationQueryBuilder}
-   */
-  start(){
-    this.query.where(`${this.alias}.isStart`, true);
-
-    return this;
-  }
-
-  /**
    * Соседние локации.
    *
    * @param {RoadRepository} roadRepository

@@ -41,20 +41,7 @@ module.exports = class{
    */
   applyEvents(eventJournal, view){
     for(const event of eventJournal.events){
-      event.apply(this, view);
-    }
-
-    for(const attacks of eventJournal.findByName('Attacks')){
-      const target = this.getDynamic(attacks.data.target.id, attacks.data.target),
-        targetOrgan = this.getOrgan(attacks.data.targetOrgan.id, attacks.data.targetOrgan);
-
-      if(targetOrgan.damage >= 10){
-        this.deleteOrgan(targetOrgan);
-
-        if(targetOrgan.isVital){
-          target.isDie = true;
-        }
-      }
+      event.apply(this, view, eventJournal);
     }
   }
 

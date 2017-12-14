@@ -1,4 +1,11 @@
 module.exports = class{
+  static async factory(options, container){
+    return new this(
+      options.dynamic,
+      await container.get('TaskRepository').build({}, container)
+    );
+  }
+
   constructor(
     dynamic,
     taskRepository
@@ -7,11 +14,6 @@ module.exports = class{
     this.taskRepository = taskRepository;
   }
 
-  /**
-   * Выбирает текущую, актуальную задачу.
-   *
-   * @return {Task} Текущая, актуальная задача.
-   */
   async getCurrentTask(){
     return this.taskRepository.findWith(
       this.taskRepository.select()
@@ -20,4 +22,4 @@ module.exports = class{
         .orderByPriority()
     );
   }
-};
+}

@@ -10,7 +10,6 @@ exports.up = function(knex, Promise) {
       .onUpdate('cascade');
     t.string('name').notNull().index();
     t.string('description').notNull();
-    t.boolean('isStart').notNull();
     t.dateTime('added').notNull();
   });
 };

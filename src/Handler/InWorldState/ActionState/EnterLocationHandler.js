@@ -1,4 +1,5 @@
-const PresetViewModel = require('../../../View/PresetViewModel');
+const PresetViewModel = require('../../../View/PresetViewModel'),
+  MoveEvent = require('../../../Game/Object/Dynamic/Event/MoveEvent');
 
 module.exports = class{
   constructor(
@@ -23,7 +24,10 @@ module.exports = class{
       return new PresetViewModel('Вы не видите этой локации');
     }
 
-    this.player.move(this.globalEvents, location);
+    this.globalEvents.trigger(new MoveEvent(
+      this.player,
+      location
+    ));
 
     return new PresetViewModel('Ваш ход зарегистрирован');
   }

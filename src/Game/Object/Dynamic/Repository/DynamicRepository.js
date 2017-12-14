@@ -17,7 +17,7 @@ module.exports = class extends ObjectRepository{
       endurance: entity.endurance,
       currentEndurance: entity.currentEndurance,
       isDie: entity.isDie,
-      ai: entity.ai
+      ai: JSON.stringify(entity.ai)
     };
   }
 
@@ -30,7 +30,7 @@ module.exports = class extends ObjectRepository{
     entity.endurance = data.endurance;
     entity.currentEndurance = data.currentEndurance;
     entity.isDie = data.isDie;
-    entity.ai = data.ai;
+    entity.ai = JSON.parse(data.ai);
 
     return entity;
   }

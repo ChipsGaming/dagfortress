@@ -3,7 +3,7 @@ module.exports = class{
     this.handler = handler;
   }
 
-  async check(task, condition){
+  async check(task, condition, view){
     return this.handler.check(task, condition);
   }
 };

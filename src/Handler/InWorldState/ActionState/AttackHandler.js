@@ -1,18 +1,17 @@
 const RegexRoute = require('../../../Router/RegexRoute'),
-  PresetViewModel = require('../../../View/PresetViewModel');
+  PresetViewModel = require('../../../View/PresetViewModel'),
+  AttacksEvent = require('../../../Game/Object/Dynamic/Event/AttacksEvent');
 
 module.exports = class{
   constructor(
     player,
     globalEvents,
-    aiContainer,
     dynamicRepository,
     playerRepository,
     organRepository
   ){
     this.player = player;
     this.globalEvents = globalEvents;
-    this.aiContainer = aiContainer;
     this.dynamicRepository = dynamicRepository;
     this.playerRepository = playerRepository;
     this.organRepository = organRepository;
@@ -21,6 +20,20 @@ module.exports = class{
   async process(message, match){
     match = new RegexRoute(/^у(?:дарить)? (.+) по (.+) у (.+)/i, ['weapon', 'organ', 'target'])
       .route(message);
+
+    const target = await this.dynamicRepository.find({
+      'object.name': match.target,
+      'object.location': this.player.location
+    });
+    if(target === null){
+      return new PresetViewModel(`Рядом с вами нет ${match.target}`);
+    }
+    if(target.id == this.player.id){
+      return new PresetViewModel('Мазахист? А ну пшел атседава!');
+    }
+    if((await this.player.getGroup()).alliance == (await target.getGroup()).alliance){
+      return new PresetViewModel(`${target.name} ваш союзник`);
+    }
 
     const weapon = await this.organRepository.find({
       dynamic: this.player.id,
@@ -33,17 +46,6 @@ module.exports = class{
       return new PresetViewModel(`${weapon.name} не является оружием`);
     }
 
-    const target = await this.dynamicRepository.find({
-      'object.name': match.target,
-      'object.location': this.player.location
-    });
-    if(target === null){
-      return new PresetViewModel(`Рядом с вами нет ${match.target}`);
-    }
-    if(target.id == this.player.id){
-      return new PresetViewModel('Мазахист? А ну пшел атседава!');
-    }
-
     const targetOrgan = await this.organRepository.find({
       dynamic: target.id,
       name: match.organ
@@ -52,28 +54,17 @@ module.exports = class{
       return new PresetViewModel(`У ${target.name} нет ${match.organ} для нанесения удара`);
     }
 
-    this.player.attack(
-      this.globalEvents,
+    const ai = await this.player.getAI(),
+      damage = await ai.attack.getDamage(weapon, target, targetOrgan);
+
+    this.globalEvents.trigger(new AttacksEvent(
+      this.player,
       weapon,
       target,
-      targetOrgan
-    );
-
-    const targetIsPlayer = await this.playerRepository.find('player.id', target.id) !== null;
-    if(target.currentEndurance > 0 && !targetIsPlayer){
-      const ai = await target.getAI(this.aiContainer),
-        weapon = await ai.attack.getWeapon(this.player),
-        targetOrgan = await ai.attack.getTargetOrgan(this.player);
-
-      if(weapon !== null && targetOrgan !== null){
-        target.attack(
-          this.globalEvents,
-          weapon,
-          this.player,
-          targetOrgan
-        );
-      }
-    }
+      targetOrgan,
+      damage,
+      damage === 0
+    ));
 
     return new PresetViewModel('Ваш ход зарегистрирован');
   }

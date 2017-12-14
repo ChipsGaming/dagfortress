@@ -3,10 +3,10 @@ const GameEvent = require('../../../Event/GameEvent'),
 
 module.exports = class extends GameEvent{
   constructor(publisher){
-    super('Wait', publisher);
+    super('Die', publisher);
   }
 
   apply(worldState, view, eventJournal){
-    view.add(new ViewModel('in_world_state/action_state/wait', this));
+    view.add(new ViewModel('in_world_state/action_state/die', this));
   }
 };

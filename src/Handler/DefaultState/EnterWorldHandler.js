@@ -8,11 +8,15 @@ module.exports = class{
   constructor(
     config,
     worldRepository,
+    allianceRepository,
+    groupRepository,
     playerRepository,
     organRepository
   ){
     this.config = config;
     this.worldRepository = worldRepository;
+    this.allianceRepository = allianceRepository;
+    this.groupRepository = groupRepository;
     this.playerRepository = playerRepository;
     this.organRepository = organRepository;
   }
@@ -28,20 +32,27 @@ module.exports = class{
       return new PresetViewModel('Лимит свободных слотов для игроков в этом мире истек');
     }
 
-    const startLocation = await world.getStartLocation();
-    if(startLocation === null){
-      return new PresetViewModel('В данном мире нет стартовой локации. Вход невозможен');
+    const group = await this.groupRepository.findWith(
+      this.groupRepository.select()
+        .inWorld(this.allianceRepository, world)
+        .withName(match.group)
+    );
+    if(group === null){
+      return new PresetViewModel('Группа не найдена');
+    }
+    if(!group.isPlayer){
+      return new PresetViewModel(`В группу ${group.name} не могут входить игроки`);
+    }
+    if(group.startLocation === null){
+      return new PresetViewModel(`Группе ${group.name} не задана стартовая локация`);
     }
 
-    const playerGroup = await world.getPlayerGroup();
-    if(playerGroup === null){
-      return new PresetViewModel('В данном мире нет клана для игроков. Вход невозможен');
-    }
+    const startLocation = await group.getStartLocation();
 
     const player = new Player(
       world.id,
       startLocation.id,
-      playerGroup.id,
+      group.id,
       message.author.username,
       message.author.id
     );

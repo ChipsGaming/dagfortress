@@ -1,5 +1,4 @@
-const Uuid = require('uuid/v4'),
-  WinEvent = require('./Event/WinEvent');
+const Uuid = require('uuid/v4');
 
 module.exports = class{
   constructor(world, name){
@@ -15,15 +14,5 @@ module.exports = class{
    */
   async getWorld(){
     return this.lazyLoader.loadWorld(this.world);
-  }
-
-  // Actions
-  /**
-   * Регистрирует победу альянса.
-   *
-   * @param {EventJournal} events Журнал событий.
-   */
-  win(events){
-    events.trigger(new WinEvent(this));
   }
 };

@@ -49,15 +49,38 @@ module.exports = class{
       return new PresetViewModel('Лимит свободных слотов для миров истек');
     }
 
-    const prototype = await this.prototypeList.get(match.name);
+    const prototype = await this.prototypeList.get(match.prototype);
     if(prototype === null){
       return new PresetViewModel('Прототип не найден');
     }
 
     const worldBuilder = WorldBuilder.fromJson(prototype);
 
+    let group = null;
+    for(const i of worldBuilder.groups){
+      if(i.name == match.group){
+        group = i;
+        break;
+      }
+    }
+    if(group === null){
+      return new PresetViewModel('Группа не найдена');
+    }
+    if(!group.isPlayer){
+      return new PresetViewModel(`В группу ${group.name} не могут входить игроки`);
+    }
+    if(group.startLocation === null){
+      return new PresetViewModel(`Группе ${group.name} не задана стартовая локация`);
+    }
+
     await this.worldRepository.save(worldBuilder.world);
     await this.chronoRepository.save(worldBuilder.chrono);
+    for(const location of worldBuilder.locations){
+      await this.locationRepository.save(location);
+    }
+    for(const road of worldBuilder.roads){
+      await this.roadRepository.save(road);
+    }
     for(const alliance of worldBuilder.alliances){
       await this.allianceRepository.save(alliance);
     }
@@ -76,12 +99,6 @@ module.exports = class{
     for(const taskReward of worldBuilder.tasksRewards){
       await this.taskRewardRepository.save(taskReward);
     }
-    for(const location of worldBuilder.locations){
-      await this.locationRepository.save(location);
-    }
-    for(const road of worldBuilder.roads){
-      await this.roadRepository.save(road);
-    }
     for(const dynamic of worldBuilder.dynamics){
       await this.dynamicRepository.save(dynamic);
     }
@@ -89,10 +106,13 @@ module.exports = class{
       await this.organRepository.save(organ);
     }
 
+    group = await this.groupRepository.find('id', group.id);
+    const startLocation = await group.getStartLocation();
+
     const player = new Player(
       worldBuilder.world.id,
-      worldBuilder.findStartLocation().id,
-      worldBuilder.findGroupPlayer().id,
+      startLocation.id,
+      group.id,
       message.author.username,
       message.author.id
     );
@@ -105,7 +125,7 @@ module.exports = class{
     
     return new ViewModel('default_state/create_world', {
       world: worldBuilder.world,
-      location: worldBuilder.findStartLocation(),
+      location: startLocation,
       player: player
     });
   }

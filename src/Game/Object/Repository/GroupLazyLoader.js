@@ -6,4 +6,10 @@ module.exports = class extends LazyLoader{
 
     return allianceRepository.find('id', allianceId);
   }
+
+  async loadStartLocation(locationId){
+    const locationRepository = await this.container.get('LocationRepository').build({}, this.container);
+
+    return locationRepository.find('id', locationId);
+  }
 };

@@ -131,10 +131,25 @@ module.exports = class{
       }
     }
 
+    for(let allianceJson of worldJson.alliances){
+      for(let groupJson of allianceJson.groups){
+        if(!('startLocation' in groupJson)){
+          continue;
+        }
+
+        const startLocation = worldBuilder.findLocationByName(groupJson.startLocation);
+        if(startLocation === null){
+          continue;
+        }
+
+        worldBuilder.findGroupByName(groupJson.name).startLocation = startLocation.id;
+      }
+    }
+
     return worldBuilder;
   }
 
-  assign(object, json, properties){
+  assign(object, json, properties = []){
     for(const prop of properties){
       if(prop in json){
         object[prop] = json[prop];
@@ -156,14 +171,6 @@ module.exports = class{
   findGroupByName(name){
     for(const group of this.groups){
       if(group.name == name){
-        return group;
-      }
-    }
-  }
-
-  findGroupPlayer(){
-    for(const group of this.groups){
-      if(group.isPlayer){
         return group;
       }
     }
@@ -192,14 +199,6 @@ module.exports = class{
   findLocationByName(name){
     for(const location of this.locations){
       if(location.name == name){
-        return location;
-      }
-    }
-  }
-
-  findStartLocation(){
-    for(const location of this.locations){
-      if(location.isStart){
         return location;
       }
     }
@@ -348,8 +347,7 @@ module.exports = class{
 
     return this.assign(
       new Location(world, json.name, json.description),
-      json,
-      ['isStart']
+      json
     );
   }
 
@@ -379,11 +377,16 @@ module.exports = class{
     world = world instanceof Object? world.id : world;
     location = location instanceof Object? location.id : location;
 
-    return this.assign(
+    const dynamic = this.assign(
       new Dynamic(world, location, this.findGroupByName(json.group).id, json.name),
       json,
-      ['endurance', 'currentEndurance', 'isDie', 'ai']
+      ['endurance', 'currentEndurance', 'isDie']
     );
+    if('ai' in json){
+      dynamic.ai = Object.assign(dynamic.ai, json.ai);
+    }
+
+    return dynamic;
   }
 
   addOrgan(organ){

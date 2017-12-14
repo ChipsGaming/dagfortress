@@ -19,7 +19,6 @@ module.exports = class extends EntityRepository{
       world: entity.world,
       name: entity.name,
       description: entity.description,
-      isStart: entity.isStart,
       added: entity.added
     };
   }
@@ -31,7 +30,6 @@ module.exports = class extends EntityRepository{
       data.description
     );
     entity.id = data.id
-    entity.isStart = data.isStart;
     entity.added = new Date(data.added);
 
     entity.lazyLoader = this.lazyLoader;

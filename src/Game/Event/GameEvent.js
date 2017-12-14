@@ -1,6 +1,6 @@
 const Event = require('../../Event/Event');
 
 module.exports = class extends Event{
-  apply(worldState){
+  apply(worldState, view, eventJournal){
   }
 };

@@ -8,7 +8,7 @@ module.exports = class extends GameEvent{
     });
   }
 
-  apply(worldState, view){
+  apply(worldState, view, eventJournal){
     const dynamic = worldState.getDynamic(this.publisher.id, this.publisher);
 
     dynamic.location = this.data.location.id;

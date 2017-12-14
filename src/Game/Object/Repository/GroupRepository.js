@@ -19,6 +19,7 @@ module.exports = class extends EntityRepository{
       alliance: entity.alliance,
       name: entity.name,
       isPlayer: entity.isPlayer,
+      startLocation: entity.startLocation,
       added: entity.added
     };
   }
@@ -30,6 +31,7 @@ module.exports = class extends EntityRepository{
     entity.alliance = data.alliance;
     entity.name = data.name;
     entity.isPlayer = data.isPlayer;
+    entity.startLocation = data.startLocation;
     entity.added = new Date(data.added);
 
     entity.lazyLoader = this.lazyLoader;
