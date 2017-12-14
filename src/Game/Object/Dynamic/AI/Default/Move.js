@@ -22,14 +22,24 @@ module.exports = class{
   async getNextLocation(targetLocation){
     const graph = new UG.Graph(),
       nodeIndex = {};
-    for(const location of await this.locationRepository.fetchAll()){
+
+    const locations = await this.locationRepository.fetchAll(
+      this.locationRepository.select()
+        .inWorld(this.dynamic.world)
+    );
+    for(const location of locations){
       nodeIndex[location.id] = graph.createNode('location', {id: location.id, entity: location});
-    }
-    for(const road of await this.roadRepository.fetchAll()){
-      graph.createEdge('road').link(
-        nodeIndex[road.start],
-        nodeIndex[road.end]
+
+      const roads = await this.roadRepository.fetchAll(
+        this.roadRepository.select()
+          .exit(location)
       );
+      for(const road of roads){
+        graph.createEdge('road').link(
+          nodeIndex[road.start],
+          nodeIndex[road.end]
+        );
+      }
     }
 
     const path = graph.trace(

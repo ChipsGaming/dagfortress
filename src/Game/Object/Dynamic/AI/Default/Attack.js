@@ -25,9 +25,6 @@ module.exports = class{
 
   async getTarget(){
     const group = await this.dynamic.getGroup();
-    if(group === null){
-      return null;
-    }
 
     return await this.dynamicRepository.findWith(
       this.dynamicRepository.select()

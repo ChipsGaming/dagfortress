@@ -6,7 +6,13 @@ module.exports = class{
   }
 
   async check(task, condition, view){
-    const dynamic = await this.dynamicRepository.find('name', condition.target.dynamic);
+    const alliance = await (await task.getGroup()).getAlliance();
+
+    const dynamic = await this.dynamicRepository.findWith(
+      this.dynamicRepository.select()
+        .inWorld(alliance.world)
+        .withName(condition.target.dynamic)
+    );
     if(dynamic === null){
       return true;
     }

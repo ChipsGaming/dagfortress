@@ -12,11 +12,18 @@ module.exports = class{
   }
 
   async check(task, condition, view){
-    const group = await this.groupRepository.find('id', task.group),
-      location = await this.locationRepository.find('name', condition.target.location);
+    const alliance = await (await task.getGroup()).getAlliance();
+
+    const group = await this.groupRepository.find('id', task.group);
     if(group === null){
       return true;
     }
+
+    const location = await this.locationRepository.findWith(
+      this.locationRepository.select()
+        .inWorld(alliance.world)
+        .withName(condition.target.location)
+    );
     if(location === null){
       return true;
     }

@@ -11,7 +11,13 @@ module.exports = class{
   }
 
   async run(dynamic, action, task, next){
-    const targetLocation = await this.locationRepository.find('name', action.target.location);
+    const alliance = await (await task.getGroup()).getAlliance();
+
+    const targetLocation = await this.locationRepository.findWith(
+      this.locationRepository.select()
+        .inWorld(alliance.world)
+        .withName(action.target.location)
+    );
     if(targetLocation === null || dynamic.location == targetLocation.id){
       return next(dynamic, action, task);
     }

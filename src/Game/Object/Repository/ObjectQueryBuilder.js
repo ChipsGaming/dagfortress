@@ -61,6 +61,19 @@ module.exports = class extends QueryBuilder{
   }
 
   /**
+   * Объекты с данным именем.
+   *
+   * @param {String} name Целевое имя.
+   *
+   * @return {ObjectQueryBuilder}
+   */
+  withName(name){
+    this.query.where(`${this.alias}.name`, '=', name);
+
+    return this;
+  }
+
+  /**
    * Объекты из той же локации, что и целевой объект.
    *
    * @param {Object} object Целевой объект.

@@ -6,7 +6,7 @@ module.exports = class{
   }
 
   async run(dynamic, action, task, next){
-    this.globalEvents(new WaitEvent(
+    this.globalEvents.trigger(new WaitEvent(
       dynamic
     ));
   }
