@@ -54,8 +54,8 @@ module.exports = class{
       return new PresetViewModel(`У ${target.name} нет ${match.organ} для нанесения удара`);
     }
 
-    const ai = await this.player.getAI(),
-      damage = await ai.attack.getDamage(weapon, target, targetOrgan);
+    const ai = await (await this.player.getGroup()).getAI(),
+      damage = await ai.getDamage(this.player, weapon, target, targetOrgan);
 
     this.globalEvents.trigger(new AttacksEvent(
       this.player,

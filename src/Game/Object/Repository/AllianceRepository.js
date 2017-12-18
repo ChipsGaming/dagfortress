@@ -1,5 +1,5 @@
 const EntityRepository = require('../../../Storage/EntityRepository');
-const QueryBuilder = require('./AllianceRepository');
+const QueryBuilder = require('./AllianceQueryBuilder');
 const Entity = require('../Alliance');
 
 module.exports = class extends EntityRepository{

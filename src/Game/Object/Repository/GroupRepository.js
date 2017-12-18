@@ -19,7 +19,9 @@ module.exports = class extends EntityRepository{
       alliance: entity.alliance,
       name: entity.name,
       isPlayer: entity.isPlayer,
+      maxPlayers: entity.maxPlayers,
       startLocation: entity.startLocation,
+      ai: JSON.stringify(entity.ai),
       added: entity.added
     };
   }
@@ -31,7 +33,9 @@ module.exports = class extends EntityRepository{
     entity.alliance = data.alliance;
     entity.name = data.name;
     entity.isPlayer = data.isPlayer;
+    entity.maxPlayers = data.maxPlayers;
     entity.startLocation = data.startLocation;
+    entity.ai = JSON.parse(data.ai);
     entity.added = new Date(data.added);
 
     entity.lazyLoader = this.lazyLoader;

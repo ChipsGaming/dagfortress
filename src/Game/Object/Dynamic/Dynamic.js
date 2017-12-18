@@ -6,11 +6,6 @@ module.exports = class extends Object{
     this.endurance = 3;
     this.currentEndurance = this.endurance;
     this.isDie = false;
-    this.ai = {
-      'attack': __dirname + '/AI/Default/Attack.js',
-      'task': __dirname + '/AI/Default/Task.js',
-      'move': __dirname + '/AI/Default/Move.js'
-    };
 
     this.lazyLoader = null;
   }
@@ -35,12 +30,5 @@ module.exports = class extends Object{
    */
   async getNearbyDynamics(){
     return await this.lazyLoader.loadNearbyDynamics(this);
-  }
-
-  /**
-   * @return {AI} Искусственный интеллект объекта.
-   */
-  async getAI(){
-    return await this.lazyLoader.loadAI(this);
   }
 };

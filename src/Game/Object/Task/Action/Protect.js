@@ -2,32 +2,26 @@ const AttacksEvent = require('../../Dynamic/Event/AttacksEvent');
 
 module.exports = class{
   constructor(
-    globalEvents,
-    allianceRepository,
-    groupRepository,
-    dynamicRepository
+    globalEvents
   ){
     this.globalEvents = globalEvents;
-    this.allianceRepository = allianceRepository;
-    this.groupRepository = groupRepository;
-    this.dynamicRepository = dynamicRepository;
   }
 
   async run(dynamic, action, task, next){
-    const ai = await dynamic.getAI();
+    const ai = await (await dynamic.getGroup()).getAI();
 
-    const enemy = await ai.attack.getTarget();
+    const enemy = await ai.getTarget(dynamic);
     if(enemy === null){
       return next(dynamic, action, task);
     }
 
-    const weapon = await ai.attack.getWeapon(enemy),
-      targetOrgan = await ai.attack.getTargetOrgan(enemy);
+    const weapon = await ai.getWeapon(dynamic, enemy),
+      targetOrgan = await ai.getTargetOrgan(dynamic, enemy);
     if(weapon === null || targetOrgan === null){
       return next(dynamic, action, task);
     }
 
-    const damage = await ai.attack.getDamage(weapon, enemy, targetOrgan);
+    const damage = await ai.getDamage(dynamic, weapon, enemy, targetOrgan);
 
     this.globalEvents.trigger(new AttacksEvent(
       dynamic,

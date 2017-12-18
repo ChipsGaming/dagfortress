@@ -12,4 +12,18 @@ module.exports = class extends LazyLoader{
 
     return locationRepository.find('id', locationId);
   }
+
+  async loadPlayersCount(groupId){
+    const playerRepository = await this.container.get('PlayerRepository').build({}, this.container);
+
+    return playerRepository.getScalar(
+      playerRepository.select()
+        .inGroup(groupId)
+        .count()
+    );
+  }
+
+  async loadAI(ai){
+    return this.container.get('AI').build({ai: ai}, this.container);
+  }
 };

@@ -28,8 +28,4 @@ module.exports = class extends ObjectLazyLoader{
         .nearby(dynamic)
     );
   }
-
-  async loadAI(dynamic){
-    return this.container.get('AI').build({ai: dynamic.ai, dynamic: dynamic}, this.container);
-  }
 };

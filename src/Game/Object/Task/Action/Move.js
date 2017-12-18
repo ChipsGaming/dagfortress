@@ -11,7 +11,8 @@ module.exports = class{
   }
 
   async run(dynamic, action, task, next){
-    const alliance = await (await task.getGroup()).getAlliance();
+    const group = await task.getGroup(),
+      alliance = await group.getAlliance();
 
     const targetLocation = await this.locationRepository.findWith(
       this.locationRepository.select()
@@ -22,8 +23,8 @@ module.exports = class{
       return next(dynamic, action, task);
     }
 
-    const ai = await dynamic.getAI(),
-      nextLocation = await ai.move.getNextLocation(targetLocation);
+    const ai = await group.getAI(),
+      nextLocation = await ai.getNextLocation(dynamic, targetLocation);
     if(nextLocation === null){
       return next(dynamic, action, task);
     }

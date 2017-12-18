@@ -12,7 +12,8 @@ module.exports = class{
       'protected': new SharingFactory(new (require('./ProtectedFactory'))),
       'inLocation': new SharingFactory(new (require('./InLocationFactory'))),
       'die': new SharingFactory(new (require('./DieFactory'))),
-      'allPlayersDie': new SharingFactory(new (require('./AllPlayersDieFactory')))
+      'allianceDie': new SharingFactory(new (require('./AllianceDieFactory'))),
+      'groupDie': new SharingFactory(new (require('./GroupDieFactory')))
     }, container);
   }
 };

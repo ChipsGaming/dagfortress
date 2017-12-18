@@ -31,4 +31,17 @@ module.exports = class extends QueryBuilder{
 
     return this;
   }
+
+  /**
+   * Альянсы с данным наименованием.
+   *
+   * @param {String} name Целевое наименование.
+   *
+   * @return {AllianceQueryBuilder}
+   */
+  withName(name){
+    this.query.where(`${this.alias}.name`, name);
+
+    return this;
+  }
 };

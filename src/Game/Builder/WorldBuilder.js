@@ -255,11 +255,16 @@ module.exports = class{
   groupByJson(alliance, json){
     alliance = alliance instanceof Object? alliance.id : alliance;
 
-    return this.assign(
+    const group = this.assign(
       new Group(alliance, json.name),
       json,
-      ['isPlayer']
+      ['isPlayer', 'maxPlayers']
     );
+    if('ai' in json){
+      group.ai = Object.assign(group.ai, json.ai);
+    }
+
+    return group;
   }
 
   addTask(task){
@@ -377,16 +382,11 @@ module.exports = class{
     world = world instanceof Object? world.id : world;
     location = location instanceof Object? location.id : location;
 
-    const dynamic = this.assign(
+    return this.assign(
       new Dynamic(world, location, this.findGroupByName(json.group).id, json.name),
       json,
       ['endurance', 'currentEndurance', 'isDie']
     );
-    if('ai' in json){
-      dynamic.ai = Object.assign(dynamic.ai, json.ai);
-    }
-
-    return dynamic;
   }
 
   addOrgan(organ){

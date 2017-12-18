@@ -88,6 +88,29 @@ module.exports = class extends QueryBuilder{
   }
 
   /**
+   * Объекты из данного альянса.
+   *
+   * @param {Alliance|String} alliance Целевой альянс.
+   * @param {GroupRepository} groupRepository
+   * @param {String} groupAlias [optional]
+   *
+   * @return {ObjectQueryBuilder}
+   */
+  inAlliance(
+    alliance,
+    groupRepository,
+    groupAlias = 'group'
+  ){
+    alliance = alliance instanceof Object? alliance.id : alliance;
+
+    this
+      .joinGroup(groupRepository, groupAlias)
+      .inAlliance(alliance);
+
+    return this;
+  }
+
+  /**
    * Объекты из данной группы.
    *
    * @param {Group|String} group Целевая группа.

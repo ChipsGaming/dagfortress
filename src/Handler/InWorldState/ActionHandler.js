@@ -92,9 +92,9 @@ module.exports = class extends RouteHandler{
           continue;
         }
 
-        const ai = await dynamic.getAI();
+        const ai = await (await dynamic.getGroup()).getAI();
 
-        const task = await ai.task.getCurrentTask();
+        const task = await ai.getCurrentTask(dynamic);
         if(task === null){
           continue;
         }

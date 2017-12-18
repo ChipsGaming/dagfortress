@@ -6,11 +6,29 @@ module.exports = class{
     this.alliance = alliance;
     this.name = name;
     this.isPlayer = false;
+    this.maxPlayers = null;
     this.startLocation = null;
+    this.ai = {
+      'getTarget': __dirname + '/AI/Default/Attack/GetTargetAI.js',
+      'getTargetOrgan': __dirname + '/AI/Default/Attack/GetTargetOrganAI.js',
+      'getWeapon': __dirname + '/AI/Default/Attack/GetWeaponAI.js',
+      'getDamage': __dirname + '/AI/Default/Attack/GetDamageAI.js',
+      'getCurrentTask': __dirname + '/AI/Default/Task/GetCurrentTaskAI.js',
+      'getNextLocation': __dirname + '/AI/Default/Move/GetNextLocationAI.js'
+    };
     this.added = null;
+
+    this.lazyLoader = null;
   }
 
   // Getters
+  /**
+   * @return {AI} Искусственный интеллект объекта.
+   */
+  async getAI(){
+    return await this.lazyLoader.loadAI(this.ai);
+  }
+
   /**
    * @return {Alliance} Альянс, в которую входит группа.
    */
@@ -27,5 +45,12 @@ module.exports = class{
     }
 
     return this.lazyLoader.loadStartLocation(this.startLocation);
+  }
+
+  /**
+   * @return {Integer} Число игроков в группе.
+   */
+  async getPlayersCount(){
+    return this.lazyLoader.loadPlayersCount(this.id);
   }
 };

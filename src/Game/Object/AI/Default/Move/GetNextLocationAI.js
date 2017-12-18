@@ -3,29 +3,26 @@ const UG = require('ug');
 module.exports = class{
   static async factory(options, container){
     return new this(
-      options.dynamic,
       await container.get('LocationRepository').build({}, container),
       await container.get('RoadRepository').build({}, container)
     );
   }
 
   constructor(
-    dynamic,
     locationRepository,
     roadRepository
   ){
-    this.dynamic = dynamic;
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
   }
 
-  async getNextLocation(targetLocation){
+  async process(dynamic, targetLocation){
     const graph = new UG.Graph(),
       nodeIndex = {};
 
     const locations = await this.locationRepository.fetchAll(
       this.locationRepository.select()
-        .inWorld(this.dynamic.world)
+        .inWorld(dynamic.world)
     );
     for(const location of locations){
       nodeIndex[location.id] = graph.createNode('location', {id: location.id, entity: location});
@@ -43,7 +40,7 @@ module.exports = class{
     }
 
     const path = graph.trace(
-      nodeIndex[this.dynamic.location],
+      nodeIndex[dynamic.location],
       nodeIndex[targetLocation.id]
     );
     if(path.length() == 0){

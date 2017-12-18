@@ -16,8 +16,7 @@ module.exports = class extends ObjectRepository{
       id: entity.id,
       endurance: entity.endurance,
       currentEndurance: entity.currentEndurance,
-      isDie: entity.isDie,
-      ai: JSON.stringify(entity.ai)
+      isDie: entity.isDie
     };
   }
 
@@ -30,7 +29,6 @@ module.exports = class extends ObjectRepository{
     entity.endurance = data.endurance;
     entity.currentEndurance = data.currentEndurance;
     entity.isDie = data.isDie;
-    entity.ai = JSON.parse(data.ai);
 
     return entity;
   }
@@ -40,8 +38,7 @@ module.exports = class extends ObjectRepository{
       .column(
         `${this.tableName}.endurance`,
         `${this.tableName}.currentEndurance`,
-        `${this.tableName}.isDie`,
-        `${this.tableName}.ai`
+        `${this.tableName}.isDie`
       )
       .innerJoin(this.tableName, `${super.tableName}.id`, `${this.tableName}.id`);
   }
@@ -85,8 +82,7 @@ module.exports = class extends ObjectRepository{
         .column(
           `${dynamicAlias}.endurance`,
           `${dynamicAlias}.currentEndurance`,
-          `${dynamicAlias}.isDie`,
-          `${dynamicAlias}.ai`
+          `${dynamicAlias}.isDie`
         );
   }
 

@@ -27,14 +27,9 @@ module.exports = class{
       return new PresetViewModel('Мир с заданым идентификатором не найден');
     }
 
-    const playersCount = await world.getPlayersCount();
-    if(playersCount + 1 > this.config.game.world.maxPlayers){
-      return new PresetViewModel('Лимит свободных слотов для игроков в этом мире истек');
-    }
-
     const group = await this.groupRepository.findWith(
       this.groupRepository.select()
-        .inWorld(this.allianceRepository, world)
+        .inWorld(world, this.allianceRepository)
         .withName(match.group)
     );
     if(group === null){
@@ -42,6 +37,12 @@ module.exports = class{
     }
     if(!group.isPlayer){
       return new PresetViewModel(`В группу ${group.name} не могут входить игроки`);
+    }
+    if(group.maxPlayers !== null){
+      const playersCount = await group.getPlayersCount();
+      if(playersCount + 1 > group.maxPlayers){
+        return new PresetViewModel('Лимит свободных слотов для игроков в этой группе истек');
+      }
     }
     if(group.startLocation === null){
       return new PresetViewModel(`Группе ${group.name} не задана стартовая локация`);

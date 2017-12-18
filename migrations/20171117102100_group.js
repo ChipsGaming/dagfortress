@@ -13,11 +13,14 @@ exports.up = function(knex, Promise) {
     t.boolean('isPlayer')
       .notNull()
       .index();
+    t.integer('maxPlayers');
     t.string('startLocation')
       .index()
       .references('id').inTable('location')
       .onDelete('set null')
       .onUpdate('cascade');
+    t.string('ai')
+      .notNull();
     t.dateTime('added').notNull();
   });
 };

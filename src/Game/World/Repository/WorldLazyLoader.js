@@ -77,7 +77,7 @@ module.exports = class extends LazyLoader{
 
     return groupRepository.findWith(
       groupRepository.select()
-        .inWorld(allianceRepository, worldId)
+        .inWorld(worldId, allianceRepository)
         .forPlayer()
     );
   }
@@ -91,7 +91,7 @@ module.exports = class extends LazyLoader{
       taskRepository.select()
         .actual()
         .joinGroup(groupRepository)
-        .inWorld(allianceRepository, worldId)
+        .inWorld(worldId, allianceRepository)
     );
   }
 };

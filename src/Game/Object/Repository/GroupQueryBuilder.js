@@ -31,15 +31,15 @@ module.exports = class extends QueryBuilder{
   }
 
   /**
-   * Вражеские объекты для данной группы.
+   * Группы, относящиеся к данному миру.
    *
-   * @param {GroupRepository} groupRepository
-   * @param {Group|String} group Целевая группа.
+   * @param {World|String} world Целевой мир.
+   * @param {AllianceRepository} allianceRepository
    * @param {String} alias [optional] Псевдоним подключаемой сущности.
    *
-   * @return {ObjectQueryBuilder}
+   * @return {GroupQueryBuilder}
    */
-  inWorld(allianceRepository, world, alias = 'alliance'){
+  inWorld(world, allianceRepository, alias = 'alliance'){
     world = world instanceof Object? world.id : world;
 
     this.joinAlliance(allianceRepository, alias)
