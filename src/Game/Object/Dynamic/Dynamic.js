@@ -2,9 +2,9 @@ const Object = require('../Object');
 
 module.exports = class extends Object{
   constructor(world, location, group, name){
-    super(world, location, group, name);
-    this.endurance = 3;
-    this.currentEndurance = this.endurance;
+    super(world, location, name);
+    this.group = group;
+    this.hitPoints = 10;
     this.isDie = false;
 
     this.lazyLoader = null;
@@ -12,17 +12,10 @@ module.exports = class extends Object{
 
   // Getters
   /**
-   * @return {Organ[]} Органы объекта.
+   * @return {Group} Группа.
    */
-  async getOrgans(){
-    return this.lazyLoader.loadOrgans(this.id);
-  }
-
-  /**
-   * @return {Organ[]} Ноги объекта.
-   */
-  async getLegs(){
-    return this.lazyLoader.loadLegs(this.id);
+  async getGroup(){
+    return this.lazyLoader.loadGroup(this.group);
   }
 
   /**
@@ -30,5 +23,26 @@ module.exports = class extends Object{
    */
   async getNearbyDynamics(){
     return await this.lazyLoader.loadNearbyDynamics(this);
+  }
+
+  /**
+   * @return {Task[]} Актуальные задачи.
+   */
+  async getActualTasks(){
+    return this.lazyLoader.loadActualTasks(this.group);
+  }
+
+  /**
+   * @return {Task[]} Завершенные задачи.
+   */
+  async getCompletedTasks(){
+    return this.lazyLoader.loadCompletedTasks(this.group);
+  }
+
+  /**
+   * @return {Item[]} Предметы.
+   */
+  async getItems(){
+    return this.lazyLoader.loadItems(this.id);
   }
 };

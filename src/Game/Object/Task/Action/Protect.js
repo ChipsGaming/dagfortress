@@ -15,19 +15,11 @@ module.exports = class{
       return next(dynamic, action, task);
     }
 
-    const weapon = await ai.getWeapon(dynamic, enemy),
-      targetOrgan = await ai.getTargetOrgan(dynamic, enemy);
-    if(weapon === null || targetOrgan === null){
-      return next(dynamic, action, task);
-    }
-
-    const damage = await ai.getDamage(dynamic, weapon, enemy, targetOrgan);
+    const damage = await ai.getDamage(dynamic, enemy);
 
     this.globalEvents.trigger(new AttacksEvent(
       dynamic,
-      weapon,
       enemy,
-      targetOrgan,
       damage,
       damage === 0
     ));

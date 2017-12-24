@@ -6,9 +6,13 @@ exports.up = function(knex, Promise) {
       .references('id').inTable('object')
       .onDelete('cascade')
       .onUpdate('cascade');
-    t.integer('endurance')
-      .notNull();
-    t.integer('currentEndurance')
+    t.string('group')
+      .notNull()
+      .index()
+      .references('id').inTable('group')
+      .onDelete('cascade')
+      .onUpdate('cascade');
+    t.integer('hitPoints')
       .notNull();
     t.boolean('isDie')
       .notNull()

@@ -14,13 +14,15 @@ module.exports = class{
       chrono = await world.getChrono(),
       location = await this.player.getCurrentLocation(),
       nearbyLocations = await location.getNearbyLocations(),
-      nearbyDynamics = await this.player.getNearbyDynamics();
+      nearbyDynamics = await this.player.getNearbyDynamics(),
+      nearbyItems = await location.getItems();
 
     return new ViewModel('in_world_state/view_location', {
       chrono: chrono,
       location: location,
       nearbyLocations: nearbyLocations,
-      nearbyDynamics: nearbyDynamics
+      nearbyDynamics: nearbyDynamics,
+      nearbyItems: nearbyItems
     });
   }
 };

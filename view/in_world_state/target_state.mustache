@@ -2,10 +2,6 @@
 Труп {{target.name}}
 {{/target.isDie}}
 {{^target.isDie}}
-{{target.name}} {{#tl}}endurance_{{target.currentEndurance}}{{/tl}}
+{{target.name}}
+{{#tl}}damage_{{target.hitPoints}}{{/tl}}
 {{/target.isDie}}
-
-{{#organs}}
-	{{name}} [{{mass}}]
-	{{#tl}}damage_{{damage}}{{/tl}}
-{{/organs}}

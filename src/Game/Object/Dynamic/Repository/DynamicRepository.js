@@ -2,6 +2,8 @@ const ObjectRepository = require('../../Repository/ObjectRepository');
 const QueryBuilder = require('./DynamicQueryBuilder');
 const Entity = require('../Dynamic');
 
+const LazyLoader = require('./DynamicLazyLoader');
+
 module.exports = class extends ObjectRepository{
   static get tableName(){
     return 'dynamic';
@@ -14,8 +16,8 @@ module.exports = class extends ObjectRepository{
   static extract(entity){
     return {
       id: entity.id,
-      endurance: entity.endurance,
-      currentEndurance: entity.currentEndurance,
+      group: entity.group,
+      hitPoints: entity.hitPoints,
       isDie: entity.isDie
     };
   }
@@ -26,8 +28,8 @@ module.exports = class extends ObjectRepository{
       super.hydrate(data)
     );
 
-    entity.endurance = data.endurance;
-    entity.currentEndurance = data.currentEndurance;
+    entity.group = data.group;
+    entity.hitPoints = data.hitPoints;
     entity.isDie = data.isDie;
 
     return entity;
@@ -36,8 +38,8 @@ module.exports = class extends ObjectRepository{
   static getFindStatement(database, where){
     return ObjectRepository.getFindStatement(database, where)
       .column(
-        `${this.tableName}.endurance`,
-        `${this.tableName}.currentEndurance`,
+        `${this.tableName}.group`,
+        `${this.tableName}.hitPoints`,
         `${this.tableName}.isDie`
       )
       .innerJoin(this.tableName, `${super.tableName}.id`, `${this.tableName}.id`);
@@ -80,8 +82,8 @@ module.exports = class extends ObjectRepository{
           `${dynamicAlias}.id`
         )
         .column(
-          `${dynamicAlias}.endurance`,
-          `${dynamicAlias}.currentEndurance`,
+          `${dynamicAlias}.group`,
+          `${dynamicAlias}.hitPoints`,
           `${dynamicAlias}.isDie`
         );
   }

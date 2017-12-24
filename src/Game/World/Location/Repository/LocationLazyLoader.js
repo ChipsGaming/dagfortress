@@ -35,4 +35,14 @@ module.exports = class extends LazyLoader{
         .alive()
     );
   }
+
+  async loadItems(locationId){
+    const itemRepository = await this.container.get('ItemRepository').build({}, this.container);
+
+    return itemRepository.fetchAll(
+      itemRepository.select()
+        .inLocation(locationId)
+        .withoutOwner()
+    );
+  }
 };

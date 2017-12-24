@@ -40,7 +40,7 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/ObjectStateHandler',
         player: this.player
       }),
-      new RegexRoute(/^(п(?:ойти)? |у(?:дарить)? |ж(?:дать)?)/i, [], {
+      new RegexRoute(/^(п(?:ойти)? |у(?:дарить)? |взять |положить |ж(?:дать)?)/i, [], {
         middleware: 'InWorldState/ActionHandler',
         player: this.player
       }),

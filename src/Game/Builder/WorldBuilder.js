@@ -3,9 +3,9 @@ const World = require('../World/World'),
   Location = require('../World/Location/Location'),
   Road = require('../World/Location/Road'),
   Dynamic = require('../Object/Dynamic/Dynamic'),
-  Organ = require('../Object/Dynamic/Organ'),
-  Alliance = require('../Object/Alliance'),
-  Group = require('../Object/Group'),
+  Item = require('../Object/Static/Item'),
+  Alliance = require('../Object/Dynamic/Alliance'),
+  Group = require('../Object/Dynamic/Group'),
   Task = require('../Object/Task/Task'),
   TaskCondition = require('../Object/Task/Condition'),
   TaskAction = require('../Object/Task/Action'),
@@ -24,7 +24,7 @@ module.exports = class{
     this.locations = [];
     this.roads = [];
     this.dynamics = [];
-    this.organs = [];
+    this.items = [];
   }
 
   static fromJson(json){
@@ -117,16 +117,17 @@ module.exports = class{
 
           const dynamic = worldBuilder.dynamicByJson(worldBuilder.world, location, dynamicJson);
           worldBuilder.addDynamic(dynamic);
-    
-          for(let organJson of dynamicJson.organs){
-            if('prototype' in organJson){
-              organJson = Object.assign(json.prototypes.organ[organJson.prototype], organJson);
-            }
+        }
+      }
 
-            worldBuilder.addOrgan(
-              worldBuilder.organByJson(dynamic, organJson)
-            );
+      if('items' in locationJson){
+        for(let itemJson of locationJson.items){
+          if('prototype' in itemJson){
+            itemJson = Object.assign(json.prototypes.item[itemJson.prototype], itemJson);
           }
+
+          const item = worldBuilder.itemByJson(worldBuilder.world, location, itemJson);
+          worldBuilder.addItem(item);
         }
       }
     }
@@ -212,8 +213,8 @@ module.exports = class{
     return this.dynamics.indexOf(dynamic) !== -1;
   }
 
-  hasOrgan(organ){
-    return this.organs.indexOf(organ) !== -1;
+  hasItem(item){
+    return this.items.indexOf(item) !== -1;
   }
 
   // Actions
@@ -385,25 +386,25 @@ module.exports = class{
     return this.assign(
       new Dynamic(world, location, this.findGroupByName(json.group).id, json.name),
       json,
-      ['endurance', 'currentEndurance', 'isDie']
+      ['hitPoints', 'isDie']
     );
   }
 
-  addOrgan(organ){
-    if(this.hasOrgan(organ)){
+  addItem(item){
+    if(this.hasItem(item)){
       return;
     }
 
-    this.organs.push(organ);
+    this.items.push(item);
   }
 
-  organByJson(dynamic, json){
-    dynamic = dynamic instanceof Object? dynamic.id : dynamic;
+  itemByJson(world, location, json){
+    world = world instanceof Object? world.id : world;
+    location = location instanceof Object? location.id : location;
 
     return this.assign(
-      new Organ(dynamic, json.name),
-      json,
-      ['damage', 'isVital', 'isWeapon', 'isLegs', 'isKeeping', 'mass']
+      new Item(world, location, json.name),
+      json
     );
   }
 };

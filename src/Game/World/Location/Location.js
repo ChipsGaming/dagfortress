@@ -38,4 +38,11 @@ module.exports = class{
   async getAliveDynamics(){
     return this.lazyLoader.loadAliveDynamics(this.id);
   }
+
+  /**
+   * @return {Item[]} Предметы в данной локации, не принадлежащие никому.
+   */
+  async getItems(){
+    return this.lazyLoader.loadItems(this.id);
+  }
 };

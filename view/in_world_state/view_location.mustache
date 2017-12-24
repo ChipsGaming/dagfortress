@@ -2,12 +2,16 @@
 Вы стоите в **{{location.name}}**
 	{{{location.description}}}
 
-Здесь вы видите
+Здесь вы видите:
 	{{#nearbyDynamics}}
 	{{name}}
 	{{/nearbyDynamics}}
 
-Недалеко вы видите
+	{{#nearbyItems}}
+	*{{name}}*
+	{{/nearbyItems}}
+
+Недалеко вы видите:
 	{{#nearbyLocations}}
 	{{name}}
 	{{/nearbyLocations}}

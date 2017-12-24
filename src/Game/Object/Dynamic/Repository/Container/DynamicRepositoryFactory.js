@@ -1,4 +1,4 @@
-const Repository = require('../DynamicRepository');
+const Repository = require('../DynamicRepository'),
   LazyLoader = require('../DynamicLazyLoader');
 
 module.exports = class{

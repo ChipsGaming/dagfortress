@@ -9,7 +9,7 @@ module.exports = class{
       await container.get('WorldRepository').build({}, container),
       await container.get('ChronoRepository').build({}, container),
       await container.get('DynamicRepository').build({}, container),
-      await container.get('OrganRepository').build({}, container),
+      await container.get('ItemRepository').build({}, container),
       await container.get('TaskRepository').build({}, container),
       await container.get('TaskConditionContainer').build({}, container),
       await container.get('TaskActionContainer').build({}, container),

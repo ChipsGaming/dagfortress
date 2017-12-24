@@ -53,13 +53,6 @@ module.exports = class{
   }
 
   /**
-   * @return {Integer} Количество активных игроков в данном мире.
-   */
-  async getActivePlayersCount(){
-    return this.lazyLoader.loadActivePlayersCount(this.id);
-  }
-
-  /**
    * @return {Group} Группа для игроков данного мира.
    */
   async getPlayerGroup(){

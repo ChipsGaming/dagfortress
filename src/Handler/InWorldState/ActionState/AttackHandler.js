@@ -7,20 +7,15 @@ module.exports = class{
     player,
     globalEvents,
     dynamicRepository,
-    playerRepository,
-    organRepository
+    playerRepository
   ){
     this.player = player;
     this.globalEvents = globalEvents;
     this.dynamicRepository = dynamicRepository;
     this.playerRepository = playerRepository;
-    this.organRepository = organRepository;
   }
 
   async process(message, match){
-    match = new RegexRoute(/^у(?:дарить)? (.+) по (.+) у (.+)/i, ['weapon', 'organ', 'target'])
-      .route(message);
-
     const target = await this.dynamicRepository.find({
       'object.name': match.target,
       'object.location': this.player.location
@@ -35,33 +30,12 @@ module.exports = class{
       return new PresetViewModel(`${target.name} ваш союзник`);
     }
 
-    const weapon = await this.organRepository.find({
-      dynamic: this.player.id,
-      name: match.weapon
-    });
-    if(weapon === null){
-      return new PresetViewModel('У вас нет такого оружия');
-    }
-    if(!weapon.isWeapon){
-      return new PresetViewModel(`${weapon.name} не является оружием`);
-    }
-
-    const targetOrgan = await this.organRepository.find({
-      dynamic: target.id,
-      name: match.organ
-    });
-    if(targetOrgan === null){
-      return new PresetViewModel(`У ${target.name} нет ${match.organ} для нанесения удара`);
-    }
-
     const ai = await (await this.player.getGroup()).getAI(),
-      damage = await ai.getDamage(this.player, weapon, target, targetOrgan);
+      damage = await ai.getDamage(this.player, target);
 
     this.globalEvents.trigger(new AttacksEvent(
       this.player,
-      weapon,
       target,
-      targetOrgan,
       damage,
       damage === 0
     ));

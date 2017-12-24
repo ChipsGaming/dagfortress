@@ -16,7 +16,7 @@ module.exports = class extends RouteHandler{
     worldRepository,
     chronoRepository,
     dynamicRepository,
-    organRepository,
+    itemRepository,
     taskRepository,
     taskConditionContainer,
     taskActionContainer,
@@ -28,7 +28,7 @@ module.exports = class extends RouteHandler{
     this.worldRepository = worldRepository;
     this.chronoRepository = chronoRepository;
     this.dynamicRepository = dynamicRepository;
-    this.organRepository = organRepository;
+    this.itemRepository = itemRepository;
     this.taskRepository = taskRepository;
     this.taskConditionContainer = taskConditionContainer;
     this.taskActionContainer = taskActionContainer;
@@ -41,11 +41,19 @@ module.exports = class extends RouteHandler{
         middleware: 'InWorldState/ActionState/EnterLocationHandler',
         player: this.player
       }),
-      new RegexRoute(/^у(?:дарить)? .+$/i, [], {
+      new RegexRoute(/^у(?:дарить)? (.+)$/i, ['target'], {
         middleware: 'InWorldState/ActionState/AttackHandler',
         player: this.player
       }),
-      new RegexRoute(/^ж(?:дать)?$/i, ['count'], {
+      new RegexRoute(/^взять (.+)$/i, ['name'], {
+        middleware: 'InWorldState/ActionState/TakeHandler',
+        player: this.player
+      }),
+      new RegexRoute(/^положить (.+)$/i, ['name'], {
+        middleware: 'InWorldState/ActionState/PutHandler',
+        player: this.player
+      }),
+      new RegexRoute(/^ж(?:дать)?$/i, [], {
         middleware: 'InWorldState/ActionState/WaitHandler',
         player: this.player
       }),
@@ -111,7 +119,7 @@ module.exports = class extends RouteHandler{
       );
       await newState.replaceCurrentState(
         this.dynamicRepository,
-        this.organRepository
+        this.itemRepository
       );
       this.globalEvents.clear();
 

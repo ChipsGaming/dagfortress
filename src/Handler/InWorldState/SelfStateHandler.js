@@ -8,11 +8,11 @@ module.exports = class{
   }
 
   async process(message){
-    const organs = await this.player.getOrgans()
+    const items = await this.player.getItems();
 
     return new ViewModel('in_world_state/self_state', {
       player: this.player,
-      organs: organs
+      items: items
     });
   }
 };

@@ -19,11 +19,8 @@ module.exports = class{
       return new PresetViewModel(`Рядом с вами нет ${match.target}`);
     }
 
-    const organs = await target.getOrgans();
-
     return new ViewModel('in_world_state/target_state', {
-      target: target,
-      organs: organs
+      target: target
     });
   }
 };

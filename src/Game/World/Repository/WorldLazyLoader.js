@@ -59,18 +59,6 @@ module.exports = class extends LazyLoader{
     );
   }
 
-  async loadActivePlayersCount(worldId){
-    const playerRepository = await this.container.get('PlayerRepository').build({}, this.container);
-
-    return playerRepository.getScalar(
-      playerRepository.select()
-        .inWorld(worldId)
-        .alive()
-        .active()
-        .count()
-    );
-  }
-
   async loadPlayerGroup(worldId){
     const allianceRepository = await this.container.get('AllianceRepository').build({}, this.container),
       groupRepository = await this.container.get('GroupRepository').build({}, this.container);

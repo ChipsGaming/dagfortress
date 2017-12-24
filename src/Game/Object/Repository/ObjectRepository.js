@@ -13,7 +13,6 @@ module.exports = class extends EntityRepository{
       id: entity.id,
       world: entity.world,
       location: entity.location,
-      group: entity.group,
       name: entity.name,
       added: entity.added
     };
@@ -25,7 +24,6 @@ module.exports = class extends EntityRepository{
     entity.id = data.id;
     entity.world = data.world;
     entity.location = data.location;
-    entity.group = data.group;
     entity.name = data.name;
     entity.added = new Date(data.added);
 

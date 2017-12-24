@@ -1,6 +1,5 @@
 const World = require('../../Game/World/World'),
   WorldBuilder = require('../../Game/Builder/WorldBuilder'),
-  SandboxOrganGenerator = require('../../Game/Object/Dynamic/Generator/SandboxOrganGenerator'),
   Player = require('../../Game/Object/Dynamic/Player/Player'),
   ViewModel = require('../../View/ViewModel'),
   PresetViewModel = require('../../View/PresetViewModel');
@@ -20,8 +19,8 @@ module.exports = class{
     locationRepository,
     roadRepository,
     dynamicRepository,
-    organRepository,
-    playerRepository
+    playerRepository,
+    itemRepository
   ){
     this.config = config;
     this.prototypeList = prototypeList;
@@ -36,8 +35,8 @@ module.exports = class{
     this.locationRepository = locationRepository;
     this.roadRepository = roadRepository;
     this.dynamicRepository = dynamicRepository;
-    this.organRepository = organRepository;
     this.playerRepository = playerRepository;
+    this.itemRepository = itemRepository;
   }
 
   async process(message, match){
@@ -102,8 +101,8 @@ module.exports = class{
     for(const dynamic of worldBuilder.dynamics){
       await this.dynamicRepository.save(dynamic);
     }
-    for(const organ of worldBuilder.organs){
-      await this.organRepository.save(organ);
+    for(const item of worldBuilder.items){
+      await this.itemRepository.save(item);
     }
 
     group = await this.groupRepository.find('id', group.id);
@@ -118,10 +117,6 @@ module.exports = class{
     );
     player.isCreator = true;
     await this.playerRepository.save(player);
-    
-    for(const organ of await new SandboxOrganGenerator(player.id).generate()){
-      await this.organRepository.save(organ);
-    }
     
     return new ViewModel('default_state/create_world', {
       world: worldBuilder.world,

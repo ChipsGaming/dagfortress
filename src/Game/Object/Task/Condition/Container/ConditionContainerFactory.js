@@ -13,7 +13,8 @@ module.exports = class{
       'inLocation': new SharingFactory(new (require('./InLocationFactory'))),
       'die': new SharingFactory(new (require('./DieFactory'))),
       'allianceDie': new SharingFactory(new (require('./AllianceDieFactory'))),
-      'groupDie': new SharingFactory(new (require('./GroupDieFactory')))
+      'groupDie': new SharingFactory(new (require('./GroupDieFactory'))),
+      'ownsItem': new SharingFactory(new (require('./OwnsItemFactory')))
     }, container);
   }
 };

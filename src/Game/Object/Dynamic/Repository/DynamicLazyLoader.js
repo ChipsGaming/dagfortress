@@ -1,23 +1,42 @@
 const ObjectLazyLoader = require('../../Repository/ObjectLazyLoader');
 
 module.exports = class extends ObjectLazyLoader{
-  async loadOrgans(dynamicId){
-    const organRepository = await this.container.get('OrganRepository').build({}, this.container);
+  async loadTasks(groupId){
+    const taskRepository = await this.container.get('TaskRepository').build({}, this.container);
 
-    return organRepository.fetchAll(
-      organRepository.select()
-        .part(dynamicId)
+    return taskRepository.fetchAll(
+      taskRepository.select()
+        .forGroup(this.group)
+        .orderByPriority()
     );
   }
 
-  async loadLegs(dynamicId){
-    const organRepository = await this.container.get('OrganRepository').build({}, this.container);
+  async loadActualTasks(groupId){
+    const taskRepository = await this.container.get('TaskRepository').build({}, this.container);
 
-    return organRepository.fetchAll(
-      organRepository.select()
-        .part(dynamicId)
-        .legs()
+    return taskRepository.fetchAll(
+      taskRepository.select()
+        .forGroup(groupId)
+        .actual()
+        .orderByPriority()
     );
+  }
+
+  async loadCompletedTasks(groupId){
+    const taskRepository = await this.container.get('TaskRepository').build({}, this.container);
+
+    return taskRepository.fetchAll(
+      taskRepository.select()
+        .forGroup(groupId)
+        .completed()
+        .orderByPriority()
+    );
+  }
+
+  async loadGroup(groupId){
+    const groupRepository = await this.container.get('GroupRepository').build({}, this.container);
+
+    return groupRepository.find('id', groupId);
   }
 
   async loadNearbyDynamics(dynamic){
@@ -26,6 +45,15 @@ module.exports = class extends ObjectLazyLoader{
     return dynamicRepository.fetchAll(
       dynamicRepository.select()
         .nearby(dynamic)
+    );
+  }
+
+  async loadItems(dynamicId){
+    const itemRepository = await this.container.get('ItemRepository').build({}, this.container);
+
+    return itemRepository.fetchAll(
+      itemRepository.select()
+        .owner(dynamicId)
     );
   }
 };

@@ -1,5 +1,5 @@
 const QueryBuilder = require('../../../../Storage/QueryBuilder'),
-  GroupQueryBuilder = require('../../Repository/GroupQueryBuilder');
+  GroupQueryBuilder = require('../../Dynamic/Repository/GroupQueryBuilder');
 
 module.exports = class extends QueryBuilder{
   // Joins
