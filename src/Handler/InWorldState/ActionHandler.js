@@ -70,6 +70,9 @@ module.exports = class extends RouteHandler{
   getActionPlayersCount(players){
     let actionPlayersCount = 0;
     for(const player of players){
+      if(player.isDie){
+        continue;
+      }
       if(this.globalEvents.find((event) => event.publisher.id == player.id).length > 0){
         continue;
       }
